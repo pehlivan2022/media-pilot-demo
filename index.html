@@ -591,13 +591,13 @@ section[id]{scroll-margin-top:92px}
       document.getElementById('topicGrid').innerHTML = topics.map(t=>{
         const urgent = t.alerts.filter(a=>a.state==='urgent').length;
         const returns = t.alerts.filter(a=>a.type==='return').length;
-        return `<div class="topic-tile ${t.id===activeTopicId?'active':''}" onclick="setActiveTopic('${t.id}')">`
+        return `<div class="topic-tile ${t.id===activeTopicId?'active':''}" onclick="setActiveTopic('${t.id}')">
           <div class="inline-badges">
             <span class="badge ${t.color==='red'?'red':t.color==='amber'?'amber':'green'}">${t.label}</span>
-            <span class="badge gray">${t.alerts.length} casi</span>
+            <span class="badge gray">${t.alerts.length} slučajeva</span>
           </div>
           <div class="topic-name">${t.owner}</div>
-          <div class="topic-mini">Urgent: ${urgent} · Return: ${returns} · Nuovi: ${t.alerts.length-returns}</div>
+          <div class="topic-mini">Urgent: ${urgent} · Return: ${returns} · Novi: ${t.alerts.length-returns}</div>
         </div>`;
       }).join('');
     }
