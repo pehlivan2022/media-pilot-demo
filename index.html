@@ -60,7 +60,8 @@
       border-radius:12px;transition:.15s ease;display:inline-flex;align-items:center;justify-content:center
     }
     .icon-btn:hover,.menu-btn:hover,.chip-btn:hover,.action-btn:hover,.filter-btn:hover,.tab-btn:hover,.nav-btn:hover,.kpi-btn:hover,.close-btn:hover{transform:translateY(-1px)}
-    .menu-btn,.icon-btn,.close-btn{width:38px;height:38px;flex-shrink:0}
+    .menu-btn,.icon-btn,.close-btn{width:42px;height:42px;flex-shrink:0}
+.close-btn{font-size:20px;font-weight:800;background:#fff;color:var(--text);border-color:var(--line-2);box-shadow:var(--shadow)}
     .menu-icon{width:16px;display:grid;gap:3px}
     .menu-icon span{display:block;height:2px;border-radius:20px;background:var(--text-2)}
     .side-scroll{flex:1;overflow:auto;padding:12px 10px 22px}
@@ -83,12 +84,14 @@
     .mobile-menu-btn{display:none}
     .top-title-wrap{min-width:0}
     .top-title{font-size:1.42rem;font-weight:800;letter-spacing:-.03em}
+.top-brand-mini{font-size:.62rem;letter-spacing:.18em;text-transform:uppercase;color:var(--text-3);margin-bottom:2px}
     .top-title span{color:var(--text-3)}
     .top-desc{font-size:.82rem;color:var(--text-3);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:520px}
     .top-actions{margin-left:auto;display:flex;align-items:center;gap:8px;flex-wrap:wrap;justify-content:flex-end}
     .tab-btn{padding:9px 11px;font-size:.7rem;text-transform:uppercase;letter-spacing:.12em;font-weight:800}
     .tab-btn.active{background:var(--blue);color:#fff;border-color:var(--blue)}
     .content{padding:16px;display:flex;flex-direction:column;gap:14px}
+section[id]{scroll-margin-top:92px}
     .panel{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);overflow:hidden}
     .panel-head{display:flex;align-items:center;gap:10px;padding:12px 14px;border-bottom:1px solid var(--line);background:linear-gradient(180deg,#fff 0%,#fbfdff 100%)}
     .panel-title{font-size:.73rem;text-transform:uppercase;letter-spacing:.14em;color:var(--text-3)}
@@ -152,6 +155,11 @@
     .timeline-time{font-family:var(--mono);font-size:.74rem;color:var(--text-3);min-width:52px}
     .timeline-text{font-size:.88rem;line-height:1.45;color:var(--text-2)}
     .bottom-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+    #alerts .panel-head{background:linear-gradient(180deg,#eef4ff 0%,#fbfdff 100%)}
+    #queue .panel-head{background:linear-gradient(180deg,#fff7eb 0%,#fbfdff 100%)}
+    #cases .panel-head{background:linear-gradient(180deg,#eefaf2 0%,#fbfdff 100%)}
+    #topics .panel-head{background:linear-gradient(180deg,#f5efff 0%,#fbfdff 100%)}
+
     .topic-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;padding:14px}
     .topic-tile{padding:13px;border:1px solid var(--line);border-radius:14px;background:var(--surface-2);cursor:pointer}
     .topic-tile:hover{transform:translateY(-1px)}
@@ -160,12 +168,14 @@
     .modal-overlay,.sheet-overlay{position:fixed;inset:0;background:var(--overlay);opacity:0;pointer-events:none;transition:.2s ease;z-index:80}
     .modal-overlay.open,.sheet-overlay.open{opacity:1;pointer-events:auto}
     .modal{
-      position:fixed;inset:50% auto auto 50%;transform:translate(-50%,-48%) scale(.98);width:min(940px,calc(100vw - 24px));
-      max-height:calc(100vh - 28px);overflow:auto;background:#fff;border:1px solid var(--line);border-radius:22px;box-shadow:0 30px 80px rgba(15,23,42,.24);z-index:90;
+      position:fixed;inset:50% auto auto 50%;transform:translate(-50%,-48%) scale(.98);width:min(900px,calc(100vw - 44px));
+      max-height:calc(100vh - 44px);overflow:auto;background:#fff;border:1px solid var(--line);border-radius:22px;box-shadow:0 30px 80px rgba(15,23,42,.24);z-index:90;
       opacity:0;pointer-events:none;transition:.2s ease
     }
     .modal.open{opacity:1;pointer-events:auto;transform:translate(-50%,-50%) scale(1)}
-    .modal-head{position:sticky;top:0;z-index:2;display:flex;gap:12px;align-items:flex-start;padding:16px;border-bottom:1px solid var(--line);background:rgba(255,255,255,.96);backdrop-filter:blur(12px)}
+    .modal-head{position:sticky;top:0;z-index:2;display:flex;gap:12px;align-items:flex-start;padding:16px;border-bottom:1px solid var(--line);background:linear-gradient(180deg,#eef4ff 0%,#ffffff 100%);backdrop-filter:blur(12px)}
+#legendModal .modal-head{background:linear-gradient(180deg,#fff7eb 0%,#ffffff 100%)}
+#composeModal .modal-head{background:linear-gradient(180deg,#eefaf2 0%,#ffffff 100%)}
     .modal-head h3{font-size:1.25rem;line-height:1.25;letter-spacing:-.02em}
     .modal-sub{margin-top:5px;font-size:.9rem;color:var(--text-3);line-height:1.45}
     .modal-body{padding:16px}
@@ -201,7 +211,7 @@
       .kpi-value{font-size:1.4rem}
       .tab-btn{font-size:.68rem;padding:8px 10px}
       .topic-grid{grid-template-columns:1fr}
-      .modal{width:100vw;max-height:100vh;height:100vh;inset:0;transform:none;border-radius:0}
+      .modal{width:calc(100vw - 18px);max-height:calc(100vh - 18px);height:auto;inset:9px auto auto 9px;transform:none;border-radius:20px}
       .modal.open{transform:none}
       .modal-head{padding:14px}
       .modal-body{padding:14px}
@@ -251,8 +261,9 @@
           <span class="menu-icon"><span></span><span></span><span></span></span>
         </button>
         <div class="top-title-wrap">
+          <div class="top-brand-mini">UJEDINJENA SRPSKA</div>
           <div class="top-title">VRH <span>· overview</span></div>
-          <div class="top-desc">Emergenze prima, poi temi in lavorazione. Tema cliccabile, popup completi, contrasto da app e mobile leggibile.</div>
+          <div class="top-desc">Emergenze prvo. Teme u radu odmah ispod.</div>
         </div>
         <div class="top-actions">
           <button class="tab-btn active" data-scenario="bih">Scenario BIH</button>
@@ -267,12 +278,12 @@
         <section class="hero-grid" id="overview">
           <div class="panel hero-card">
             <h2>Emergenze ora</h2>
-            <p>Questa fascia mette in testa le priorità rosse e arancioni. Sotto trovi i temi su cui si sta lavorando. Le decisioni prese in coda finiscono automaticamente nella lista <strong>Viđeno</strong>, con nota su cosa è stato deciso.</p>
+            <p>Priorità crvene i narandžaste.</p>
             <div class="hero-list" id="heroUrgentChips"></div>
           </div>
           <div class="panel hero-card">
             <h2>Temi in lavorazione</h2>
-            <p>Cliccando un tema si apre un popup con elenco casi, stato, nuovo/ritorno e accesso ai dettagli. Così non devi leggerli schiacciati sul fondo.</p>
+            <p>Teme u radu.</p>
             <div class="hero-list" id="heroTopicChips"></div>
           </div>
         </section>
@@ -394,12 +405,40 @@
     </div>
     <div class="modal-body">
       <div class="legend-grid">
-        <div class="legend-item"><span class="badge red">urgent</span><p>Richiede linea o decisione VRH oggi. Sale in cima e va nella coda decisionale.</p></div>
-        <div class="legend-item"><span class="badge amber">today</span><p>Va gestito nel ciclo corrente, ma non è ancora il caso più esplosivo.</p></div>
-        <div class="legend-item"><span class="badge blue">routed</span><p>Ownership già assegnata: media team, analitičar, lokalni odbor o altro.</p></div>
-        <div class="legend-item"><span class="badge green">watch</span><p>Monitoraggio attivo. Tienilo sotto osservazione senza intasare il vertice.</p></div>
-        <div class="legend-item"><span class="badge violet">new</span><p>Segnale nuovo. Non collegato ancora a un caso precedente.</p></div>
-        <div class="legend-item"><span class="badge gray">return</span><p>Alert di ritorno. Tema riemerso da memoria, follow-up o vecchi cluster.</p></div>
+        <div class="legend-item"><span class="badge red">urgent</span><p>Traži odluku vrha danas.</p></div>
+        <div class="legend-item"><span class="badge amber">today</span><p>Rješava se danas, ali nije crveno.</p></div>
+        <div class="legend-item"><span class="badge blue">routed</span><p>Već dodijeljeno timu.</p></div>
+        <div class="legend-item"><span class="badge green">watch</span><p>Praćenje bez dizanja panike.</p></div>
+        <div class="legend-item"><span class="badge violet">new</span><p>Novi signal.</p></div>
+        <div class="legend-item"><span class="badge gray">return</span><p>Povratak stare teme.</p></div>
+      </div>
+    </div>
+  </div>
+
+  
+  <div class="modal" id="composeModal">
+    <div class="modal-head">
+      <div style="flex:1">
+        <h3>Uputstvo medijskom timu</h3>
+        <div class="modal-sub">Unesi smjernicu, ton i ključne tačke.</div>
+      </div>
+      <button class="close-btn" id="closeCompose">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="mini-grid" style="margin-top:0">
+        <div class="mini-box"><small>za alert</small><strong id="composeTargetTitle">-</strong></div>
+        <div class="mini-box"><small>status</small><strong>demo draft</strong></div>
+      </div>
+      <div class="chart-wrap">
+        <div class="chart-title"><span>Smjernica za slanje</span><span>vidljivo polje za unos</span></div>
+        <div style="display:flex;flex-direction:column;gap:10px">
+          <input id="composeSubject" type="text" placeholder="Naslov / kratka uputa" style="width:100%;padding:12px;border:1px solid var(--line-2);border-radius:12px">
+          <textarea id="composeText" placeholder="Unesi konkretne upute za media tim: ton, poruke, šta izbjegavati, ko ide prvi, da li tražiti lokalnu potvrdu..." style="width:100%;min-height:220px;padding:12px;border:1px solid var(--line-2);border-radius:14px;resize:vertical;font:inherit;line-height:1.45"></textarea>
+          <div class="action-line">
+            <button class="action-btn success" id="sendComposeBtn">Pošalji uputstvo</button>
+            <button class="action-btn" onclick="closeModals()">Otkaži</button>
+          </div>
+        </div>
       </div>
     </div>
   </div>
@@ -410,7 +449,7 @@
     const topics = [
       {
         id:'izbori',label:'Izbori & CIK',color:'red',owner:'Vrh / Analitičar',alerts:[
-          {id:'rs01',title:'CIK u fokusu dopo ricorsi coordinati da Banja Luka e Doboj',place:'Banja Luka · Doboj',summary:'Due serie di objave spingono il frame che il processo di verifica sia stato politicizzato. La narrativa è uscita dai portali locali e sta arrivando a centralno.',risk:3,trend:3,priority:3,route:'Vrh',target:'centralno',reason:'Tema elettorale + coordinazione canali + eho offline',source:'portali lokalni + Facebook',action:'Definire linea politica e tono pubblico',state:'urgent',type:'new',openCase:true,team:'Media team',trendLine:[4,6,5,7,6,8,6,7],timeline:[['07:45','Prvi set di post identici da dvije stranice'],['09:10','Portal di Doboj rilancia il frame'],['11:25','Komentari offline javljeni iz lokalnog odbora'],['13:40','Predložen alert VRH']]},
+          {id:'rs01',title:'CIK u fokusu poslije ponovljenih predsjedničkih izbora u RS',place:'RS · Banja Luka',summary:'Poslije februarskog ponavljanja predsjedničkih izbora u dijelu biračkih mjesta, objave ponovo otvaraju pitanje regularnosti i legitimiteta procesa u RS.',risk:3,trend:3,priority:3,route:'Vrh',target:'centralno',reason:'Tema elettorale + coordinazione canali + eho offline',source:'izborni narativi + portali',action:'Definire linea politica e tono pubblico',state:'urgent',type:'new',openCase:true,team:'Media team',trendLine:[5,7,6,8,7,6,7,5],labels:['08 Feb','20 Feb','05 Mar','18 Mar','01 Apr','10 Apr','16 Apr','22 Apr'],timeline:[['07:45','Prvi set di post identici da dvije stranice'],['09:10','Portal di Doboj rilancia il frame'],['11:25','Komentari offline javljeni iz lokalnog odbora'],['13:40','Predložen alert VRH']]},
           {id:'rs02',title:'Narativ “izlaznost pod pritiskom” torna a Bijeljina',place:'Bijeljina',summary:'Vecchio frame sulla mobilizzazione ritorna con immagini di code e commenti coordinati. Più forte del previsto ma ancora gestibile.',risk:2,trend:2,priority:2,route:'Media team',target:'regionalno',reason:'Tema nota ma in ripresa',source:'regionalni portal + reels',action:'Counter-narrative con dato locale',state:'today',type:'return',openCase:true,team:'Media team',trendLine:[3,2,4,3,5,4,5,4],timeline:[['08:20','Ripresa del frame su izlaznost'],['10:30','Dva reels šire isti ugao'],['12:00','Predlog za odgovor sa lokalnim podacima']]},
           {id:'rs03',title:'Contestazione liste birača in Prijedor tra gruppi civici',place:'Prijedor',summary:'Tema rimane locale ma il tono è salito. Si cercano conferme dal terreno prima di eventuale escalation.',risk:2,trend:2,priority:2,route:'Lokalni odbor',target:'lokalno',reason:'Najprije potvrda sa terena',source:'grupa građana + lokalni portal',action:'Traži local confirm e contesto',state:'watch',type:'new',openCase:false,team:'Lokalni odbor',trendLine:[2,3,2,4,3,4,3,5],timeline:[['09:00','Signal iz lokalne FB grupe'],['10:10','Poslano lokalnom odboru'],['12:50','Čeka potvrdu o broju birača']]},
           {id:'rs04',title:'Tema “nepravilnosti brojanja” raste su X/Twitter',place:'Istočno Sarajevo',summary:'Più account ripetono le stesse parole chiave su brojanje glasova. Non è ancora mainstream ma sta accelerando.',risk:3,trend:2,priority:3,route:'Analitičar / Vrh',target:'centralno',reason:'Pattern coordinato + tema osjetljiva',source:'X / portali',action:'Potvrdi cluster e pripremi case',state:'today',type:'new',openCase:true,team:'Analitičar',trendLine:[3,5,4,5,6,5,6,5],timeline:[['07:55','Cluster od 6 naloga'],['09:40','Portal preuzima dvije formulacije'],['13:05','Alert predložen za centralni pregled']]},
@@ -421,12 +460,12 @@
           {id:'rs06',title:'Personalni napad na predsjednika RS kroz video cut',place:'Banja Luka',summary:'Kratki video izvučen iz starog intervjua se koristi za framing reputacione slabosti. Tema je već na više platformi.',risk:3,trend:3,priority:3,route:'Vrh',target:'lider',reason:'Target diretto + alto reach',source:'short video + portal',action:'Odobriti odgovor ili ignorisati uz monitoring',state:'urgent',type:'new',openCase:true,team:'Media team',trendLine:[5,7,6,8,6,7,5,7],timeline:[['07:30','Video prvi put objavljen'],['09:15','Tri naloga preuzimaju isti kadar'],['12:35','Tema prelazi na portal'],['14:00','Traži odluku vrha']]},
           {id:'rs07',title:'Ritorno del frame sulla imovina porodice',place:'Bijeljina · online',summary:'Tema stara, ali vraćena con screenshots e “podsjetnik” narativom. Bassa novità, medio potenziale.',risk:2,trend:2,priority:2,route:'Follow-up',target:'lider',reason:'Narativ iz arhive',source:'copy portali + komentari',action:'Koristi stare tačke odgovora',state:'watch',type:'return',openCase:false,team:'Follow-up',trendLine:[2,3,2,4,3,4,2,3],timeline:[['08:10','Objavljen “podsjetnik” thread'],['10:40','Tri portala prenose bez novih činjenica'],['13:10','Predlog follow-up statusa']]},
           {id:'rs08',title:'Napad sulla simbolika e tono del lidera in NSRS',place:'Narodna skupština RS',summary:'Objave fokusirano kritikuju stil govora e gesti durante una seduta. Tema è facilmente mediatizzabile.',risk:2,trend:3,priority:2,route:'Media team',target:'lider',reason:'Tema vizuelna i viralna',source:'clips + TikTok',action:'Lagani reframing i kratko objašnjenje',state:'today',type:'new',openCase:true,team:'Media team',trendLine:[3,5,3,6,4,5,3,4],timeline:[['09:00','Prvi clips objavljeni'],['11:20','Tema ulazi na TikTok'],['13:30','Media team dobio draft task']]},
-          {id:'rs09',title:'Intervista internazionale reinterpretata in chiave di scontro',place:'online',summary:'Dio intervista se uzima van konteksta i koristi za priču o izolaciji RS. Rischio medio, ma centralna osjetljivost alta.',risk:3,trend:2,priority:3,route:'Vrh',target:'centralno',reason:'Spoljašnji signal + lider target',source:'foreign clip + domaći portal',action:'Brza linija i Q&A za medije',state:'today',type:'new',openCase:true,team:'Media team',trendLine:[4,5,4,6,5,6,4,5],timeline:[['08:35','Clip preveden na lokalni portal'],['10:10','Komentatori dižu ton'],['12:55','Traži Q&A paket']]},
+          {id:'rs09',title:'Poslije poraza Orbana raste priča o slabljenju Dodikovih saveznika u EU',place:'online',summary:'Poslije izbora u Mađarskoj dio komentara otvara priču da RS ostaje bez najjačeg evropskog saveznika. Tema je politički osjetljiva i lako prelazi na centralni nivo.',risk:3,trend:2,priority:3,route:'Vrh',target:'centralno',reason:'Spoljašnji signal + lider target',source:'regionalni komentari + portali',action:'Brza linija i Q&A za medije',state:'today',type:'new',openCase:true,team:'Media team',trendLine:[4,5,4,6,5,6,4,5],labels:['03 Apr','06 Apr','09 Apr','12 Apr','15 Apr','17 Apr','20 Apr','22 Apr'],timeline:[['08:35','Clip preveden na lokalni portal'],['10:10','Komentatori dižu ton'],['12:55','Traži Q&A paket']]},
           {id:'rs10',title:'Satira che scivola verso diffamazione personale',place:'Banja Luka',summary:'Memovi i kratke objave prelaze iz satire u direktnu optužbu bez osnove. Tema još nije ogromna, ali može eskalirati.',risk:2,trend:2,priority:2,route:'Analitičar',target:'lider',reason:'Potreban monitoring i procjena granice',source:'meme pages',action:'Procjena da li ignorisati ili flagovati',state:'watch',type:'new',openCase:false,team:'Analitičar',trendLine:[2,4,3,4,2,4,3,4],timeline:[['10:00','Meme stranice ulaze u temu'],['12:15','Signal dijeljen u Telegram grupi'],['14:20','Ostavljen u watch statusu']]}]
       },
       {
         id:'nsrs',label:'NSRS & zakoni',color:'amber',owner:'Analitičar / Vrh',alerts:[
-          {id:'rs11',title:'Zakon o imovini vraća centralni konfliktni okvir',place:'NSRS',summary:'Sednica i komentari vraćaju temu zakona o imovini u jak konfliktni okvir između institucija.',risk:3,trend:3,priority:3,route:'Vrh',target:'centralno',reason:'Institucionalna težina + medijski eho',source:'NSRS prenos + portali',action:'Precizna politička linija za nastupe',state:'urgent',type:'return',openCase:true,team:'Vrh',trendLine:[5,6,4,7,5,8,6,7],timeline:[['08:00','Tema otvara jutarnje portale'],['09:50','Komentatori podižu ton'],['12:15','Signal i u radijskim emisijama'],['13:35','Escalation prema vrhu']]},
+          {id:'rs11',title:'Dan Republike i dalje se vraća kao sukobni politički simbol',place:'NSRS',summary:'Poslije januarskog obilježavanja Dana Republike uprkos zabrani, tema se i dalje vraća kao simbolički i institucionalni sukob između RS i državnog nivoa.',risk:3,trend:3,priority:3,route:'Vrh',target:'centralno',reason:'Institucionalna težina + medijski eho',source:'javni događaji + portali',action:'Precizna politička linija za nastupe',state:'urgent',type:'return',openCase:true,team:'Vrh',trendLine:[5,6,4,7,5,8,6,7],labels:['09 Jan','15 Jan','01 Feb','20 Feb','10 Mar','28 Mar','11 Apr','22 Apr'],timeline:[['08:00','Tema otvara jutarnje portale'],['09:50','Komentatori podižu ton'],['12:15','Signal i u radijskim emisijama'],['13:35','Escalation prema vrhu']]},
           {id:'rs12',title:'Polemica su veto e procedura di hitnost',place:'NSRS',summary:'Objave sugeriscono da procedura hitnosti služi za guranje teme bez rasprave. Tema je živa, ali ne gori još.',risk:2,trend:2,priority:2,route:'Media team',target:'centralno',reason:'Proceduralni napad, srednji reach',source:'portali + komentari',action:'Objasni proceduru u 3 tačke',state:'today',type:'new',openCase:true,team:'Media team',trendLine:[2,4,3,5,3,5,4,5],timeline:[['09:05','Objavljen tekst o hitnoj proceduri'],['10:50','Komentari rastu'],['13:05','Predlog za explanatory card']]},
           {id:'rs13',title:'Clip iz skupštinske rasprave postaje mem u Prijedoru',place:'Prijedor',summary:'Lokalni eho zabavan, ali pomjera temu iz ozbiljnog okvira u podsmijeh. Nije vrh prioritet.',risk:1,trend:2,priority:1,route:'Media team',target:'regionalno',reason:'Nizak rizik, ali vizuelno lako širenje',source:'clips',action:'Ne pojačavati, samo monitorisati',state:'watch',type:'new',openCase:false,team:'Media team',trendLine:[1,3,2,4,2,3,2,4],timeline:[['08:55','Clip iz rasprave izvučen'],['11:00','Lokalni profili dijele kao šalu'],['13:45','Ostaje u watchu']]},
           {id:'rs14',title:'Povratak stare teme o platama poslanika',place:'online',summary:'Archivski članci o naknadama poslanika ponovo se vrte uz novu sjednicu.',risk:2,trend:2,priority:2,route:'Follow-up',target:'follow-up',reason:'Stara tema sa novim okidačem',source:'archive portals',action:'Pripremi reuse materijal',state:'watch',type:'return',openCase:false,team:'Follow-up',trendLine:[2,2,3,4,2,3,2,3],timeline:[['07:50','Arhivski članak vraćen'],['10:05','Tema vezana za novu sjednicu'],['12:35','Follow-up označio kao povratak']]},
@@ -488,6 +527,7 @@
     let activeAlertId = topics[0].alerts[0].id;
     let activeScenario = 'bih';
     let reviewedQueue = [];
+    let composeAlertId = null;
 
     const allAlerts = () => topics.flatMap(t => t.alerts.map(a => ({...a, topicId:t.id, topicLabel:t.label, topicColor:t.color}))); 
     const getAlert = id => allAlerts().find(a => a.id === id);
@@ -617,6 +657,7 @@
         <div class="action-line">
           <button class="action-btn primary" onclick="openAlertModal('${a.id}')">Apri popup completo</button>
         </div>`;
+      window.currentChartLabels = a.labels || null;
       drawChart('previewChart', a.trendLine, stateTone(a.state), true);
     }
 
@@ -709,7 +750,7 @@
       const fy = v => (H-axisH) - py - (((v-min)/range) * ((H-axisH) - py*2));
       const points = values.map((v,i)=>`${px+i*step},${fy(v)}`).join(' ');
       const area = `${px},${H-axisH-py+4} ${points} ${W-px},${H-axisH-py+4}`;
-      const labels = ['08h','10h','12h','14h','16h','18h','20h','22h'];
+      const labels = (window.currentChartLabels && window.currentChartLabels.length===values.length) ? window.currentChartLabels : ['08h','10h','12h','14h','16h','18h','20h','22h'];
       svg.setAttribute('viewBox',`0 0 ${W} ${H}`);
       svg.innerHTML = `
         <defs>
@@ -758,14 +799,39 @@
               <div class="chart-title"><span>Dettaglio</span><span>RS politics demo</span></div>
               <div class="summary-text" style="margin-top:0">${a.summary}</div>
               <div class="action-line" style="margin-top:14px">
-                <button class="action-btn primary" onclick="handleDecision('${a.id}','Istruzione media team')">Istruzione media team</button>
+                <button class="action-btn primary" onclick="openComposeModal('${a.id}')">Uputstvo medijskom timu</button>
                 <button class="action-btn success" onclick="handleDecision('${a.id}','Pošalji mjesnom odboru')">Pošalji lokalnom</button>
                 <button class="action-btn warn" onclick="handleDecision('${a.id}','Stavi in hold / monitor')">Hold / monitor</button>
               </div>
-              ${sourceContext==='queue' ? '<div class="card-sub" style="margin-top:10px">Questa voce viene dalla coda “Šta traži odluku vrha”. Dopo una decisione finirà in <strong>Viđeno</strong>.</div>' : '<div class="card-sub" style="margin-top:10px">Puoi aprire il popup completo da ogni alert card. Qui il grafico si vede subito, non resta schiacciato in fondo.</div>'}
+              ${sourceContext==='queue' ? '<div class="card-sub" style="margin-top:10px">Poslije odluke ide u Viđeno.</div>' : '<div class="card-sub" style="margin-top:10px">Grafikon i akcije odmah vidljivi.</div>'}
             </div>
           </div>
         </div>`;
+    }
+
+
+    function openComposeModal(id){
+      const a = getAlert(id);
+      if(!a) return;
+      composeAlertId = id;
+      document.getElementById('composeTargetTitle').textContent = a.title;
+      document.getElementById('composeSubject').value = `Smjernica · ${a.topicLabel}`;
+      document.getElementById('composeText').value = `Ton: kratak, disciplinovan, bez širenja teme.\nKljučne poruke: \n1) ${a.action}\n2) Držati fokus na ${a.target}.\n3) Ne pojačavati protivnički frame bez potrebe.\n\nPo potrebi tražiti lokalnu potvrdu i pripremiti Q&A.`;
+      openModal('composeModal');
+    }
+
+    function sendCompose(){
+      if(!composeAlertId) return;
+      const subj = document.getElementById('composeSubject').value.trim();
+      const txt = document.getElementById('composeText').value.trim();
+      if(!txt){ toast('Unesi tekst uputstva.'); return; }
+      const a = getAlert(composeAlertId);
+      if(a && !reviewedQueue.some(r=>r.id===composeAlertId && r.decision==='Uputstvo medijskom timu')){
+        reviewedQueue.unshift({id:a.id,title:a.title,decision:'Uputstvo medijskom timu',when:new Date().toLocaleString('it-IT',{day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'}),note: txt.slice(0,120) + (txt.length>120?'…':'')});
+      }
+      renderQueue();
+      closeModals();
+      toast(`Poslato: ${subj || 'Uputstvo medijskom timu'}`);
     }
 
     function openModal(modalId){
@@ -777,6 +843,7 @@
       document.getElementById('modalOverlay').classList.remove('open');
       document.getElementById('detailModal').classList.remove('open');
       document.getElementById('legendModal').classList.remove('open');
+      document.getElementById('composeModal').classList.remove('open');
       document.body.style.overflow='';
     }
 
@@ -787,6 +854,7 @@
       document.getElementById('modalSub').textContent = `${a.topicLabel} · ${a.place} · ${a.type==='new'?'nuovo':'ritorno'} · ${a.state}`;
       document.getElementById('modalBody').innerHTML = buildDetailHtml(a, sourceContext);
       openModal('detailModal');
+      window.currentChartLabels = a.labels || null;
       drawChart('modalChart', a.trendLine, stateTone(a.state), true);
     }
 
@@ -858,6 +926,8 @@
     document.getElementById('topicFilter').addEventListener('change', renderAlerts);
     document.getElementById('closeModal').addEventListener('click', closeModals);
     document.getElementById('closeLegend').addEventListener('click', closeModals);
+    document.getElementById('closeCompose').addEventListener('click', closeModals);
+    document.getElementById('sendComposeBtn').addEventListener('click', sendCompose);
     document.getElementById('modalOverlay').addEventListener('click', closeModals);
     document.getElementById('legendBtn').addEventListener('click', ()=>openModal('legendModal'));
     document.querySelectorAll('.tab-btn').forEach(btn=>btn.addEventListener('click', ()=>{
