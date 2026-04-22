@@ -1,0 +1,798 @@
+import React, { useMemo, useState } from 'react';
+import { Bell, ChevronRight, Menu, Search, X, AlertTriangle, CheckCircle2, Activity, Clock3, FileText, Users, BarChart3, ArrowLeft, Send, PauseCircle, ShieldAlert } from 'lucide-react';
+
+const topics = [
+  {
+    id: 'izbori',
+    label: 'Izbori',
+    color: 'red',
+    count: 4,
+    alerts: [
+      {
+        id: 'a1',
+        title: 'Regularnost izbora postaje centralna tema',
+        summary: 'Više izvora i NGO kanala gura narativ o pritisku na izborni proces. Tema je iz lokalnog signala prešla na centralni nivo.',
+        risk: 3,
+        trend: 3,
+        priority: 3,
+        route: 'Vrh',
+        target: 'centralno',
+        reason: 'Strategic relevance 3 + trend 3 + NGO legitimitet',
+        source: 'NGO + portal + društvene mreže',
+        action: 'Political line needed',
+        state: 'urgent',
+        trendLine: [2, 3, 3, 4, 4, 5, 6, 7, 8, 9],
+        timeline: [
+          ['08:15', 'NGO signal preuzet od dva portala'],
+          ['10:30', 'Isti okvir u tri koordinisane objave'],
+          ['12:20', 'Lokalni signal potvrđuje offline eho'],
+        ],
+      },
+      {
+        id: 'a2',
+        title: 'CIK spominjan u više koordinisanih objava',
+        summary: 'Ponavljaju se iste fraze i isti okvir kroz više kanala u kratkom vremenu.',
+        risk: 3,
+        trend: 2,
+        priority: 3,
+        route: 'Analitičar / Vrh',
+        target: 'centralno',
+        reason: 'Coordination signal + izborni kontekst',
+        source: 'Portali + Facebook stranice',
+        action: 'Confirm cluster and prep case',
+        state: 'today',
+        trendLine: [1, 2, 2, 3, 4, 4, 5, 5, 6, 6],
+        timeline: [
+          ['09:10', 'Cluster detektovan na tri izvora'],
+          ['11:00', 'Phrase reuse signal raste'],
+          ['13:05', 'Predložen alert kandidat'],
+        ],
+      },
+      {
+        id: 'a3',
+        title: 'Tema izlaznosti dobija negativni okvir',
+        summary: 'Sadržaj pokušava pretvoriti mobilizaciju u priču o nepovjerenju.',
+        risk: 2,
+        trend: 2,
+        priority: 2,
+        route: 'Media team',
+        target: 'regionalno',
+        reason: 'Important but still operatively solvable',
+        source: 'Regionalni portal',
+        action: 'Counter-narrative',
+        state: 'routed',
+        trendLine: [1, 1, 2, 2, 2, 3, 3, 4, 4, 4],
+        timeline: [
+          ['08:50', 'Prvi negativni okvir'],
+          ['10:15', 'Media team dobio task'],
+          ['12:40', 'Draft u radu'],
+        ],
+      },
+      {
+        id: 'a4',
+        title: 'Lokalni signal traži potvrdu sa terena',
+        summary: 'Prvi lokalni odbor javlja da se ista tema pojavljuje i offline.',
+        risk: 2,
+        trend: 2,
+        priority: 2,
+        route: 'Lokalni odbor',
+        target: 'lokalno',
+        reason: 'Needs local confirmation before escalation',
+        source: 'Local board feedback',
+        action: 'Confirm / enrich',
+        state: 'watch',
+        trendLine: [1, 1, 1, 2, 2, 2, 3, 3, 3, 4],
+        timeline: [
+          ['09:25', 'Signal sa terena'],
+          ['10:05', 'Poslano lokalnom odboru'],
+          ['12:55', 'Čeka potvrdu'],
+        ],
+      },
+    ],
+  },
+  {
+    id: 'lider',
+    label: 'Lider',
+    color: 'red',
+    count: 3,
+    alerts: [
+      {
+        id: 'b1',
+        title: 'Reputacioni napad na lidera jača u istom okviru',
+        summary: 'Tema je personalizovana i prelazi iz ironije u direktan reputacijski napad.',
+        risk: 3,
+        trend: 3,
+        priority: 3,
+        route: 'Vrh',
+        target: 'lider',
+        reason: 'Leader target + risk 3 + repeat pattern',
+        source: 'Portal + short video',
+        action: 'Approval for direct answer',
+        state: 'urgent',
+        trendLine: [2, 2, 3, 4, 4, 5, 6, 7, 7, 8],
+        timeline: [
+          ['08:40', 'Prvi personalni napad'],
+          ['11:20', 'Video format širi temu'],
+          ['13:10', 'Predložen case za vrh'],
+        ],
+      },
+      {
+        id: 'b2',
+        title: 'Napad vezan za stil i simboliku lidera',
+        summary: 'Još nije dokazno jak, ali raste kroz kratke forme.',
+        risk: 2,
+        trend: 2,
+        priority: 2,
+        route: 'Media team',
+        target: 'lider',
+        reason: 'Monitor + prep response',
+        source: 'Reels / clips',
+        action: 'Light framing response',
+        state: 'today',
+        trendLine: [1, 1, 2, 2, 3, 3, 4, 4, 4, 5],
+        timeline: [
+          ['09:00', 'Clip format počeo da raste'],
+          ['11:50', 'Media team priprema odgovor'],
+          ['13:30', 'Tema još nije full red'],
+        ],
+      },
+      {
+        id: 'b3',
+        title: 'Stara tema o imovini se vraća',
+        summary: 'Follow-up signal pokazuje da se koristi stari obrazac.',
+        risk: 2,
+        trend: 1,
+        priority: 2,
+        route: 'Follow-up',
+        target: 'lider',
+        reason: 'Return of archived narrative',
+        source: 'Copy portals',
+        action: 'Reuse archive response',
+        state: 'watch',
+        trendLine: [1, 1, 1, 1, 2, 2, 2, 2, 3, 3],
+        timeline: [
+          ['08:05', 'Stari narativ vraćen'],
+          ['10:45', 'Povezan sa arhivom'],
+          ['12:15', 'Predložen follow-up monitoring'],
+        ],
+      },
+    ],
+  },
+  {
+    id: 'rs-lokal',
+    label: 'RS lokal',
+    color: 'yellow',
+    count: 4,
+    alerts: [
+      {
+        id: 'c1',
+        title: 'Lokalna tema u RS traži potvrdu prije eskalacije',
+        summary: 'Više lokalnih signala postoji, ali bez dovoljne centralne težine dok mjesni odbor ne potvrdi.',
+        risk: 2,
+        trend: 2,
+        priority: 2,
+        route: 'Lokalni odbor',
+        target: 'lokalno',
+        reason: 'Local first, not immediate vrh',
+        source: 'Local portal + teren',
+        action: 'Confirm and enrich',
+        state: 'watch',
+        trendLine: [1, 1, 2, 2, 2, 2, 3, 3, 3, 4],
+        timeline: [
+          ['08:25', 'Prvi lokalni signal'],
+          ['10:10', 'Poslano na provjeru'],
+          ['13:05', 'Još bez centralne težine'],
+        ],
+      },
+      {
+        id: 'c2',
+        title: 'Narativ se širi na susjedne opštine',
+        summary: 'Tema prelazi iz jedne opštine u dvije susjedne, ali još nije centralna.',
+        risk: 2,
+        trend: 3,
+        priority: 2,
+        route: 'Media team / Lokalni odbor',
+        target: 'regionalno',
+        reason: 'Regional growth with local roots',
+        source: 'Regional portals',
+        action: 'Coordinate local line',
+        state: 'today',
+        trendLine: [1, 2, 2, 3, 3, 4, 4, 5, 5, 6],
+        timeline: [
+          ['08:55', 'Signal iz druge opštine'],
+          ['11:00', 'Regionalni šum raste'],
+          ['13:25', 'Traži koordinaciju'],
+        ],
+      },
+    ],
+  },
+  {
+    id: 'followup',
+    label: 'Follow-up',
+    color: 'green',
+    count: 3,
+    alerts: [
+      {
+        id: 'g1',
+        title: 'Arhivska tema se vraća kroz novi ugao',
+        summary: 'Nije ista priča doslovno, ali koristi isti memorijski okvir.',
+        risk: 2,
+        trend: 2,
+        priority: 2,
+        route: 'Follow-up',
+        target: 'archive',
+        reason: 'Linked to old case',
+        source: 'Mixed',
+        action: 'Reuse old lines',
+        state: 'watch',
+        trendLine: [1, 1, 1, 2, 2, 2, 3, 3, 4, 4],
+        timeline: [
+          ['08:00', 'Stari frame aktiviran'],
+          ['10:20', 'Povezano sa hot topic'],
+          ['12:50', 'Predložen reuse'],
+        ],
+      },
+    ],
+  },
+];
+
+const nav = [
+  { key: 'vrh', label: 'Overview VRH', icon: Activity },
+  { key: 'topics', label: 'Topics & trend', icon: BarChart3 },
+  { key: 'cases', label: 'Cases', icon: FileText },
+  { key: 'media', label: 'Media team', icon: Users },
+];
+
+const mediaTasks = [
+  { title: 'Draft izjave spreman', desc: 'Čeka političku liniju', state: 'draft' },
+  { title: 'Lokalni odbor potvrdio signal', desc: 'Tema veća od prvobitne procjene', state: 'confirm' },
+  { title: '1 tema zatvorena', desc: 'Ostaje monitoring 24h', state: 'done' },
+];
+
+const caseList = [
+  { id: 'case-102', title: 'Izbori · centralni narativ', owner: 'Media team', status: 'open', due: 'oggi', severity: 'high' },
+  { id: 'case-097', title: 'Lider · reputacioni napad', owner: 'VRH', status: 'approval', due: 'entro 2h', severity: 'high' },
+  { id: 'case-091', title: 'RS lokal · koordinazione', owner: 'Lokalni odbor', status: 'in progress', due: 'danas', severity: 'medium' },
+];
+
+function cn(...classes) {
+  return classes.filter(Boolean).join(' ');
+}
+
+function stateTone(state) {
+  if (state === 'urgent' || state === 'high') return 'bg-red-500/15 text-red-300 border-red-400/30';
+  if (state === 'today' || state === 'medium' || state === 'confirm') return 'bg-amber-500/15 text-amber-300 border-amber-400/30';
+  if (state === 'routed' || state === 'draft' || state === 'approval') return 'bg-sky-500/15 text-sky-300 border-sky-400/30';
+  if (state === 'done' || state === 'watch' || state === 'open' || state === 'in progress') return 'bg-emerald-500/15 text-emerald-300 border-emerald-400/30';
+  return 'bg-zinc-500/15 text-zinc-300 border-zinc-400/30';
+}
+
+function scoreTone(score) {
+  if (score >= 3) return 'text-red-300 border-red-400/30 bg-red-500/10';
+  if (score >= 2) return 'text-amber-300 border-amber-400/30 bg-amber-500/10';
+  return 'text-emerald-300 border-emerald-400/30 bg-emerald-500/10';
+}
+
+function Badge({ children, className = '' }) {
+  return <span className={cn('inline-flex items-center rounded-md border px-2 py-1 text-[10px] font-medium uppercase tracking-wide', className)}>{children}</span>;
+}
+
+function Card({ children, className = '' }) {
+  return <div className={cn('rounded-2xl border border-zinc-800 bg-zinc-950/80 shadow-[0_0_0_1px_rgba(255,255,255,0.02)]', className)}>{children}</div>;
+}
+
+function MiniLineChart({ values, tone = '#ef4444' }) {
+  const w = 400;
+  const h = 110;
+  const p = 14;
+  const max = Math.max(...values);
+  const min = Math.min(...values);
+  const range = max - min || 1;
+  const step = (w - p * 2) / (values.length - 1);
+  const y = (v) => h - p - ((v - min) / range) * (h - p * 2);
+  const points = values.map((v, i) => `${p + step * i},${y(v)}`).join(' ');
+  const area = `${p},${h - p} ${points} ${w - p},${h - p}`;
+
+  return (
+    <svg viewBox={`0 0 ${w} ${h}`} className="h-28 w-full">
+      <defs>
+        <linearGradient id="g" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stopColor={tone} stopOpacity="0.28" />
+          <stop offset="100%" stopColor={tone} stopOpacity="0" />
+        </linearGradient>
+      </defs>
+      <polygon points={area} fill="url(#g)" />
+      <polyline points={points} fill="none" stroke={tone} strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" />
+      {values.map((v, i) => (
+        <circle key={i} cx={p + step * i} cy={y(v)} r={i === values.length - 1 ? 4 : 2.6} fill={tone} opacity={i === values.length - 1 ? 1 : 0.55} />
+      ))}
+    </svg>
+  );
+}
+
+function LoginScreen({ onEnter }) {
+  const [role, setRole] = useState('VRH');
+  return (
+    <div className="min-h-screen bg-[#07090d] text-zinc-100 flex items-center justify-center p-6">
+      <Card className="w-full max-w-md p-6">
+        <div className="mb-6">
+          <div className="text-xs uppercase tracking-[0.3em] text-zinc-500">Media Pilot Demo</div>
+          <h1 className="mt-2 text-3xl font-black tracking-tight">VRH front-end demo</h1>
+          <p className="mt-2 text-sm text-zinc-400">Login finto, gloria vera quanto basta per una demo. Nessun backend, nessun dramma.</p>
+        </div>
+        <div className="space-y-4">
+          <div>
+            <label className="mb-2 block text-xs uppercase tracking-wide text-zinc-500">Ruolo demo</label>
+            <div className="grid grid-cols-3 gap-2">
+              {['VRH', 'Media team', 'Lokalni odbor'].map((r) => (
+                <button
+                  key={r}
+                  onClick={() => setRole(r)}
+                  className={cn(
+                    'rounded-xl border px-3 py-3 text-sm transition',
+                    role === r ? 'border-lime-300 bg-lime-300 text-black' : 'border-zinc-800 bg-zinc-900 text-zinc-300 hover:border-zinc-700'
+                  )}
+                >
+                  {r}
+                </button>
+              ))}
+            </div>
+          </div>
+          <div className="space-y-2">
+            <input className="w-full rounded-xl border border-zinc-800 bg-zinc-900 px-4 py-3 text-sm outline-none" value="demo@pilot.app" readOnly />
+            <input className="w-full rounded-xl border border-zinc-800 bg-zinc-900 px-4 py-3 text-sm outline-none" value="••••••••" readOnly type="password" />
+          </div>
+          <button onClick={() => onEnter(role)} className="w-full rounded-xl bg-lime-300 px-4 py-3 text-sm font-bold text-black hover:bg-lime-200">
+            Entra nella demo
+          </button>
+        </div>
+      </Card>
+    </div>
+  );
+}
+
+function Sidebar({ collapsed, setCollapsed, activeScreen, setActiveScreen }) {
+  return (
+    <aside className={cn('border-r border-zinc-800 bg-zinc-950/90 transition-all duration-200', collapsed ? 'w-[78px]' : 'w-[240px]')}>
+      <div className="flex h-16 items-center gap-3 border-b border-zinc-800 px-4">
+        <button onClick={() => setCollapsed(!collapsed)} className="rounded-lg border border-zinc-700 bg-zinc-900 p-2 text-zinc-300 hover:bg-zinc-800">
+          <Menu className="h-4 w-4" />
+        </button>
+        {!collapsed && (
+          <div>
+            <div className="font-black tracking-tight"><span className="text-lime-300">VRH</span> · Media Pilot</div>
+            <div className="text-[10px] uppercase tracking-[0.25em] text-zinc-500">executive view</div>
+          </div>
+        )}
+      </div>
+      <div className="space-y-2 p-3">
+        {nav.map((item) => {
+          const Icon = item.icon;
+          const active = activeScreen === item.key;
+          return (
+            <button
+              key={item.key}
+              onClick={() => setActiveScreen(item.key)}
+              className={cn(
+                'flex w-full items-center gap-3 rounded-xl border px-3 py-3 text-sm transition',
+                active ? 'border-zinc-700 bg-zinc-900 text-white' : 'border-transparent text-zinc-400 hover:border-zinc-800 hover:bg-zinc-900'
+              )}
+            >
+              <Icon className="h-4 w-4 shrink-0" />
+              {!collapsed && <span>{item.label}</span>}
+            </button>
+          );
+        })}
+      </div>
+    </aside>
+  );
+}
+
+function Topbar({ title, subtitle, onBack, showBack = false }) {
+  return (
+    <div className="sticky top-0 z-20 flex h-16 items-center gap-4 border-b border-zinc-800 bg-[#07090d]/90 px-4 backdrop-blur">
+      {showBack && (
+        <button onClick={onBack} className="rounded-lg border border-zinc-700 bg-zinc-900 p-2 text-zinc-300 hover:bg-zinc-800">
+          <ArrowLeft className="h-4 w-4" />
+        </button>
+      )}
+      <div className="min-w-0">
+        <div className="text-lg font-black tracking-tight text-white">{title}</div>
+        <div className="truncate text-xs text-zinc-500">{subtitle}</div>
+      </div>
+      <div className="ml-auto flex items-center gap-2">
+        <button className="hidden rounded-xl border border-zinc-800 bg-zinc-900 px-3 py-2 text-xs text-zinc-300 md:flex md:items-center md:gap-2">
+          <Search className="h-3.5 w-3.5" /> Cerca
+        </button>
+        <button className="rounded-xl border border-zinc-800 bg-zinc-900 p-2 text-zinc-300"><Bell className="h-4 w-4" /></button>
+      </div>
+    </div>
+  );
+}
+
+function KpiRow({ alerts }) {
+  const urgent = alerts.filter((a) => a.state === 'urgent').length;
+  const today = alerts.filter((a) => a.state === 'today').length;
+  const watch = alerts.filter((a) => a.state === 'watch').length;
+  const routed = alerts.filter((a) => a.state === 'routed').length;
+  const items = [
+    ['Active alerts', alerts.length, `${urgent} rossi`],
+    ['Da decidere oggi', today, 'ciclo corrente'],
+    ['Follow-up watch', watch, 'monitoring'],
+    ['Già instradati', routed, 'ownership chiara'],
+  ];
+
+  return (
+    <div className="grid grid-cols-2 gap-3 xl:grid-cols-4">
+      {items.map(([label, val, sub]) => (
+        <Card key={label} className="p-4">
+          <div className="text-[10px] uppercase tracking-[0.22em] text-zinc-500">{label}</div>
+          <div className="mt-2 text-3xl font-black tracking-tight text-white">{val}</div>
+          <div className="mt-1 text-xs text-zinc-500">{sub}</div>
+        </Card>
+      ))}
+    </div>
+  );
+}
+
+function TopicRow({ topics, activeTopicId, setActiveTopicId }) {
+  return (
+    <Card className="overflow-hidden">
+      <div className="flex items-center border-b border-zinc-800 px-4 py-3 text-[10px] uppercase tracking-[0.24em] text-zinc-500">
+        Semafori tema
+        <span className="ml-auto">click apre alert</span>
+      </div>
+      <div className="grid grid-cols-2 md:grid-cols-4">
+        {topics.map((topic) => (
+          <button
+            key={topic.id}
+            onClick={() => setActiveTopicId(topic.id)}
+            className={cn(
+              'flex items-center gap-3 border-r border-zinc-800 px-4 py-4 text-left last:border-r-0 hover:bg-zinc-900',
+              activeTopicId === topic.id && 'bg-zinc-900'
+            )}
+          >
+            <span
+              className={cn(
+                'h-3 w-3 rounded-full',
+                topic.color === 'red' && 'bg-red-400 shadow-[0_0_12px_rgba(248,113,113,0.8)]',
+                topic.color === 'yellow' && 'bg-amber-400 shadow-[0_0_12px_rgba(251,191,36,0.6)]',
+                topic.color === 'green' && 'bg-emerald-400 shadow-[0_0_12px_rgba(52,211,153,0.6)]'
+              )}
+            />
+            <div>
+              <div className="text-sm font-semibold text-white">{topic.label}</div>
+              <div className="text-xs text-zinc-500">{topic.count} alert</div>
+            </div>
+          </button>
+        ))}
+      </div>
+    </Card>
+  );
+}
+
+function AlertList({ alerts, activeAlertId, setActiveAlertId, onOpenDetail }) {
+  return (
+    <Card className="overflow-hidden">
+      <div className="flex items-center border-b border-zinc-800 px-4 py-3 text-[10px] uppercase tracking-[0.24em] text-zinc-500">
+        Alert list
+        <span className="ml-auto">{alerts.length} elementi</span>
+      </div>
+      <div className="divide-y divide-zinc-800">
+        {alerts.map((a) => (
+          <button
+            key={a.id}
+            onClick={() => setActiveAlertId(a.id)}
+            className={cn('grid w-full gap-3 p-4 text-left hover:bg-zinc-900 lg:grid-cols-[1fr_auto]', activeAlertId === a.id && 'bg-zinc-900')}
+          >
+            <div>
+              <div className="mb-2 flex flex-wrap gap-2">
+                <Badge className={stateTone(a.state)}>{a.state}</Badge>
+                <Badge className={scoreTone(a.risk)}>risk {a.risk}</Badge>
+                <Badge className={scoreTone(a.trend)}>trend {a.trend}</Badge>
+                <Badge className={scoreTone(a.priority)}>P{a.priority}</Badge>
+              </div>
+              <div className="text-sm font-semibold text-white">{a.title}</div>
+              <div className="mt-1 text-sm leading-5 text-zinc-400">{a.summary}</div>
+            </div>
+            <div className="flex min-w-[130px] items-end justify-between gap-2 lg:flex-col lg:items-end">
+              <div className="text-xs text-zinc-500">{a.target}</div>
+              <button
+                onClick={(e) => {
+                  e.stopPropagation();
+                  onOpenDetail(a.id);
+                }}
+                className="inline-flex items-center gap-1 rounded-lg border border-zinc-700 bg-zinc-950 px-2 py-1 text-xs text-zinc-300 hover:bg-zinc-800"
+              >
+                Apri <ChevronRight className="h-3 w-3" />
+              </button>
+            </div>
+          </button>
+        ))}
+      </div>
+    </Card>
+  );
+}
+
+function DetailPanel({ alert, onOpenCase, onSendMedia }) {
+  const tone = alert.state === 'urgent' ? '#ef4444' : alert.state === 'today' ? '#f59e0b' : alert.state === 'routed' ? '#38bdf8' : '#34d399';
+  return (
+    <div className="space-y-3">
+      <Card className="p-4">
+        <div className="text-[10px] uppercase tracking-[0.24em] text-zinc-500">Selected alert</div>
+        <div className="mt-2 text-xl font-black tracking-tight text-white">{alert.title}</div>
+        <p className="mt-2 text-sm leading-6 text-zinc-400">{alert.summary}</p>
+        <div className="mt-3 flex flex-wrap gap-2">
+          <Badge className={stateTone(alert.state)}>{alert.state}</Badge>
+          <Badge className={scoreTone(alert.risk)}>risk {alert.risk}</Badge>
+          <Badge className={scoreTone(alert.trend)}>trend {alert.trend}</Badge>
+          <Badge className={scoreTone(alert.priority)}>priority {alert.priority}</Badge>
+        </div>
+        <div className="mt-4 grid gap-3 md:grid-cols-2">
+          <InfoMini label="Perché conta" value={alert.reason} />
+          <InfoMini label="Fonte" value={alert.source} />
+          <InfoMini label="Azione" value={alert.action} />
+          <InfoMini label="Routing" value={alert.route} />
+        </div>
+        <div className="mt-4 flex flex-wrap gap-2">
+          <button onClick={onOpenCase} className="rounded-xl bg-lime-300 px-4 py-2 text-sm font-bold text-black hover:bg-lime-200">Open case</button>
+          <button onClick={onSendMedia} className="rounded-xl border border-zinc-700 bg-zinc-900 px-4 py-2 text-sm text-zinc-200 hover:bg-zinc-800">Instrukcija media timu</button>
+          <button className="rounded-xl border border-zinc-700 bg-zinc-900 px-4 py-2 text-sm text-zinc-200 hover:bg-zinc-800">Stavi na hold</button>
+        </div>
+      </Card>
+      <Card className="overflow-hidden">
+        <div className="flex items-center border-b border-zinc-800 px-4 py-3 text-[10px] uppercase tracking-[0.24em] text-zinc-500">
+          Grafico 10 giorni
+          <span className="ml-auto">{alert.state} · {alert.target}</span>
+        </div>
+        <div className="p-2">
+          <MiniLineChart values={alert.trendLine} tone={tone} />
+        </div>
+      </Card>
+      <Card className="overflow-hidden">
+        <div className="flex items-center border-b border-zinc-800 px-4 py-3 text-[10px] uppercase tracking-[0.24em] text-zinc-500">
+          Timeline
+        </div>
+        <div className="space-y-3 p-4">
+          {alert.timeline.map(([time, text]) => (
+            <div key={time + text} className="flex gap-3 rounded-xl border border-zinc-800 bg-zinc-900 p-3">
+              <div className="text-xs font-medium text-zinc-500">{time}</div>
+              <div className="text-sm text-zinc-300">{text}</div>
+            </div>
+          ))}
+        </div>
+      </Card>
+    </div>
+  );
+}
+
+function InfoMini({ label, value }) {
+  return (
+    <div className="rounded-xl border border-zinc-800 bg-zinc-900 p-3">
+      <div className="text-[10px] uppercase tracking-[0.2em] text-zinc-500">{label}</div>
+      <div className="mt-1 text-sm text-white">{value}</div>
+    </div>
+  );
+}
+
+function CasePage({ alert, onBack }) {
+  return (
+    <div className="min-h-screen bg-[#07090d] text-zinc-100">
+      <Topbar title="Case view" subtitle="stato del caso, assegnazioni e azioni demo" onBack={onBack} showBack />
+      <div className="grid gap-4 p-4 xl:grid-cols-[1.2fr_0.8fr]">
+        <div className="space-y-4">
+          <Card className="p-5">
+            <div className="flex flex-wrap items-start justify-between gap-4">
+              <div>
+                <div className="text-[10px] uppercase tracking-[0.24em] text-zinc-500">Case ID · demo-102</div>
+                <h1 className="mt-2 text-2xl font-black tracking-tight">{alert.title}</h1>
+                <p className="mt-2 max-w-3xl text-sm leading-6 text-zinc-400">{alert.summary}</p>
+              </div>
+              <Badge className={stateTone(alert.state)}>{alert.state}</Badge>
+            </div>
+            <div className="mt-5 grid gap-3 md:grid-cols-3">
+              <InfoMini label="Owner" value={alert.route} />
+              <InfoMini label="Target" value={alert.target} />
+              <InfoMini label="Recommended action" value={alert.action} />
+            </div>
+          </Card>
+          <Card className="overflow-hidden">
+            <div className="border-b border-zinc-800 px-4 py-3 text-[10px] uppercase tracking-[0.24em] text-zinc-500">Decisioni rapide</div>
+            <div className="grid gap-3 p-4 md:grid-cols-3">
+              <button className="flex items-center justify-center gap-2 rounded-xl bg-lime-300 px-4 py-3 text-sm font-bold text-black"><CheckCircle2 className="h-4 w-4" /> Approva linea</button>
+              <button className="flex items-center justify-center gap-2 rounded-xl border border-zinc-700 bg-zinc-900 px-4 py-3 text-sm text-zinc-200"><Send className="h-4 w-4" /> Invia media team</button>
+              <button className="flex items-center justify-center gap-2 rounded-xl border border-zinc-700 bg-zinc-900 px-4 py-3 text-sm text-zinc-200"><PauseCircle className="h-4 w-4" /> Hold 24h</button>
+            </div>
+          </Card>
+        </div>
+        <div className="space-y-4">
+          <Card className="overflow-hidden">
+            <div className="border-b border-zinc-800 px-4 py-3 text-[10px] uppercase tracking-[0.24em] text-zinc-500">Workflow</div>
+            <div className="space-y-3 p-4">
+              {[
+                ['08:15', 'Signal ingestovan'],
+                ['10:30', 'Cluster potvrđen'],
+                ['12:20', 'Alert otvoren'],
+                ['13:40', 'Case predat vrhu'],
+              ].map(([t, d]) => (
+                <div key={t} className="flex gap-3 rounded-xl border border-zinc-800 bg-zinc-900 p-3">
+                  <div className="text-xs text-zinc-500">{t}</div>
+                  <div className="text-sm text-zinc-300">{d}</div>
+                </div>
+              ))}
+            </div>
+          </Card>
+          <Card className="overflow-hidden">
+            <div className="border-b border-zinc-800 px-4 py-3 text-[10px] uppercase tracking-[0.24em] text-zinc-500">Bozza risposta</div>
+            <div className="p-4 text-sm leading-6 text-zinc-300">
+              Tema traži smirenu, kratku i autoritativnu liniju. Fokus: procedura, regularnost, odbacivanje panike, spremnost na transparentnost.
+            </div>
+          </Card>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function TopicsPage({ topics, onOpenAlert }) {
+  return (
+    <div className="space-y-4 p-4">
+      <div className="grid gap-4 lg:grid-cols-2">
+        {topics.map((topic) => {
+          const first = topic.alerts[0];
+          const tone = topic.color === 'red' ? '#ef4444' : topic.color === 'yellow' ? '#f59e0b' : '#34d399';
+          return (
+            <Card key={topic.id} className="overflow-hidden">
+              <div className="flex items-center border-b border-zinc-800 px-4 py-3">
+                <div>
+                  <div className="text-lg font-black tracking-tight text-white">{topic.label}</div>
+                  <div className="text-xs text-zinc-500">{topic.count} alert collegati</div>
+                </div>
+                <div className="ml-auto"><Badge className={topic.color === 'red' ? stateTone('urgent') : topic.color === 'yellow' ? stateTone('today') : stateTone('watch')}>{topic.color}</Badge></div>
+              </div>
+              <div className="p-3">
+                <MiniLineChart values={first.trendLine} tone={tone} />
+                <div className="mt-3 rounded-xl border border-zinc-800 bg-zinc-900 p-3">
+                  <div className="text-sm font-semibold text-white">Top alert</div>
+                  <div className="mt-1 text-sm text-zinc-400">{first.title}</div>
+                  <button onClick={() => onOpenAlert(topic.id, first.id)} className="mt-3 rounded-lg border border-zinc-700 bg-zinc-950 px-3 py-2 text-xs text-zinc-300 hover:bg-zinc-800">Apri dettaglio</button>
+                </div>
+              </div>
+            </Card>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
+
+function CasesPage() {
+  return (
+    <div className="space-y-4 p-4">
+      <Card className="overflow-hidden">
+        <div className="flex items-center border-b border-zinc-800 px-4 py-3 text-[10px] uppercase tracking-[0.24em] text-zinc-500">
+          Active cases
+          <span className="ml-auto">mock data</span>
+        </div>
+        <div className="divide-y divide-zinc-800">
+          {caseList.map((c) => (
+            <div key={c.id} className="grid gap-3 p-4 md:grid-cols-[1fr_auto_auto_auto] md:items-center">
+              <div>
+                <div className="text-sm font-semibold text-white">{c.title}</div>
+                <div className="mt-1 text-xs text-zinc-500">{c.id} · owner {c.owner}</div>
+              </div>
+              <Badge className={stateTone(c.status)}>{c.status}</Badge>
+              <Badge className={stateTone(c.severity)}>{c.severity}</Badge>
+              <div className="text-xs text-zinc-400">{c.due}</div>
+            </div>
+          ))}
+        </div>
+      </Card>
+    </div>
+  );
+}
+
+function MediaPage() {
+  return (
+    <div className="space-y-4 p-4">
+      <div className="grid gap-4 lg:grid-cols-2">
+        <Card className="overflow-hidden">
+          <div className="border-b border-zinc-800 px-4 py-3 text-[10px] uppercase tracking-[0.24em] text-zinc-500">Media team queue</div>
+          <div className="divide-y divide-zinc-800">
+            {mediaTasks.map((m) => (
+              <div key={m.title} className="p-4">
+                <div className="flex items-start justify-between gap-3">
+                  <div>
+                    <div className="text-sm font-semibold text-white">{m.title}</div>
+                    <div className="mt-1 text-sm text-zinc-400">{m.desc}</div>
+                  </div>
+                  <Badge className={stateTone(m.state)}>{m.state}</Badge>
+                </div>
+              </div>
+            ))}
+          </div>
+        </Card>
+        <Card className="p-4">
+          <div className="text-[10px] uppercase tracking-[0.24em] text-zinc-500">Suggested response</div>
+          <div className="mt-3 rounded-xl border border-zinc-800 bg-zinc-900 p-4 text-sm leading-6 text-zinc-300">
+            Ova tema traži kratku, disciplinovanu reakciju. Ne širiti narativ protivnika. Potvrditi procedure, spustiti ton, ostaviti prostor za transparentnost.
+          </div>
+        </Card>
+      </div>
+    </div>
+  );
+}
+
+function OverviewPage({ topics, activeTopicId, setActiveTopicId, activeAlertId, setActiveAlertId, onOpenDetail, onOpenCase }) {
+  const activeTopic = useMemo(() => topics.find((t) => t.id === activeTopicId) || topics[0], [topics, activeTopicId]);
+  const activeAlert = useMemo(() => activeTopic.alerts.find((a) => a.id === activeAlertId) || activeTopic.alerts[0], [activeTopic, activeAlertId]);
+  const allAlerts = useMemo(() => topics.flatMap((t) => t.alerts), [topics]);
+
+  return (
+    <div className="space-y-4 p-4">
+      <KpiRow alerts={allAlerts} />
+      <TopicRow topics={topics} activeTopicId={activeTopicId} setActiveTopicId={(id) => { setActiveTopicId(id); setActiveAlertId((topics.find((t) => t.id === id)?.alerts[0]?.id) || ''); }} />
+      <div className="grid gap-4 xl:grid-cols-[1.1fr_0.9fr]">
+        <AlertList alerts={activeTopic.alerts} activeAlertId={activeAlert.id} setActiveAlertId={setActiveAlertId} onOpenDetail={onOpenDetail} />
+        <DetailPanel alert={activeAlert} onOpenCase={onOpenCase} onSendMedia={() => {}} />
+      </div>
+    </div>
+  );
+}
+
+export default function MediaPilotDemoApp() {
+  const [loggedIn, setLoggedIn] = useState(false);
+  const [role, setRole] = useState('VRH');
+  const [collapsed, setCollapsed] = useState(false);
+  const [activeScreen, setActiveScreen] = useState('vrh');
+  const [activeTopicId, setActiveTopicId] = useState(topics[0].id);
+  const [activeAlertId, setActiveAlertId] = useState(topics[0].alerts[0].id);
+  const [selectedAlertId, setSelectedAlertId] = useState(topics[0].alerts[0].id);
+  const [showCasePage, setShowCasePage] = useState(false);
+
+  const allAlerts = useMemo(() => topics.flatMap((t) => t.alerts), []);
+  const selectedAlert = useMemo(() => allAlerts.find((a) => a.id === selectedAlertId) || allAlerts[0], [allAlerts, selectedAlertId]);
+
+  const openAlertDetail = (topicId, alertId) => {
+    setActiveTopicId(topicId);
+    setActiveAlertId(alertId);
+    setSelectedAlertId(alertId);
+    setActiveScreen('vrh');
+  };
+
+  if (!loggedIn) {
+    return <LoginScreen onEnter={(selectedRole) => { setRole(selectedRole); setLoggedIn(true); }} />;
+  }
+
+  if (showCasePage) {
+    return <CasePage alert={selectedAlert} onBack={() => setShowCasePage(false)} />;
+  }
+
+  return (
+    <div className="min-h-screen bg-[#07090d] text-zinc-100">
+      <div className="flex min-h-screen">
+        <Sidebar collapsed={collapsed} setCollapsed={setCollapsed} activeScreen={activeScreen} setActiveScreen={setActiveScreen} />
+        <main className="min-w-0 flex-1">
+          <Topbar title={activeScreen === 'vrh' ? 'VRH overview' : activeScreen === 'topics' ? 'Topics & trend' : activeScreen === 'cases' ? 'Cases' : 'Media team'} subtitle={`Frontend demo · ruolo ${role} · niente backend per ora`} />
+          {activeScreen === 'vrh' && (
+            <OverviewPage
+              topics={topics}
+              activeTopicId={activeTopicId}
+              setActiveTopicId={setActiveTopicId}
+              activeAlertId={activeAlertId}
+              setActiveAlertId={(id) => { setActiveAlertId(id); setSelectedAlertId(id); }}
+              onOpenDetail={(alertId) => { setSelectedAlertId(alertId); }}
+              onOpenCase={() => setShowCasePage(true)}
+            />
+          )}
+          {activeScreen === 'topics' && <TopicsPage topics={topics} onOpenAlert={(topicId, alertId) => openAlertDetail(topicId, alertId)} />}
+          {activeScreen === 'cases' && <CasesPage />}
+          {activeScreen === 'media' && <MediaPage />}
+        </main>
+      </div>
+      <div className="fixed bottom-4 right-4 hidden rounded-full border border-zinc-800 bg-zinc-950/90 px-4 py-2 text-xs text-zinc-400 shadow-lg md:flex md:items-center md:gap-2">
+        <ShieldAlert className="h-4 w-4 text-lime-300" /> demo only · mock data · frontend
+      </div>
+    </div>
+  );
+}
