@@ -3,692 +3,459 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>VRH · Media Pilot</title>
+  <title>VRH · Media Pilot Mobile</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=Martian+Mono:wght@300;400;500;600&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,400&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
   <style>
-    :root {
-      --bg: #080a0e;
-      --surface: #0e1117;
-      --surface2: #141820;
-      --surface3: #1c2230;
-      --line: #1e2535;
-      --line2: #2a3347;
-      --text: #dde3f0;
-      --text2: #8a96ae;
-      --text3: #4d5a72;
-      --accent: #d4ff4e;
-      --red: #ff3535;
-      --red-soft: rgba(255,53,53,.12);
-      --red-border: rgba(255,53,53,.25);
-      --orange: #ff8f00;
-      --orange-soft: rgba(255,143,0,.1);
-      --orange-border: rgba(255,143,0,.22);
-      --green: #00d97e;
-      --green-soft: rgba(0,217,126,.1);
-      --green-border: rgba(0,217,126,.2);
-      --blue: #4d9fff;
-      --blue-soft: rgba(77,159,255,.1);
-      --blue-border: rgba(77,159,255,.2);
-      --gray-soft: rgba(138,150,174,.08);
-      --gray-border: rgba(138,150,174,.18);
-      --mono: 'Martian Mono', monospace;
-      --display: 'Syne', sans-serif;
-      --body: 'DM Sans', sans-serif;
-      --sidebar-w: 220px;
-      --sidebar-col: 52px;
-      --drawer-w: 440px;
-      --radius: 10px;
-      --radius-sm: 6px;
+    :root{
+      --bg:#f4f7fb;
+      --surface:#ffffff;
+      --surface-2:#f7f9fc;
+      --surface-3:#eef3f8;
+      --line:#d9e2ec;
+      --line-2:#c2cfdb;
+      --text:#122033;
+      --text-2:#42546b;
+      --text-3:#6c7d92;
+      --shadow:0 10px 30px rgba(16,24,40,.08);
+      --accent:#d8ef4a;
+      --accent-strong:#bfd92f;
+      --red:#d92d20;
+      --red-soft:#fff0ef;
+      --amber:#b54708;
+      --amber-soft:#fff7ed;
+      --green:#027a48;
+      --green-soft:#ecfdf3;
+      --blue:#175cd3;
+      --blue-soft:#eff8ff;
+      --radius:16px;
+      --radius-sm:10px;
+      --sidebar-w:240px;
+      --sidebar-collapsed:64px;
+      --drawer-w:560px;
+      --display:'Syne',sans-serif;
+      --body:'Inter',sans-serif;
+      --mono:'JetBrains Mono',monospace;
     }
-
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-    html { font-size: 13px; }
-
-    body {
-      font-family: var(--body);
-      background: var(--bg);
-      color: var(--text);
-      min-height: 100vh;
-      overflow-x: hidden;
+    *{box-sizing:border-box;margin:0;padding:0}
+    html{font-size:14px}
+    body{
+      font-family:var(--body);
+      color:var(--text);
+      background:linear-gradient(180deg,#f8fbff 0%,#f4f7fb 100%);
+      min-height:100vh;
+      overflow-x:hidden;
     }
-
-    /* ── APP SHELL ── */
-    .app {
-      display: grid;
-      grid-template-columns: var(--sidebar-w) 1fr;
-      min-height: 100vh;
-      transition: grid-template-columns .18s ease;
+    button,input{font:inherit}
+    .app{
+      display:grid;
+      grid-template-columns:var(--sidebar-w) 1fr;
+      min-height:100vh;
+      transition:grid-template-columns .2s ease;
     }
-    .app.collapsed { grid-template-columns: var(--sidebar-col) 1fr; }
-
-    /* ── SIDEBAR ── */
-    .sidebar {
-      background: var(--surface);
-      border-right: 1px solid var(--line);
-      position: sticky;
-      top: 0;
-      height: 100vh;
-      overflow: hidden;
-      display: flex;
-      flex-direction: column;
-      z-index: 20;
-      transition: width .18s ease;
+    .app.collapsed{grid-template-columns:var(--sidebar-collapsed) 1fr}
+    .sidebar{
+      background:rgba(255,255,255,.92);
+      backdrop-filter:blur(14px);
+      border-right:1px solid var(--line);
+      position:sticky;
+      top:0;height:100vh;
+      display:flex;flex-direction:column;
+      z-index:40;
     }
-
-    .side-top {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      padding: 14px 12px;
-      border-bottom: 1px solid var(--line);
-      flex-shrink: 0;
+    .side-top{
+      height:64px;
+      display:flex;align-items:center;gap:12px;
+      padding:0 14px;
+      border-bottom:1px solid var(--line);
+      flex-shrink:0;
     }
-
-    .burger {
-      width: 28px; height: 28px;
-      border-radius: 6px;
-      border: 1px solid var(--line2);
-      background: var(--surface2);
-      display: flex; align-items: center; justify-content: center;
-      cursor: pointer;
-      flex-shrink: 0;
-      transition: background .12s;
+    .burger,.mobile-burger,.icon-btn{
+      width:38px;height:38px;border-radius:12px;
+      border:1px solid var(--line-2);
+      background:var(--surface);
+      display:inline-flex;align-items:center;justify-content:center;
+      cursor:pointer;color:var(--text-2);
+      transition:.15s ease;
+      box-shadow:0 1px 2px rgba(16,24,40,.04);
     }
-    .burger:hover { background: var(--surface3); }
-    .burger-lines { width: 13px; display: grid; gap: 2.5px; }
-    .burger-lines span { height: 1.5px; border-radius: 2px; background: var(--text2); display: block; }
-
-    .brand { overflow: hidden; }
-    .brand strong {
-      display: block;
-      font-family: var(--display);
-      font-size: 15px;
-      font-weight: 800;
-      color: var(--text);
-      letter-spacing: -.3px;
-      white-space: nowrap;
+    .burger:hover,.mobile-burger:hover,.icon-btn:hover,.tab-btn:hover,.side-link:hover,.btn:hover{transform:translateY(-1px)}
+    .burger-lines{width:16px;display:grid;gap:3px}
+    .burger-lines span{display:block;height:2px;background:var(--text-2);border-radius:10px}
+    .brand{overflow:hidden}
+    .brand strong{
+      display:block;font-family:var(--display);font-size:17px;font-weight:800;letter-spacing:-.4px;white-space:nowrap
     }
-    .brand strong em { color: var(--accent); font-style: normal; }
-    .brand span {
-      display: block;
-      font-family: var(--mono);
-      font-size: 9px;
-      color: var(--text3);
-      margin-top: 2px;
-      letter-spacing: .5px;
-      white-space: nowrap;
+    .brand strong em{font-style:normal;color:var(--blue)}
+    .brand span{
+      display:block;margin-top:2px;font-size:10px;
+      text-transform:uppercase;letter-spacing:.16em;
+      color:var(--text-3);font-family:var(--mono);white-space:nowrap
     }
-
-    .side-scroll { flex: 1; overflow-y: auto; overflow-x: hidden; padding: 10px 8px; }
-    .side-scroll::-webkit-scrollbar { width: 3px; }
-    .side-scroll::-webkit-scrollbar-thumb { background: var(--line2); border-radius: 2px; }
-
-    .side-group { margin-bottom: 16px; }
-    .side-title {
-      font-family: var(--mono);
-      font-size: 8px;
-      text-transform: uppercase;
-      letter-spacing: 1.2px;
-      color: var(--text3);
-      padding: 0 8px;
-      margin: 0 0 6px;
-      white-space: nowrap;
-      overflow: hidden;
+    .side-scroll{flex:1;overflow:auto;padding:12px 10px 24px}
+    .side-group{margin-bottom:18px}
+    .side-title{
+      padding:0 10px 8px;font-size:10px;
+      font-family:var(--mono);text-transform:uppercase;
+      letter-spacing:.16em;color:var(--text-3)
     }
-
-    .side-link {
-      display: flex;
-      align-items: center;
-      gap: 9px;
-      padding: 7px 8px;
-      border-radius: var(--radius-sm);
-      color: var(--text2);
-      text-decoration: none;
-      margin-bottom: 2px;
-      border: 1px solid transparent;
-      font-size: 12px;
-      font-weight: 500;
-      white-space: nowrap;
-      overflow: hidden;
-      transition: all .12s;
+    .side-link{
+      width:100%;display:flex;align-items:center;gap:10px;
+      padding:11px 12px;border-radius:12px;border:1px solid transparent;
+      background:transparent;color:var(--text-2);text-align:left;cursor:pointer;
+      margin-bottom:4px;font-weight:600
     }
-    .side-link:hover { background: var(--surface2); color: var(--text); }
-    .side-link.active { background: var(--surface3); border-color: var(--line2); color: var(--text); }
-
-    .sdot {
-      width: 7px; height: 7px;
-      border-radius: 50%;
-      flex-shrink: 0;
-      background: var(--text3);
+    .side-link.active{
+      background:var(--surface);
+      border-color:var(--line);
+      color:var(--text);
+      box-shadow:var(--shadow)
     }
-    .sdot.red { background: var(--red); box-shadow: 0 0 5px var(--red); }
-    .sdot.yellow { background: var(--orange); }
-    .sdot.green { background: var(--green); }
-    .sdot.blue { background: var(--blue); }
-
-    .app.collapsed .brand,
-    .app.collapsed .side-title,
-    .app.collapsed .side-link-label { display: none; }
-    .app.collapsed .side-link { justify-content: center; padding: 8px 0; }
-    .app.collapsed .side-top { padding: 14px 12px; }
-
-    /* ── MAIN ── */
-    .main { min-width: 0; display: flex; flex-direction: column; }
-
-    /* ── TOPBAR ── */
-    .topbar {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      padding: 10px 16px;
-      border-bottom: 1px solid var(--line);
-      background: var(--surface);
-      flex-shrink: 0;
-      position: sticky;
-      top: 0;
-      z-index: 10;
+    .side-link-label{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    .sdot{width:9px;height:9px;border-radius:50%;flex-shrink:0;background:var(--text-3)}
+    .sdot.red{background:var(--red);box-shadow:0 0 0 4px rgba(217,45,32,.08)}
+    .sdot.yellow{background:var(--amber);box-shadow:0 0 0 4px rgba(181,71,8,.08)}
+    .sdot.green{background:var(--green);box-shadow:0 0 0 4px rgba(2,122,72,.08)}
+    .sdot.blue{background:var(--blue);box-shadow:0 0 0 4px rgba(23,92,211,.08)}
+    .app.collapsed .brand,.app.collapsed .side-title,.app.collapsed .side-link-label{display:none}
+    .app.collapsed .side-link{justify-content:center;padding:11px 0}
+    .main{min-width:0;display:flex;flex-direction:column}
+    .topbar{
+      position:sticky;top:0;z-index:25;
+      height:64px;
+      display:flex;align-items:center;gap:12px;
+      padding:0 18px;
+      background:rgba(244,247,251,.88);
+      backdrop-filter:blur(14px);
+      border-bottom:1px solid var(--line);
     }
-    .topbar-title {
-      font-family: var(--display);
-      font-size: 17px;
-      font-weight: 800;
-      letter-spacing: -.4px;
+    .mobile-burger{display:none}
+    .topbar-title{font-family:var(--display);font-size:22px;font-weight:800;letter-spacing:-.5px}
+    .topbar-title span{color:var(--text-3)}
+    .topbar-desc{
+      color:var(--text-3);font-size:12px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+      max-width:420px
     }
-    .topbar-title span { color: var(--text3); }
-    .topbar-desc {
-      font-size: 11px;
-      color: var(--text3);
-      flex: 1;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      display: none;
+    .topbar-right{margin-left:auto;display:flex;align-items:center;gap:10px}
+    .tabs{display:flex;gap:6px;flex-wrap:wrap}
+    .tab-btn{
+      padding:9px 12px;border-radius:12px;border:1px solid var(--line);
+      background:var(--surface);color:var(--text-2);cursor:pointer;
+      font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.12em
     }
-    .topbar-tabs { display: flex; gap: 3px; margin-left: auto; }
-    .ttab {
-      font-family: var(--mono);
-      font-size: 9px;
-      letter-spacing: .4px;
-      padding: 5px 10px;
-      border-radius: var(--radius-sm);
-      cursor: pointer;
-      color: var(--text3);
-      border: 1px solid transparent;
-      transition: all .12s;
-      text-transform: uppercase;
-      background: none;
+    .tab-btn.active{background:var(--accent);border-color:transparent;color:#111827}
+    .content{padding:16px;display:flex;flex-direction:column;gap:14px}
+    .panel{
+      background:var(--surface);
+      border:1px solid var(--line);
+      border-radius:var(--radius);
+      box-shadow:var(--shadow);
+      overflow:hidden;
     }
-    .ttab:hover { color: var(--text2); border-color: var(--line2); }
-    .ttab.active { background: var(--accent); color: #000; font-weight: 600; border-color: transparent; }
-
-    /* ── CONTENT WRAPPER ── */
-    .content-wrap { flex: 1; padding: 12px 16px; display: flex; flex-direction: column; gap: 10px; }
-
-    /* ── KPI ROW ── */
-    .kpi-row {
-      display: grid;
-      grid-template-columns: repeat(5, minmax(0,1fr));
-      gap: 1px;
-      background: var(--line);
-      border-radius: var(--radius);
-      overflow: hidden;
-      border: 1px solid var(--line);
-      flex-shrink: 0;
+    .section-head{
+      display:flex;align-items:center;gap:10px;
+      padding:11px 14px;
+      border-bottom:1px solid var(--line);
+      background:linear-gradient(180deg,#fff 0%,#fbfcfe 100%);
     }
-    .kpi {
-      background: var(--surface);
-      padding: 10px 14px;
-      cursor: default;
-      transition: background .12s;
+    .section-head-title{
+      font-size:10px;font-family:var(--mono);
+      text-transform:uppercase;letter-spacing:.16em;color:var(--text-3)
     }
-    .kpi:hover { background: var(--surface2); }
-    .kpi-label {
-      font-family: var(--mono);
-      font-size: 8px;
-      text-transform: uppercase;
-      letter-spacing: .8px;
-      color: var(--text3);
-      margin-bottom: 5px;
+    .section-head-meta{
+      margin-left:auto;font-size:10px;font-family:var(--mono);
+      color:var(--text-3)
     }
-    .kpi-val {
-      font-family: var(--display);
-      font-size: 28px;
-      font-weight: 800;
-      line-height: 1;
-      color: var(--text);
+    .kpi-row{
+      display:grid;
+      grid-template-columns:repeat(5,minmax(0,1fr));
+      gap:12px
     }
-    .kpi-val.is-red { color: var(--red); }
-    .kpi-val.is-orange { color: var(--orange); }
-    .kpi-sub { font-family: var(--mono); font-size: 9px; color: var(--text3); margin-top: 4px; }
-
-    /* ── SEMAFORI ── */
-    .traffic-wrap {
-      background: var(--surface);
-      border: 1px solid var(--line);
-      border-radius: var(--radius);
-      overflow: hidden;
-      flex-shrink: 0;
+    .kpi{
+      padding:14px;border-radius:var(--radius);
+      border:1px solid var(--line);
+      background:var(--surface);
+      box-shadow:var(--shadow)
     }
-    .section-head {
-      display: flex;
-      align-items: center;
-      padding: 7px 14px;
-      border-bottom: 1px solid var(--line);
-      gap: 8px;
+    .kpi-label{
+      font-size:10px;font-family:var(--mono);
+      text-transform:uppercase;letter-spacing:.14em;color:var(--text-3);
+      margin-bottom:8px
     }
-    .section-head-title {
-      font-family: var(--mono);
-      font-size: 8px;
-      text-transform: uppercase;
-      letter-spacing: 1px;
-      color: var(--text3);
+    .kpi-val{font-size:33px;font-weight:800;line-height:1;font-family:var(--display)}
+    .kpi-val.red{color:var(--red)}
+    .kpi-val.amber{color:var(--amber)}
+    .kpi-val.green{color:var(--green)}
+    .kpi-val.blue{color:var(--blue)}
+    .kpi-sub{margin-top:8px;color:var(--text-3);font-size:12px}
+    .traffic-wrap{overflow:hidden}
+    .traffic-row{display:grid;grid-template-columns:repeat(4,minmax(0,1fr))}
+    .traffic{
+      position:relative;
+      display:flex;align-items:center;gap:10px;
+      padding:13px 14px;
+      border-right:1px solid var(--line);
+      cursor:pointer;background:var(--surface)
     }
-    .section-head-meta {
-      font-family: var(--mono);
-      font-size: 8px;
-      color: var(--text3);
-      margin-left: auto;
+    .traffic:last-child{border-right:none}
+    .traffic.active{background:var(--surface-2)}
+    .traffic.active::after{
+      content:"";position:absolute;left:0;right:0;bottom:0;height:3px;background:var(--blue)
     }
-    .traffic-row {
-      display: flex;
-      gap: 0;
+    .t-dot{width:12px;height:12px;border-radius:50%;flex-shrink:0}
+    .t-dot.red{background:var(--red);box-shadow:0 0 0 5px rgba(217,45,32,.08)}
+    .t-dot.yellow{background:var(--amber);box-shadow:0 0 0 5px rgba(181,71,8,.08)}
+    .t-dot.green{background:var(--green);box-shadow:0 0 0 5px rgba(2,122,72,.08)}
+    .t-label{font-weight:700}
+    .t-count{margin-left:auto;font-family:var(--mono);font-size:11px;color:var(--text-3)}
+    .priority-strip{display:grid;grid-template-columns:1.2fr .8fr;gap:14px}
+    .queue-list,.alert-list{display:flex;flex-direction:column}
+    .queue-card{
+      padding:13px 14px;border-bottom:1px solid var(--line);
+      display:flex;align-items:center;gap:12px
     }
-    .traffic {
-      flex: 1;
-      padding: 10px 14px;
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      cursor: pointer;
-      border-right: 1px solid var(--line);
-      transition: background .12s;
-      position: relative;
+    .queue-card:last-child,.alert-card:last-child{border-bottom:none}
+    .qc-title{font-size:14px;font-weight:700}
+    .qc-desc{font-size:12px;color:var(--text-3);margin-top:4px;line-height:1.45}
+    .qc-right{margin-left:auto;display:flex;flex-direction:column;gap:6px;align-items:flex-end}
+    .main-grid{display:grid;grid-template-columns:1fr 380px;gap:14px;align-items:start}
+    .alert-card{
+      padding:14px;border-bottom:1px solid var(--line);
+      display:grid;grid-template-columns:1fr auto;gap:12px;
+      cursor:pointer;background:var(--surface)
     }
-    .traffic:last-child { border-right: none; }
-    .traffic:hover { background: var(--surface2); }
-    .traffic.active { background: var(--surface3); }
-    .traffic.active::after {
-      content: '';
-      position: absolute;
-      bottom: 0; left: 0; right: 0;
-      height: 2px;
-      background: var(--accent);
+    .alert-card.active{background:var(--surface-2);box-shadow:inset 3px 0 0 var(--blue)}
+    .alert-top{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:8px}
+    .alert-title{font-size:15px;line-height:1.35;font-weight:800;margin-bottom:6px}
+    .alert-desc{font-size:13px;line-height:1.55;color:var(--text-2)}
+    .alert-side{display:flex;flex-direction:column;align-items:flex-end;gap:8px;min-width:110px}
+    .score-box{text-align:right}
+    .score-box small{display:block;font-size:10px;font-family:var(--mono);color:var(--text-3);margin-bottom:2px}
+    .score-box strong{display:block;font-size:13px;font-weight:800}
+    .right-stack{display:flex;flex-direction:column;gap:14px}
+    .detail-card .body{padding:15px}
+    .dc-kicker{font-size:10px;font-family:var(--mono);text-transform:uppercase;letter-spacing:.16em;color:var(--text-3)}
+    .dc-title{margin:8px 0 10px;font-size:18px;line-height:1.3;font-weight:800}
+    .dc-text{font-size:13px;line-height:1.6;color:var(--text-2);margin-bottom:12px}
+    .chips{display:flex;flex-wrap:wrap;gap:6px}
+    .dc-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:12px}
+    .dc-mini{
+      padding:11px;border-radius:12px;border:1px solid var(--line);background:var(--surface-2)
     }
-    .t-dot {
-      width: 10px; height: 10px;
-      border-radius: 50%;
-      flex-shrink: 0;
+    .dc-mini small{display:block;font-size:10px;font-family:var(--mono);letter-spacing:.08em;color:var(--text-3);margin-bottom:4px}
+    .dc-mini strong{display:block;font-size:13px;line-height:1.45}
+    .actions,.modal-actions{
+      padding:12px 14px;border-top:1px solid var(--line);
+      display:flex;flex-wrap:wrap;gap:8px
     }
-    .t-dot.red { background: var(--red); box-shadow: 0 0 7px var(--red); animation: pulse 2s ease infinite; }
-    .t-dot.yellow { background: var(--orange); box-shadow: 0 0 5px var(--orange); }
-    .t-dot.green { background: var(--green); box-shadow: 0 0 5px var(--green); }
-    @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.4} }
-    .t-label { font-size: 12px; font-weight: 500; }
-    .t-count {
-      margin-left: auto;
-      font-family: var(--mono);
-      font-size: 10px;
-      color: var(--text3);
+    .btn{
+      border-radius:12px;border:1px solid var(--line-2);
+      background:var(--surface);color:var(--text);
+      padding:10px 13px;cursor:pointer;font-weight:700;
+      font-size:12px;letter-spacing:.02em
     }
-
-    /* ── MAIN GRID ── */
-    .main-grid {
-      display: grid;
-      grid-template-columns: 1fr 360px;
-      gap: 10px;
-      flex: 1;
-      min-height: 0;
+    .btn.primary{background:var(--accent);border-color:transparent}
+    .btn.primary:hover{background:var(--accent-strong)}
+    .btn.red{background:var(--red-soft);border-color:#f7c3be;color:var(--red)}
+    .btn.blue{background:var(--blue-soft);border-color:#b2ddff;color:var(--blue)}
+    .badge{
+      display:inline-flex;align-items:center;
+      padding:5px 8px;border-radius:999px;
+      border:1px solid;font-size:10px;font-family:var(--mono);
+      text-transform:uppercase;letter-spacing:.08em;font-weight:600
     }
-
-    /* ── PRIORITY STRIP ── */
-    .priority-strip {
-      display: grid;
-      grid-template-columns: 1.2fr .8fr;
-      gap: 10px;
+    .badge.red{background:var(--red-soft);color:var(--red);border-color:#f7c3be}
+    .badge.yellow{background:var(--amber-soft);color:var(--amber);border-color:#fed7aa}
+    .badge.green{background:var(--green-soft);color:var(--green);border-color:#abefc6}
+    .badge.blue{background:var(--blue-soft);color:var(--blue);border-color:#b2ddff}
+    .badge.gray{background:#f3f4f6;color:#475467;border-color:#d0d5dd}
+    .chart-box{padding:8px 12px 14px}
+    .chart-svg{width:100%;height:96px;display:block}
+    .overlay{
+      position:fixed;inset:0;background:rgba(15,23,42,.36);
+      backdrop-filter:blur(6px);
+      opacity:0;pointer-events:none;transition:.18s ease;
+      z-index:70
     }
-
-    /* ── PANEL BASE ── */
-    .panel {
-      background: var(--surface);
-      border: 1px solid var(--line);
-      border-radius: var(--radius);
-      overflow: hidden;
+    .overlay.open{opacity:1;pointer-events:auto}
+    .drawer{
+      position:fixed;top:0;right:0;height:100vh;width:var(--drawer-w);max-width:100vw;
+      background:#fdfefe;border-left:1px solid var(--line);
+      box-shadow:-30px 0 60px rgba(2,6,23,.15);
+      transform:translateX(100%);transition:.2s ease;z-index:80;
+      display:flex;flex-direction:column
     }
-
-    /* ── QUEUE CARD ── */
-    .queue-list { display: flex; flex-direction: column; }
-    .queue-card {
-      padding: 9px 14px;
-      border-bottom: 1px solid var(--line);
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      transition: background .12s;
+    .drawer.open{transform:translateX(0)}
+    .drawer-head{
+      padding:16px 16px 14px;border-bottom:1px solid var(--line);
+      display:flex;align-items:flex-start;gap:12px;background:var(--surface)
     }
-    .queue-card:last-child { border-bottom: none; }
-    .queue-card:hover { background: var(--surface2); }
-    .qc-title { font-size: 12px; font-weight: 500; color: var(--text); margin-bottom: 2px; }
-    .qc-desc { font-size: 10px; color: var(--text3); }
-    .qc-right { display: flex; flex-direction: column; align-items: flex-end; gap: 4px; flex-shrink: 0; }
-
-    /* ── BADGE ── */
-    .badge {
-      display: inline-flex;
-      align-items: center;
-      padding: 3px 7px;
-      border-radius: 4px;
-      font-family: var(--mono);
-      font-size: 9px;
-      font-weight: 500;
-      letter-spacing: .3px;
-      white-space: nowrap;
-      border: 1px solid;
+    .drawer-head-text{flex:1;min-width:0}
+    .drawer-head-text h3{font-size:20px;line-height:1.28;font-weight:800;margin-bottom:6px}
+    .drawer-head-text p{font-size:13px;line-height:1.55;color:var(--text-2)}
+    .drawer-body{flex:1;overflow:auto;padding:14px;background:#fbfdff}
+    .close-btn{width:40px;height:40px;border-radius:12px;border:1px solid var(--line);background:var(--surface);cursor:pointer;font-size:22px;color:var(--text-2)}
+    .modal-block{
+      background:var(--surface);
+      border:1px solid var(--line);
+      border-radius:14px;
+      box-shadow:var(--shadow);
+      overflow:hidden;
+      margin-bottom:12px
     }
-    .badge.red { background: var(--red-soft); color: var(--red); border-color: var(--red-border); }
-    .badge.yellow { background: var(--orange-soft); color: var(--orange); border-color: var(--orange-border); }
-    .badge.green { background: var(--green-soft); color: var(--green); border-color: var(--green-border); }
-    .badge.blue { background: var(--blue-soft); color: var(--blue); border-color: var(--blue-border); }
-    .badge.gray { background: var(--gray-soft); color: var(--text2); border-color: var(--gray-border); }
-
-    /* ── ALERT LIST ── */
-    .alert-list { display: flex; flex-direction: column; }
-    .alert-card {
-      padding: 10px 14px;
-      border-bottom: 1px solid var(--line);
-      cursor: pointer;
-      transition: background .12s;
-      display: grid;
-      grid-template-columns: 1fr auto;
-      gap: 10px;
-      align-items: start;
+    .modal-block .in{padding:14px}
+    .timeline{display:flex;flex-direction:column;gap:8px}
+    .timeline-item{
+      display:flex;gap:12px;align-items:flex-start;
+      padding:11px 12px;border-radius:12px;background:var(--surface-2);
+      border:1px solid var(--line)
     }
-    .alert-card:last-child { border-bottom: none; }
-    .alert-card:hover { background: var(--surface2); }
-    .alert-card.active { background: var(--surface3); border-left: 2px solid var(--blue); }
-    .alert-top { display: flex; flex-wrap: wrap; gap: 4px; margin-bottom: 5px; }
-    .alert-title { font-size: 13px; font-weight: 500; color: var(--text); margin-bottom: 3px; line-height: 1.3; }
-    .alert-desc {
-      font-size: 11px; color: var(--text2); line-height: 1.4;
-      display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;
+    .ti-time{
+      min-width:56px;font-size:11px;font-family:var(--mono);
+      color:var(--text-3)
     }
-    .alert-side { display: flex; flex-direction: column; align-items: flex-end; gap: 4px; min-width: 80px; }
-    .score-box { text-align: right; }
-    .score-box small { font-family: var(--mono); font-size: 8px; color: var(--text3); display: block; }
-    .score-box strong { font-family: var(--display); font-size: 15px; font-weight: 800; color: var(--text); display: block; }
-
-    /* ── RIGHT STACK ── */
-    .right-stack { display: flex; flex-direction: column; gap: 10px; }
-
-    /* ── DETAIL CARD ── */
-    .detail-card {
-      background: var(--surface);
-      border: 1px solid var(--line);
-      border-radius: var(--radius);
-      overflow: hidden;
+    .ti-text{font-size:13px;line-height:1.55;color:var(--text)}
+    .toast-wrap{
+      position:fixed;left:50%;bottom:18px;transform:translateX(-50%);
+      z-index:95;display:flex;flex-direction:column;gap:8px;pointer-events:none
     }
-    .dc-kicker {
-      font-family: var(--mono);
-      font-size: 8px;
-      text-transform: uppercase;
-      letter-spacing: 1px;
-      color: var(--text3);
+    .toast{
+      min-width:240px;max-width:90vw;
+      background:#101828;color:#fff;border-radius:14px;
+      padding:12px 14px;box-shadow:0 20px 35px rgba(16,24,40,.2);
+      font-size:13px;line-height:1.45;opacity:0;transform:translateY(10px);
+      transition:.18s ease
     }
-    .dc-title {
-      font-family: var(--display);
-      font-size: 15px;
-      font-weight: 700;
-      line-height: 1.2;
-      color: var(--text);
-      margin: 6px 0 10px;
+    .toast.show{opacity:1;transform:translateY(0)}
+    .hidden-section{display:none}
+    .search-box{
+      display:flex;align-items:center;gap:10px;
+      padding:10px 12px;border-radius:14px;border:1px solid var(--line);
+      background:var(--surface)
     }
-    .dc-body { padding: 12px 14px; }
-    .dc-text { font-size: 11px; color: var(--text2); line-height: 1.5; margin-bottom: 10px; }
-    .dc-chips { display: flex; flex-wrap: wrap; gap: 4px; margin-bottom: 10px; }
-    .dc-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin-bottom: 10px; }
-    .dc-mini {
-      background: var(--surface2);
-      border: 1px solid var(--line);
-      border-radius: var(--radius-sm);
-      padding: 7px 9px;
+    .search-box input{border:none;outline:none;background:transparent;width:100%;color:var(--text);font-size:14px}
+    .filter-row{display:flex;gap:8px;flex-wrap:wrap}
+    .pill{
+      padding:8px 10px;border-radius:999px;border:1px solid var(--line);
+      background:var(--surface);cursor:pointer;font-size:12px;font-weight:700;color:var(--text-2)
     }
-    .dc-mini small { font-family: var(--mono); font-size: 8px; color: var(--text3); display: block; margin-bottom: 3px; }
-    .dc-mini strong { font-size: 11px; color: var(--text); display: block; line-height: 1.3; }
-
-    /* ── ACTIONS ── */
-    .dc-actions { display: flex; flex-wrap: wrap; gap: 6px; padding: 10px 14px; border-top: 1px solid var(--line); }
-    .btn {
-      font-family: var(--mono);
-      font-size: 9px;
-      font-weight: 500;
-      letter-spacing: .3px;
-      padding: 7px 11px;
-      border-radius: var(--radius-sm);
-      border: 1px solid var(--line2);
-      background: var(--surface2);
-      color: var(--text2);
-      cursor: pointer;
-      transition: all .12s;
-      text-transform: uppercase;
+    .pill.active{background:var(--blue-soft);color:var(--blue);border-color:#b2ddff}
+    .summary-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}
+    @media (max-width:1250px){
+      .main-grid{grid-template-columns:1fr}
+      .right-stack{display:grid;grid-template-columns:1fr 1fr;gap:14px}
     }
-    .btn:hover { background: var(--surface3); color: var(--text); }
-    .btn.primary { background: var(--accent); border-color: transparent; color: #000; font-weight: 600; }
-    .btn.primary:hover { background: #c0eb3a; }
-    .btn.danger { background: var(--red-soft); border-color: var(--red-border); color: var(--red); }
-    .btn.danger:hover { background: rgba(255,53,53,.2); }
-
-    /* ── CHART ── */
-    .chart-panel {
-      background: var(--surface);
-      border: 1px solid var(--line);
-      border-radius: var(--radius);
-      overflow: hidden;
+    @media (max-width:980px){
+      html{font-size:15px}
+      .app{grid-template-columns:1fr}
+      .sidebar{
+        position:fixed;left:0;top:0;bottom:0;height:100vh;width:min(86vw,320px);
+        transform:translateX(-100%);transition:.2s ease;z-index:90
+      }
+      .sidebar.mobile-open{transform:translateX(0)}
+      .app.collapsed{grid-template-columns:1fr}
+      .mobile-burger{display:inline-flex}
+      .burger{display:none}
+      .topbar{padding:0 14px}
+      .topbar-desc,.tabs{display:none}
+      .content{padding:12px}
+      .kpi-row{grid-template-columns:1fr 1fr}
+      .traffic-row{grid-template-columns:1fr 1fr}
+      .priority-strip,.summary-grid{grid-template-columns:1fr}
+      .right-stack{grid-template-columns:1fr}
+      .dc-grid{grid-template-columns:1fr}
+      .drawer{width:100vw}
+      .drawer-head-text h3{font-size:22px}
+      .alert-card{grid-template-columns:1fr}
+      .alert-side{align-items:flex-start}
+      .alert-title{font-size:17px}
+      .alert-desc,.dc-text,.ti-text{font-size:14px}
+      .qc-title{font-size:15px}
+      .btn{font-size:13px;padding:11px 14px}
+      .modal-block .in{padding:15px}
+      .chart-svg{height:120px}
     }
-    .chart-svg {
-      width: 100%;
-      height: 80px;
-      display: block;
-    }
-
-    /* ── MEDIA TEAM RETURNS ── */
-    /* reuses panel + queue-card */
-
-    /* ── DRAWER ── */
-    .drawer {
-      position: fixed;
-      top: 0; right: 0;
-      width: var(--drawer-w);
-      max-width: 100vw;
-      height: 100vh;
-      background: var(--surface);
-      border-left: 1px solid var(--line2);
-      box-shadow: -20px 0 60px rgba(0,0,0,.5);
-      transform: translateX(100%);
-      transition: transform .2s ease;
-      z-index: 50;
-      display: flex;
-      flex-direction: column;
-    }
-    .drawer.open { transform: translateX(0); }
-    .drawer-head {
-      display: flex;
-      align-items: flex-start;
-      gap: 10px;
-      padding: 14px;
-      border-bottom: 1px solid var(--line);
-      flex-shrink: 0;
-    }
-    .drawer-head-text { flex: 1; min-width: 0; }
-    .drawer-head-text h3 {
-      font-family: var(--display);
-      font-size: 16px;
-      font-weight: 700;
-      margin-bottom: 4px;
-      color: var(--text);
-    }
-    .drawer-head-text p { font-size: 11px; color: var(--text2); line-height: 1.4; }
-    .close-btn {
-      width: 30px; height: 30px;
-      border-radius: 6px;
-      border: 1px solid var(--line2);
-      background: var(--surface2);
-      color: var(--text2);
-      cursor: pointer;
-      font-size: 16px;
-      display: flex; align-items: center; justify-content: center;
-      flex-shrink: 0;
-      transition: all .12s;
-    }
-    .close-btn:hover { background: var(--surface3); color: var(--text); }
-    .drawer-body { flex: 1; overflow-y: auto; padding: 14px; }
-    .drawer-body::-webkit-scrollbar { width: 3px; }
-    .drawer-body::-webkit-scrollbar-thumb { background: var(--line2); border-radius: 2px; }
-
-    /* Timeline */
-    .timeline { display: flex; flex-direction: column; gap: 6px; margin-top: 10px; }
-    .timeline-item {
-      background: var(--surface2);
-      border: 1px solid var(--line);
-      border-radius: var(--radius-sm);
-      padding: 8px 10px;
-      display: flex;
-      gap: 10px;
-      align-items: baseline;
-    }
-    .ti-time { font-family: var(--mono); font-size: 9px; color: var(--text3); flex-shrink: 0; }
-    .ti-text { font-size: 11px; color: var(--text2); line-height: 1.4; }
-
-    /* ── FADE IN ── */
-    @keyframes fadein { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: none; } }
-    .alert-card { animation: fadein .15s ease both; }
-    .alert-card:nth-child(1){animation-delay:.04s}
-    .alert-card:nth-child(2){animation-delay:.08s}
-    .alert-card:nth-child(3){animation-delay:.12s}
-    .alert-card:nth-child(4){animation-delay:.16s}
-
-    /* ── RESPONSIVE ── */
-    @media (max-width: 1300px) {
-      .main-grid { grid-template-columns: 1fr 300px; }
-    }
-    @media (max-width: 1100px) {
-      .main-grid { grid-template-columns: 1fr; }
-      .right-stack { display: grid; grid-template-columns: 1fr 1fr; }
-    }
-    @media (max-width: 900px) {
-      .priority-strip { grid-template-columns: 1fr; }
-      .kpi-row { grid-template-columns: repeat(3, 1fr); }
-    }
-    @media (max-width: 700px) {
-      .app { grid-template-columns: 1fr; }
-      .sidebar { position: relative; height: auto; border-right: 0; border-bottom: 1px solid var(--line); }
-      .topbar-tabs { display: none; }
-      .kpi-row { grid-template-columns: 1fr 1fr; }
-      .dc-grid { grid-template-columns: 1fr; }
-      .right-stack { grid-template-columns: 1fr; }
-      .drawer { width: 100vw; }
-      .alert-card { grid-template-columns: 1fr; }
-      .alert-side { align-items: flex-start; }
+    @media (max-width:640px){
+      html{font-size:16px}
+      .kpi-row,.traffic-row{grid-template-columns:1fr}
+      .topbar-title{font-size:24px}
+      .kpi-val{font-size:36px}
+      .drawer-body{padding:12px}
+      .section-head{padding:12px 14px}
     }
   </style>
 </head>
 <body>
-  <div class="app" id="app">
-
-    <!-- SIDEBAR -->
-    <aside class="sidebar">
-      <div class="side-top">
-        <button class="burger" id="toggleSidebar" aria-label="Toggle menu">
-          <span class="burger-lines"><span></span><span></span><span></span></span>
-        </button>
-        <div class="brand">
-          <strong><em>VRH</em> · Media Pilot</strong>
-          <span>executive view</span>
-        </div>
+<div class="overlay" id="overlay"></div>
+<div class="app" id="app">
+  <aside class="sidebar" id="sidebar">
+    <div class="side-top">
+      <button class="burger" id="toggleSidebar" aria-label="Toggle sidebar">
+        <span class="burger-lines"><span></span><span></span><span></span></span>
+      </button>
+      <div class="brand">
+        <strong><em>VRH</em> · Media Pilot</strong>
+        <span>mobile friendly executive view</span>
       </div>
-      <div class="side-scroll">
-        <div class="side-group">
-          <div class="side-title">Operatività</div>
-          <a class="side-link active" href="#"><span class="sdot blue"></span><span class="side-link-label">Overview Vrh</span></a>
-          <a class="side-link" href="#"><span class="sdot red"></span><span class="side-link-label">Alert</span></a>
-          <a class="side-link" href="#"><span class="sdot blue"></span><span class="side-link-label">Case</span></a>
-          <a class="side-link" href="#"><span class="sdot green"></span><span class="side-link-label">Media team</span></a>
-          <a class="side-link" href="#"><span class="sdot yellow"></span><span class="side-link-label">Mjesni odbori</span></a>
-          <a class="side-link" href="#"><span class="sdot red"></span><span class="side-link-label">Vrh queue</span></a>
-        </div>
-        <div class="side-group">
-          <div class="side-title">Intelligence</div>
-          <a class="side-link" href="#"><span class="sdot"></span><span class="side-link-label">Cluster</span></a>
-          <a class="side-link" href="#"><span class="sdot"></span><span class="side-link-label">Trend</span></a>
-          <a class="side-link" href="#"><span class="sdot"></span><span class="side-link-label">Teme</span></a>
-          <a class="side-link" href="#"><span class="sdot"></span><span class="side-link-label">Fonti</span></a>
-          <a class="side-link" href="#"><span class="sdot"></span><span class="side-link-label">Attori</span></a>
-          <a class="side-link" href="#"><span class="sdot"></span><span class="side-link-label">Territori</span></a>
-        </div>
-        <div class="side-group">
-          <div class="side-title">Memoria</div>
-          <a class="side-link" href="#"><span class="sdot"></span><span class="side-link-label">Hot topics</span></a>
-          <a class="side-link" href="#"><span class="sdot"></span><span class="side-link-label">Archivio</span></a>
-          <a class="side-link" href="#"><span class="sdot"></span><span class="side-link-label">Follow-up</span></a>
-        </div>
+    </div>
+    <div class="side-scroll">
+      <div class="side-group">
+        <div class="side-title">Operatività</div>
+        <button class="side-link active" data-view="overview"><span class="sdot blue"></span><span class="side-link-label">Overview VRH</span></button>
+        <button class="side-link" data-view="alerts"><span class="sdot red"></span><span class="side-link-label">Alert</span></button>
+        <button class="side-link" data-view="cases"><span class="sdot blue"></span><span class="side-link-label">Case</span></button>
+        <button class="side-link" data-view="media"><span class="sdot green"></span><span class="side-link-label">Media team</span></button>
+        <button class="side-link" data-view="local"><span class="sdot yellow"></span><span class="side-link-label">Mjesni odbori</span></button>
+        <button class="side-link" data-view="queue"><span class="sdot red"></span><span class="side-link-label">Vrh queue</span></button>
       </div>
-    </aside>
-
-    <!-- MAIN -->
-    <main class="main">
-
-      <!-- TOPBAR -->
-      <div class="topbar">
-        <div class="topbar-title">VRH <span>· overview</span></div>
-        <div class="topbar-tabs" id="topbarTabs">
-          <button class="ttab active" data-tab="bih">Scenario BIH</button>
-          <button class="ttab" data-tab="7d">7 dana</button>
-          <button class="ttab" data-tab="cen">Centralno</button>
-          <button class="ttab" data-tab="hi">High priority</button>
-        </div>
+      <div class="side-group">
+        <div class="side-title">Intelligence</div>
+        <button class="side-link" data-view="topics"><span class="sdot"></span><span class="side-link-label">Cluster & trend</span></button>
+        <button class="side-link" data-view="topics"><span class="sdot"></span><span class="side-link-label">Teme</span></button>
+        <button class="side-link" data-view="topics"><span class="sdot"></span><span class="side-link-label">Fonti</span></button>
+        <button class="side-link" data-view="topics"><span class="sdot"></span><span class="side-link-label">Attori</span></button>
       </div>
+      <div class="side-group">
+        <div class="side-title">Memoria</div>
+        <button class="side-link" data-view="follow"><span class="sdot"></span><span class="side-link-label">Hot topics</span></button>
+        <button class="side-link" data-view="follow"><span class="sdot"></span><span class="side-link-label">Archivio</span></button>
+        <button class="side-link" data-view="follow"><span class="sdot"></span><span class="side-link-label">Follow-up</span></button>
+      </div>
+    </div>
+  </aside>
 
-      <!-- CONTENT -->
-      <div class="content-wrap">
-
-        <!-- KPI ROW -->
-        <div class="kpi-row">
-          <div class="kpi">
-            <div class="kpi-label">Active alerts</div>
-            <div class="kpi-val is-red">12</div>
-            <div class="kpi-sub">4 rossi</div>
-          </div>
-          <div class="kpi">
-            <div class="kpi-label">Open cases</div>
-            <div class="kpi-val is-orange">7</div>
-            <div class="kpi-sub">2 čekaju vrh</div>
-          </div>
-          <div class="kpi">
-            <div class="kpi-label">Local confirm.</div>
-            <div class="kpi-val">4</div>
-            <div class="kpi-sub">2 hitne</div>
-          </div>
-          <div class="kpi">
-            <div class="kpi-label">Follow-up watch</div>
-            <div class="kpi-val">9</div>
-            <div class="kpi-sub">3 caldi</div>
-          </div>
-          <div class="kpi">
-            <div class="kpi-label">Media returns</div>
-            <div class="kpi-val">5</div>
-            <div class="kpi-sub">oggi</div>
-          </div>
+  <main class="main">
+    <div class="topbar">
+      <button class="mobile-burger" id="mobileBurger" aria-label="Open menu">
+        <span class="burger-lines"><span></span><span></span><span></span></span>
+      </button>
+      <div>
+        <div class="topbar-title" id="pageTitle">VRH <span>· overview</span></div>
+        <div class="topbar-desc" id="pageDesc">Pregled svega bitnog, optimizovan za telefon i brzu procjenu.</div>
+      </div>
+      <div class="topbar-right">
+        <div class="tabs" id="topbarTabs">
+          <button class="tab-btn active" data-tab="bih">Scenario BIH</button>
+          <button class="tab-btn" data-tab="7d">7 dana</button>
+          <button class="tab-btn" data-tab="cen">Centralno</button>
+          <button class="tab-btn" data-tab="hi">High priority</button>
         </div>
+        <button class="icon-btn" id="quickOpen" aria-label="Open selected popup">↗</button>
+      </div>
+    </div>
 
-        <!-- SEMAFORI -->
-        <div class="traffic-wrap">
+    <div class="content">
+      <section id="view-overview">
+        <div class="kpi-row" id="kpiRow"></div>
+
+        <div class="panel traffic-wrap">
           <div class="section-head">
             <span class="section-head-title">Semafori tema</span>
-            <span class="section-head-meta">klik otvara alert listu</span>
+            <span class="section-head-meta">click = popup completo</span>
           </div>
           <div class="traffic-row" id="trafficRow"></div>
         </div>
 
-        <!-- PRIORITY STRIP -->
         <div class="priority-strip">
           <div class="panel">
             <div class="section-head">
@@ -703,43 +470,11 @@
               <span class="section-head-title">Stato rapido</span>
               <span class="section-head-meta">legenda</span>
             </div>
-            <div class="queue-list">
-              <div class="queue-card">
-                <div style="flex:1">
-                  <div class="qc-title">Urgente</div>
-                  <div class="qc-desc">Decisione o linea oggi</div>
-                </div>
-                <div class="qc-right"><span class="badge red">high</span></div>
-              </div>
-              <div class="queue-card">
-                <div style="flex:1">
-                  <div class="qc-title">Da decidere oggi</div>
-                  <div class="qc-desc">Giallo, va risolto nel ciclo corrente</div>
-                </div>
-                <div class="qc-right"><span class="badge yellow">today</span></div>
-              </div>
-              <div class="queue-card">
-                <div style="flex:1">
-                  <div class="qc-title">Monitoraggio</div>
-                  <div class="qc-desc">Verde o grigio, niente panico</div>
-                </div>
-                <div class="qc-right"><span class="badge green">watch</span></div>
-              </div>
-              <div class="queue-card">
-                <div style="flex:1">
-                  <div class="qc-title">Già instradato</div>
-                  <div class="qc-desc">Blu, ownership chiara</div>
-                </div>
-                <div class="qc-right"><span class="badge blue">routed</span></div>
-              </div>
-            </div>
+            <div class="queue-list" id="legendList"></div>
           </div>
         </div>
 
-        <!-- MAIN GRID -->
         <div class="main-grid">
-
-          <!-- LEFT: ALERT LIST -->
           <div class="panel">
             <div class="section-head">
               <span class="section-head-title" id="alertsTitle">Alert</span>
@@ -748,325 +483,778 @@
             <div class="alert-list" id="alertList"></div>
           </div>
 
-          <!-- RIGHT STACK -->
           <div class="right-stack">
+            <div class="panel detail-card" id="detailCard"></div>
 
-            <!-- DETAIL -->
-            <div class="detail-card" id="detailCard"></div>
-
-            <!-- CHART -->
-            <div class="chart-panel">
+            <div class="panel">
               <div class="section-head">
                 <span class="section-head-title">Grafico 10 giorni</span>
                 <span class="section-head-meta" id="chartMeta">trend</span>
               </div>
-              <svg class="chart-svg" id="miniChart" viewBox="0 0 400 80" preserveAspectRatio="none"></svg>
+              <div class="chart-box">
+                <svg class="chart-svg" id="miniChart" viewBox="0 0 420 96" preserveAspectRatio="none"></svg>
+              </div>
             </div>
 
-            <!-- MEDIA TEAM RETURNS -->
             <div class="panel">
               <div class="section-head">
                 <span class="section-head-title">Media team ritorni</span>
                 <span class="section-head-meta">oggi</span>
               </div>
-              <div class="queue-list">
-                <div class="queue-card">
-                  <div style="flex:1">
-                    <div class="qc-title">Draft izjave spreman</div>
-                    <div class="qc-desc">Čeka političku liniju</div>
-                  </div>
-                  <div class="qc-right"><span class="badge blue">draft</span></div>
-                </div>
-                <div class="queue-card">
-                  <div style="flex:1">
-                    <div class="qc-title">Lokalni odbor potvrdio signal</div>
-                    <div class="qc-desc">Tema veća od prvobitne procjene</div>
-                  </div>
-                  <div class="qc-right"><span class="badge yellow">confirm</span></div>
-                </div>
-                <div class="queue-card">
-                  <div style="flex:1">
-                    <div class="qc-title">1 tema zatvorena</div>
-                    <div class="qc-desc">Ostaje monitoring 24h</div>
-                  </div>
-                  <div class="qc-right"><span class="badge green">done</span></div>
-                </div>
-              </div>
+              <div class="queue-list" id="mediaReturns"></div>
             </div>
-
           </div>
         </div>
+      </section>
 
-      </div>
-    </main>
-  </div>
+      <section id="view-alerts" class="hidden-section">
+        <div class="panel">
+          <div class="section-head">
+            <span class="section-head-title">Alert center</span>
+            <span class="section-head-meta">filtri demo</span>
+          </div>
+          <div style="padding:14px;display:grid;gap:12px">
+            <div class="search-box">
+              <span>🔎</span>
+              <input id="searchInput" placeholder="Cerca alert, fonte, target..." />
+            </div>
+            <div class="filter-row" id="stateFilters"></div>
+          </div>
+        </div>
+        <div class="panel" style="margin-top:14px">
+          <div class="section-head">
+            <span class="section-head-title">Tutti gli alert</span>
+            <span class="section-head-meta" id="allAlertsMeta"></span>
+          </div>
+          <div class="alert-list" id="allAlertsList"></div>
+        </div>
+      </section>
 
-  <!-- DRAWER -->
-  <aside class="drawer" id="drawer">
-    <div class="drawer-head">
-      <div class="drawer-head-text">
-        <h3 id="drawerTitle">Alert detail</h3>
-        <p id="drawerSub">Dettaglio completo del segnale selezionato</p>
-      </div>
-      <button class="close-btn" id="closeDrawer">×</button>
+      <section id="view-cases" class="hidden-section">
+        <div class="summary-grid" id="caseSummary"></div>
+        <div class="panel" style="margin-top:14px">
+          <div class="section-head">
+            <span class="section-head-title">Case attivi</span>
+            <span class="section-head-meta">click = popup</span>
+          </div>
+          <div class="queue-list" id="caseList"></div>
+        </div>
+      </section>
+
+      <section id="view-media" class="hidden-section">
+        <div class="panel">
+          <div class="section-head">
+            <span class="section-head-title">Media team board</span>
+            <span class="section-head-meta">draft, conferme, chiusure</span>
+          </div>
+          <div class="queue-list" id="mediaBoard"></div>
+        </div>
+      </section>
+
+      <section id="view-local" class="hidden-section">
+        <div class="panel">
+          <div class="section-head">
+            <span class="section-head-title">Mjesni odbori</span>
+            <span class="section-head-meta">conferme locali</span>
+          </div>
+          <div class="queue-list" id="localBoard"></div>
+        </div>
+      </section>
+
+      <section id="view-queue" class="hidden-section">
+        <div class="panel">
+          <div class="section-head">
+            <span class="section-head-title">Queue VRH estesa</span>
+            <span class="section-head-meta">priorità operative</span>
+          </div>
+          <div class="queue-list" id="fullQueue"></div>
+        </div>
+      </section>
+
+      <section id="view-topics" class="hidden-section">
+        <div class="panel">
+          <div class="section-head">
+            <span class="section-head-title">Topics / cluster / fonti</span>
+            <span class="section-head-meta">click = popup tema</span>
+          </div>
+          <div class="queue-list" id="topicsList"></div>
+        </div>
+      </section>
+
+      <section id="view-follow" class="hidden-section">
+        <div class="panel">
+          <div class="section-head">
+            <span class="section-head-title">Memoria e follow-up</span>
+            <span class="section-head-meta">ricorrenze e archivio</span>
+          </div>
+          <div class="queue-list" id="followList"></div>
+        </div>
+      </section>
     </div>
-    <div class="drawer-body" id="drawerBody"></div>
-  </aside>
+  </main>
+</div>
 
-  <script>
-    const topics = [
+<aside class="drawer" id="drawer">
+  <div class="drawer-head">
+    <div class="drawer-head-text">
+      <h3 id="drawerTitle">Dettaglio</h3>
+      <p id="drawerSub">Tutto ciò che serve senza far rimanere il grafico sul fondo come un orfano.</p>
+    </div>
+    <button class="close-btn" id="closeDrawer">×</button>
+  </div>
+  <div class="drawer-body" id="drawerBody"></div>
+</aside>
+
+<div class="toast-wrap" id="toastWrap"></div>
+
+<script>
+const dataByTab = {
+  bih: {
+    topics: [
       {
-        id:"izbori",label:"Izbori",color:"red",count:4,
+        id:"izbori",label:"Izbori",color:"red",count:4,description:"Tema con impatto sistemico e possibilità di escalation centrale.",
         alerts:[
-          {id:"a1",title:"Regularnost izbora postaje centralna tema",summary:"Više izvora i NGO kanala gura narativ o pritisku na izborni proces. Tema je iz lokalnog signala prešla na centralni nivo.",risk:3,trend:3,priority:3,route:"Vrh",target:"centralno",reason:"strategic relevance 3 + trend 3 + NGO legitimitet",source:"NGO + portal + društvene mreže",action:"political line needed",state:"urgent",trendLine:[2,3,3,4,4,5,6,7,8,9],timeline:[["08:15","NGO signal preuzet od dva portala"],["10:30","Isti okvir u tri koordinisane objave"],["12:20","Lokalni signal potvrđuje offline eho"]]},
-          {id:"a2",title:"CIK spominjan u više koordinisanih objava",summary:"Ponavljaju se iste fraze i isti okvir kroz više kanala u kratkom vremenu.",risk:3,trend:2,priority:3,route:"Analitičar / Vrh",target:"centralno",reason:"coordination signal + izborni kontekst",source:"portali + Facebook stranice",action:"confirm cluster and prep case",state:"today",trendLine:[1,2,2,3,4,4,5,5,6,6],timeline:[["09:10","Cluster detektovan na tri izvora"],["11:00","Phrase reuse signal raste"],["13:05","Predložen alert kandidat"]]},
-          {id:"a3",title:"Tema izlaznosti dobija negativni okvir",summary:"Sadržaj pokušava pretvoriti mobilizaciju u priču o nepovjerenju.",risk:2,trend:2,priority:2,route:"Media team",target:"regionalno",reason:"important but still operatively solvable",source:"regionalni portal",action:"counter-narrative",state:"routed",trendLine:[1,1,2,2,2,3,3,4,4,4],timeline:[["08:50","Prvi negativni okvir"],["10:15","Media team dobio task"],["12:40","Draft u radu"]]},
-          {id:"a4",title:"Lokalni signal traži potvrdu sa terena",summary:"Prvi lokalni odbor javlja da se ista tema pojavljuje i offline.",risk:2,trend:2,priority:2,route:"Lokalni odbor",target:"lokalno",reason:"needs local confirmation before escalation",source:"local board feedback",action:"confirm / enrich",state:"watch",trendLine:[1,1,1,2,2,2,3,3,3,4],timeline:[["09:25","Signal sa terena"],["10:05","Poslano lokalnom odboru"],["12:55","Čeka potvrdu"]]}
+          {id:"a1",title:"Regularnost izbora postaje centralna tema",summary:"Više izvora i NGO kanala gura narativ o pritisku na izborni proces. Tema je iz lokalnog signala prešla na centralni nivo.",risk:3,trend:3,priority:3,route:"Vrh",target:"centralno",reason:"Strategic relevance 3 + trend 3 + NGO legitimitet",source:"NGO + portal + društvene mreže",action:"Political line needed",state:"urgent",trendLine:[2,3,3,4,4,5,6,7,8,9],timeline:[["08:15","NGO signal preuzet od dva portala"],["10:30","Isti okvir u tri koordinisane objave"],["12:20","Lokalni signal potvrđuje offline eho"]]},
+          {id:"a2",title:"CIK spominjan u više koordinisanih objava",summary:"Ponavljaju se iste fraze i isti okvir kroz više kanala u kratkom vremenu.",risk:3,trend:2,priority:3,route:"Analitičar / Vrh",target:"centralno",reason:"Coordination signal + izborni kontekst",source:"Portali + Facebook stranice",action:"Confirm cluster and prep case",state:"today",trendLine:[1,2,2,3,4,4,5,5,6,6],timeline:[["09:10","Cluster detektovan na tri izvora"],["11:00","Phrase reuse signal raste"],["13:05","Predložen alert kandidat"]]},
+          {id:"a3",title:"Tema izlaznosti dobija negativni okvir",summary:"Sadržaj pokušava pretvoriti mobilizaciju u priču o nepovjerenju.",risk:2,trend:2,priority:2,route:"Media team",target:"regionalno",reason:"Important but still operatively solvable",source:"Regionalni portal",action:"Counter-narrative",state:"routed",trendLine:[1,1,2,2,2,3,3,4,4,4],timeline:[["08:50","Prvi negativni okvir"],["10:15","Media team dobio task"],["12:40","Draft u radu"]]},
+          {id:"a4",title:"Lokalni signal traži potvrdu sa terena",summary:"Prvi lokalni odbor javlja da se ista tema pojavljuje i offline.",risk:2,trend:2,priority:2,route:"Lokalni odbor",target:"lokalno",reason:"Needs local confirmation before escalation",source:"Local board feedback",action:"Confirm / enrich",state:"watch",trendLine:[1,1,1,2,2,2,3,3,3,4],timeline:[["09:25","Signal sa terena"],["10:05","Poslano lokalnom odboru"],["12:55","Čeka potvrdu"]]}
         ]
       },
       {
-        id:"lider",label:"Lider",color:"red",count:3,
+        id:"lider",label:"Lider",color:"red",count:3,description:"Narativi personalizzati e reputazionali sul vertice.",
         alerts:[
-          {id:"b1",title:"Reputacioni napad na lidera jača u istom okviru",summary:"Tema je personalizovana i prelazi iz ironije u direktan reputacijski napad.",risk:3,trend:3,priority:3,route:"Vrh",target:"lider",reason:"leader target + risk 3 + repeat pattern",source:"portal + short video",action:"approval for direct answer",state:"urgent",trendLine:[2,2,3,4,4,5,6,7,7,8],timeline:[["08:40","Prvi personalni napad"],["11:20","Video format širi temu"],["13:10","Predložen case za vrh"]]},
-          {id:"b2",title:"Napad vezan za stil i simboliku lidera",summary:"Još nije dokazno jak, ali raste kroz kratke forme.",risk:2,trend:2,priority:2,route:"Media team",target:"lider",reason:"monitor + prep response",source:"reels / clips",action:"light framing response",state:"today",trendLine:[1,1,2,2,3,3,4,4,4,5],timeline:[["09:00","Clip format počeo da raste"],["11:50","Media team priprema odgovor"],["13:30","Tema još nije full red"]]},
-          {id:"b3",title:"Stara tema o imovini se vraća",summary:"Follow-up signal pokazuje da se koristi stari obrazac.",risk:2,trend:1,priority:2,route:"Follow-up",target:"lider",reason:"return of archived narrative",source:"copy portals",action:"reuse archive response",state:"watch",trendLine:[1,1,1,1,2,2,2,2,3,3],timeline:[["08:05","Stari narativ vraćen"],["10:45","Povezan sa arhivom"],["12:15","Predložen follow-up monitoring"]]}
+          {id:"b1",title:"Reputacioni napad na lidera jača u istom okviru",summary:"Tema je personalizovana i prelazi iz ironije u direktan reputacijski napad.",risk:3,trend:3,priority:3,route:"Vrh",target:"lider",reason:"Leader target + risk 3 + repeat pattern",source:"Portal + short video",action:"Approval for direct answer",state:"urgent",trendLine:[2,2,3,4,4,5,6,7,7,8],timeline:[["08:40","Prvi personalni napad"],["11:20","Video format širi temu"],["13:10","Predložen case za vrh"]]},
+          {id:"b2",title:"Napad vezan za stil i simboliku lidera",summary:"Još nije dokazno jak, ali raste kroz kratke forme.",risk:2,trend:2,priority:2,route:"Media team",target:"lider",reason:"Monitor + prep response",source:"Reels / clips",action:"Light framing response",state:"today",trendLine:[1,1,2,2,3,3,4,4,4,5],timeline:[["09:00","Clip format počeo da raste"],["11:50","Media team priprema odgovor"],["13:30","Tema još nije full red"]]},
+          {id:"b3",title:"Stara tema o imovini se vraća",summary:"Follow-up signal pokazuje da se koristi stari obrazac.",risk:2,trend:1,priority:2,route:"Follow-up",target:"lider",reason:"Return of archived narrative",source:"Copy portals",action:"Reuse archive response",state:"watch",trendLine:[1,1,1,1,2,2,2,2,3,3],timeline:[["08:05","Stari narativ vraćen"],["10:45","Povezan sa arhivom"],["12:15","Predložen follow-up monitoring"]]}
         ]
       },
       {
-        id:"rs-lokal",label:"RS lokal",color:"yellow",count:4,
+        id:"rs-lokal",label:"RS lokal",color:"yellow",count:4,description:"Teme locali che possono salire di livello se confermate.",
         alerts:[
-          {id:"c1",title:"Lokalna tema u RS traži potvrdu prije eskalacije",summary:"Više lokalnih signala postoji, ali bez dovoljne centralne težine dok mjesni odbor ne potvrdi.",risk:2,trend:2,priority:2,route:"Lokalni odbor",target:"lokalno",reason:"local first, not immediate vrh",source:"local portal + teren",action:"confirm and enrich",state:"watch",trendLine:[1,1,2,2,2,2,3,3,3,4],timeline:[["08:25","Prvi lokalni signal"],["10:10","Poslano na provjeru"],["13:05","Još bez centralne težine"]]},
-          {id:"c2",title:"Narativ se širi na susjedne opštine",summary:"Tema prelazi iz jedne opštine u dvije susjedne, ali još nije centralna.",risk:2,trend:3,priority:2,route:"Media team / Lokalni odbor",target:"regionalno",reason:"regional growth with local roots",source:"regional portals",action:"coordinate local line",state:"today",trendLine:[1,2,2,3,3,4,4,5,5,6],timeline:[["08:55","Signal iz druge opštine"],["11:00","Regionalni šum raste"],["13:25","Traži koordinaciju"]]},
-          {id:"c3",title:"Mjesni odbor traži instrukciju, ne javnu objavu",summary:"Treba ponašanje po uputi, a ne medijski izlaz.",risk:1,trend:2,priority:2,route:"Media team",target:"lokalno",reason:"operational local guidance",source:"local feedback",action:"instruction",state:"routed",trendLine:[1,1,1,2,2,2,2,3,3,3],timeline:[["09:20","Lokalni odbor traži smjernicu"],["11:45","Media team preuzeo"],["13:00","Čeka slanje instrukcije"]]},
-          {id:"c4",title:"Potvrđen teren, tema ide media timu",summary:"Lokalna provjera vratila je jači kontekst nego što je sistem prvo mislio.",risk:2,trend:2,priority:2,route:"Media team",target:"regionalno",reason:"local board confirmed escalation",source:"local board",action:"open case",state:"routed",trendLine:[1,1,2,2,3,3,3,4,4,5],timeline:[["08:35","Potvrda terena"],["10:50","Eskalacija odobrena"],["12:35","Case otvoren"]]}
+          {id:"c1",title:"Lokalna tema u RS traži potvrdu prije eskalacije",summary:"Više lokalnih signala postoji, ali bez dovoljne centralne težine dok mjesni odbor ne potvrdi.",risk:2,trend:2,priority:2,route:"Lokalni odbor",target:"lokalno",reason:"Local first, not immediate vrh",source:"Local portal + teren",action:"Confirm and enrich",state:"watch",trendLine:[1,1,2,2,2,2,3,3,3,4],timeline:[["08:25","Prvi lokalni signal"],["10:10","Poslano na provjeru"],["13:05","Još bez centralne težine"]]},
+          {id:"c2",title:"Narativ se širi na susjedne opštine",summary:"Tema prelazi iz jedne opštine u dvije susjedne, ali još nije centralna.",risk:2,trend:3,priority:2,route:"Media team / Lokalni odbor",target:"regionalno",reason:"Regional growth with local roots",source:"Regional portals",action:"Coordinate local line",state:"today",trendLine:[1,2,2,3,3,4,4,5,5,6],timeline:[["08:55","Signal iz druge opštine"],["11:00","Regionalni šum raste"],["13:25","Traži koordinaciju"]]},
+          {id:"c3",title:"Mjesni odbor traži instrukciju, ne javnu objavu",summary:"Treba ponašanje po uputi, a ne medijski izlaz.",risk:1,trend:2,priority:2,route:"Media team",target:"lokalno",reason:"Operational local guidance",source:"Local feedback",action:"Instruction",state:"routed",trendLine:[1,1,1,2,2,2,2,3,3,3],timeline:[["09:20","Lokalni odbor traži smjernicu"],["11:45","Media team preuzeo"],["13:00","Čeka slanje instrukcije"]]},
+          {id:"c4",title:"Potvrđen teren, tema ide media timu",summary:"Lokalna provjera vratila je jači kontekst nego što je sistem prvo mislio.",risk:2,trend:2,priority:2,route:"Media team",target:"regionalno",reason:"Local board confirmed escalation",source:"Local board",action:"Open case",state:"routed",trendLine:[1,1,2,2,3,3,3,4,4,5],timeline:[["08:35","Potvrda terena"],["10:50","Eskalacija odobrena"],["12:35","Case otvoren"]]}
         ]
       },
       {
-        id:"followup",label:"Follow-up",color:"green",count:3,
+        id:"followup",label:"Follow-up",color:"green",count:3,description:"Ritorni di narativi e memoria operativa.",
         alerts:[
-          {id:"g1",title:"Arhivska tema se vraća kroz novi ugao",summary:"Nije ista priča doslovno, ali koristi isti memorijski okvir.",risk:2,trend:2,priority:2,route:"Follow-up",target:"archive",reason:"linked to old case",source:"mixed",action:"reuse old lines",state:"watch",trendLine:[1,1,1,2,2,2,3,3,4,4],timeline:[["08:00","Stari frame aktiviran"],["10:20","Povezano sa hot topic"],["12:50","Predložen reuse"]]},
-          {id:"g2",title:"Drugi talas vjerovatan u 24h",summary:"Tema je stala, ali indikatori pokazuju da neće ostati mirna.",risk:2,trend:2,priority:2,route:"Monitoring",target:"follow-up",reason:"follow-up probability high",source:"trend watch",action:"monitor 24h",state:"watch",trendLine:[2,2,2,3,3,3,3,4,4,4],timeline:[["09:30","Trend nije mrtav"],["11:35","Praćenje pojačano"],["13:15","Monitoring ostaje aktivan"]]},
-          {id:"g3",title:"Hot topic dobija novi cluster link",summary:"Povezivanje s memorijom teme povećava budući priority boost.",risk:1,trend:2,priority:2,route:"Hot topic",target:"memory",reason:"topic recurrence",source:"archive",action:"link case",state:"watch",trendLine:[1,1,2,2,2,2,3,3,3,3],timeline:[["08:10","Cluster link prepoznat"],["10:15","Tema dobila memorijski tag"],["12:40","Priority boost spreman za buduće alert-e"]]}
+          {id:"g1",title:"Arhivska tema se vraća kroz novi ugao",summary:"Nije ista priča doslovno, ali koristi isti memorijski okvir.",risk:2,trend:2,priority:2,route:"Follow-up",target:"archive",reason:"Linked to old case",source:"Mixed",action:"Reuse old lines",state:"watch",trendLine:[1,1,1,2,2,2,3,3,4,4],timeline:[["08:00","Stari frame aktiviran"],["10:20","Povezano sa hot topic"],["12:50","Predložen reuse"]]},
+          {id:"g2",title:"Drugi talas vjerovatan u 24h",summary:"Tema je stala, ali indikatori pokazuju da neće ostati mirna.",risk:2,trend:2,priority:2,route:"Monitoring",target:"follow-up",reason:"Follow-up probability high",source:"Trend watch",action:"Monitor 24h",state:"watch",trendLine:[2,2,2,3,3,3,3,4,4,4],timeline:[["09:30","Trend nije mrtav"],["11:35","Praćenje pojačano"],["13:15","Monitoring ostaje aktivan"]]},
+          {id:"g3",title:"Hot topic dobija novi cluster link",summary:"Povezivanje s memorijom teme povećava budući priority boost.",risk:1,trend:2,priority:2,route:"Hot topic",target:"memory",reason:"Topic recurrence",source:"Archive",action:"Link case",state:"watch",trendLine:[1,1,2,2,2,2,3,3,3,3],timeline:[["08:10","Cluster link prepoznat"],["10:15","Tema dobila memorijski tag"],["12:40","Priority boost spreman za buduće alert-e"]]}
         ]
       }
-    ];
+    ]
+  },
+  "7d": {
+    topics: [
+      {id:"izbori",label:"Izbori",color:"red",count:3,description:"Settimana calda, ma meno esplosiva dell'istantaneo.",alerts:[
+        {id:"s1",title:"Sedmodnevni rast narativa o pritisku",summary:"Tema je konzistentna 7 dana i ostaje na vrhu pažnje.",risk:3,trend:3,priority:3,route:"Vrh",target:"centralno",reason:"Persistent pressure narrative",source:"Portal + FB + NGO",action:"Longer line and coordinated response",state:"urgent",trendLine:[3,4,4,5,6,6,7,8,8,9],timeline:[["D-7","Pojava okvira"],["D-4","Širenje na centralne portale"],["D-1","Tema konsolidovana"]]},
+        {id:"s2",title:"Raste broj copy portala",summary:"Isti sadržaj preuzima veći broj malih izvora.",risk:2,trend:3,priority:2,route:"Analitičar",target:"regionalno",reason:"Amplification pattern",source:"Copy portals",action:"Map sources and cluster",state:"today",trendLine:[1,2,2,3,3,4,5,5,6,6],timeline:[["D-6","Prvi copy"],["D-3","Broj izvora raste"],["D-1","Amplifikacija stabilna"]]},
+        {id:"s3",title:"Lokalni eho ostaje prisutan",summary:"Tema nije ogromna, ali se održava na terenu.",risk:2,trend:2,priority:2,route:"Lokalni odbor",target:"lokalno",reason:"Stable local echo",source:"Field feedback",action:"Keep board informed",state:"watch",trendLine:[1,1,2,2,2,3,3,3,4,4],timeline:[["D-7","Signal s terena"],["D-2","Ponovna potvrda"],["D-1","Bez gašenja"]]}
+      ]},
+      {id:"follow",label:"Follow-up",color:"green",count:2,description:"Memoria operativa utile nella finestra 7 giorni.",alerts:[
+        {id:"s4",title:"Tema iz arhive ostaje živa",summary:"Nastavlja se korištenje starog obrasca sa manjim varijacijama.",risk:2,trend:2,priority:2,route:"Follow-up",target:"archive",reason:"Old frame still useful",source:"Archive + web",action:"Prepare ready-made answer",state:"watch",trendLine:[1,1,1,2,2,3,3,3,4,4],timeline:[["D-7","Stari okvir aktivan"],["D-3","Novi spin"],["D-1","Ostaje za monitoring"]]},
+        {id:"s5",title:"Mogući drugi talas kroz vikend",summary:"Signal je sada niži, ali vjerovatno nije završio.",risk:2,trend:2,priority:2,route:"Monitoring",target:"follow-up",reason:"Weekend probability",source:"Trend watch",action:"Weekend watch",state:"watch",trendLine:[2,2,2,2,3,3,3,4,4,5],timeline:[["D-5","Prva procjena"],["D-2","Signal ostaje"],["D-1","Pojačan oprez"]]}
+      ]}
+    ]
+  },
+  cen: {
+    topics: [
+      {id:"central",label:"Centralno",color:"red",count:3,description:"Solo segnali a rilevanza centrale.",alerts:[
+        {id:"c10",title:"Koordinisana centralna objava mijenja ton teme",summary:"Centralni akteri su preuzeli okvir i pojačali ga.",risk:3,trend:3,priority:3,route:"Vrh",target:"centralno",reason:"Central actor takeover",source:"Central portal",action:"Direct response and framing",state:"urgent",trendLine:[2,3,4,4,5,6,7,8,8,9],timeline:[["09:00","Central actor enters"],["11:10","Coordination noticed"],["13:00","Escalation complete"]]},
+        {id:"c11",title:"Tema prelazi sa portala na TV kadar",summary:"Ulazak u širi format povećava politički pritisak.",risk:3,trend:2,priority:3,route:"Vrh",target:"centralno",reason:"Cross-format escalation",source:"TV clip + portal",action:"Prepare disciplined line",state:"today",trendLine:[1,2,2,3,4,4,5,6,6,7],timeline:[["09:15","TV mention"],["11:30","Portal amplification"],["12:55","Need guidance"]]},
+        {id:"c12",title:"Opozicioni okvir traži rebuttal",summary:"Napad još nije dominantan, ali nosi centralni potencijal.",risk:2,trend:2,priority:2,route:"Media team",target:"centralno",reason:"Needs pre-emptive answer",source:"Opposition statement",action:"Draft rebuttal",state:"routed",trendLine:[1,1,1,2,2,3,3,4,4,5],timeline:[["08:40","Statement issued"],["10:50","Draft opened"],["12:20","Waiting sign-off"]]}
+      ]}
+    ]
+  },
+  hi: {
+    topics: [
+      {id:"high",label:"High priority",color:"red",count:4,description:"Solo elementi ad alta priorità.",alerts:[
+        {id:"h1",title:"Top priority signal traži odluku odmah",summary:"Sistem gaže sve pragove i traži odluku vrha.",risk:3,trend:3,priority:3,route:"Vrh",target:"centralno",reason:"All thresholds exceeded",source:"Mixed verified sources",action:"Immediate political line",state:"urgent",trendLine:[3,3,4,5,6,6,7,8,9,10],timeline:[["08:00","Threshold exceeded"],["09:50","Second source confirms"],["12:10","Escalated to top"]]},
+        {id:"h2",title:"Lider under direct reputational stress",summary:"Tema udara direktno na percepciju vrha.",risk:3,trend:3,priority:3,route:"Vrh",target:"lider",reason:"Leader stress + repeat pattern",source:"Portal + clips",action:"Approved answer needed",state:"urgent",trendLine:[2,3,3,4,5,5,6,7,8,9],timeline:[["08:35","First hit"],["10:20","Repetition"],["12:40","Escalation"]]},
+        {id:"h3",title:"Centralni copy cluster ubrzava",summary:"Brza replikacija narativa kroz više izvora.",risk:3,trend:2,priority:3,route:"Analitičar / Vrh",target:"centralno",reason:"Cluster replication",source:"Copy portals",action:"Map and decide response",state:"today",trendLine:[1,2,3,3,4,5,5,6,7,7],timeline:[["09:00","Cluster appears"],["11:00","Acceleration"],["13:00","Decision pending"]]},
+        {id:"h4",title:"Terenski signal potvrđuje centralni udar",summary:"Lokalni i centralni sloj se podudaraju.",risk:2,trend:3,priority:3,route:"Vrh / Lokalni odbor",target:"multi-level",reason:"Cross-level confirmation",source:"Field + central web",action:"Coordinate central and local line",state:"today",trendLine:[1,1,2,3,4,5,5,6,7,8],timeline:[["08:45","Field confirms"],["10:40","Merged assessment"],["12:50","Coordination needed"]]}
+      ]}
+    ]
+  }
+};
 
-    let activeTopicId = topics[0].id;
-    let activeAlertId = topics[0].alerts[0].id;
+const legendItems = [
+  {title:"Urgente",desc:"Decisione o linea oggi",badges:[["high","red"]]},
+  {title:"Da decidere oggi",desc:"Giallo, va risolto nel ciclo corrente",badges:[["today","yellow"]]},
+  {title:"Monitoraggio",desc:"Verde o grigio, niente panico ma attenzione",badges:[["watch","green"]]},
+  {title:"Già instradato",desc:"Blu, ownership chiara",badges:[["routed","blue"]]}
+];
 
-    function badgeClass(state){
-      if(state==="urgent") return "red";
-      if(state==="today") return "yellow";
-      if(state==="routed") return "blue";
-      return "green";
-    }
-    function scoreClass(n){
-      if(n>=3) return "red";
-      if(n>=2) return "yellow";
-      return "green";
-    }
-    function currentTopic(){ return topics.find(t=>t.id===activeTopicId); }
-    function currentAlert(){
-      const t=currentTopic();
-      return t.alerts.find(a=>a.id===activeAlertId)||t.alerts[0];
-    }
+const mediaReturns = [
+  {title:"Draft izjave spreman",desc:"Čeka političku liniju",tag:["draft","blue"]},
+  {title:"Lokalni odbor potvrdio signal",desc:"Tema veća od prvobitne procjene",tag:["confirm","yellow"]},
+  {title:"1 tema zatvorena",desc:"Ostaje monitoring 24h",tag:["done","green"]}
+];
 
-    // TRAFFIC
-    function renderTraffic(){
-      const row=document.getElementById("trafficRow");
-      row.innerHTML="";
-      topics.forEach(topic=>{
-        const el=document.createElement("div");
-        el.className="traffic"+(topic.id===activeTopicId?" active":"");
-        el.innerHTML=`<div class="t-dot ${topic.color}"></div><span class="t-label">${topic.label}</span><span class="t-count">${topic.count}</span>`;
-        el.onclick=()=>{
-          activeTopicId=topic.id;
-          activeAlertId=topic.alerts[0]?.id||null;
-          renderAll();
-        };
-        row.appendChild(el);
-      });
-    }
+const cases = [
+  {id:"case-102",title:"Izbori · centralni narativ",owner:"Media team",status:"open",severity:"high",due:"oggi",detail:"Potrebna koordinisana politička linija i smirena poruka."},
+  {id:"case-097",title:"Lider · reputacioni napad",owner:"VRH",status:"approval",severity:"high",due:"entro 2h",detail:"Odgovor mora biti kratak, autoritativan i bez nervoze."},
+  {id:"case-091",title:"RS lokal · koordinazione",owner:"Lokalni odbor",status:"in progress",severity:"medium",due:"danas",detail:"Potvrde sa terena i instrukcije lokalnoj mreži."},
+  {id:"case-083",title:"Follow-up · stari narativ",owner:"Follow-up",status:"watch",severity:"medium",due:"24h",detail:"Držati spremne stare linije i pratiti vikend talas."}
+];
 
-    // QUEUE
-    function renderQueue(){
-      const list=document.getElementById("vrhQueue");
-      const all=topics.flatMap(t=>t.alerts);
-      const filtered=all.filter(a=>a.route.includes("Vrh")||a.state==="urgent").slice(0,4);
-      list.innerHTML="";
-      filtered.forEach(a=>{
-        const el=document.createElement("div");
-        el.className="queue-card";
-        el.innerHTML=`
-          <div style="flex:1;min-width:0">
-            <div class="qc-title">${a.title}</div>
-            <div class="qc-desc">${a.reason}</div>
-          </div>
-          <div class="qc-right">
-            <span class="badge ${badgeClass(a.state)}">${a.state}</span>
-            <span class="badge ${scoreClass(a.priority)}">P${a.priority}</span>
-          </div>`;
-        list.appendChild(el);
-      });
-    }
+const localUpdates = [
+  {title:"Banja Luka · potvrda terena",desc:"Signal potvrđen offline, traži uputu za lokalni nastup.",tag:["confirm","yellow"]},
+  {title:"Doboj · bez javne objave",desc:"Traži samo internu instrukciju i monitoring.",tag:["local","blue"]},
+  {title:"Bijeljina · pojačan eho",desc:"Tema prelazi iz online u razgovore na terenu.",tag:["watch","green"]}
+];
 
-    // ALERTS
-    function renderAlerts(){
-      const t=currentTopic();
-      document.getElementById("alertsTitle").textContent="Alert · "+t.label;
-      document.getElementById("alertsMeta").textContent=t.alerts.length+" elementi";
-      const list=document.getElementById("alertList");
-      list.innerHTML="";
-      t.alerts.forEach(a=>{
-        const card=document.createElement("div");
-        card.className="alert-card"+(a.id===activeAlertId?" active":"");
-        card.innerHTML=`
-          <div class="alert-main">
-            <div class="alert-top">
-              <span class="badge ${badgeClass(a.state)}">${a.state}</span>
-              <span class="badge ${scoreClass(a.risk)}">risk ${a.risk}</span>
-              <span class="badge ${scoreClass(a.trend)}">trend ${a.trend}</span>
-              <span class="badge ${scoreClass(a.priority)}">P${a.priority}</span>
-              <span class="badge blue">${a.route}</span>
-            </div>
-            <div class="alert-title">${a.title}</div>
-            <p class="alert-desc">${a.summary}</p>
-          </div>
-          <div class="alert-side">
-            <div class="score-box"><small>target</small><strong>${a.target}</strong></div>
-            <div class="score-box"><small>source</small><strong style="font-size:11px;font-family:var(--mono)">${a.source}</strong></div>
-          </div>`;
-        card.onclick=()=>{ activeAlertId=a.id; renderAlerts(); renderRight(); };
-        card.ondblclick=()=>openDrawer(a);
-        list.appendChild(card);
-      });
-    }
+let currentTab = "bih";
+let activeView = "overview";
+let activeTopicId = null;
+let activeAlertId = null;
+let activeFilter = "all";
+let searchTerm = "";
 
-    // DETAIL
-    function renderDetail(){
-      const a=currentAlert();
-      const card=document.getElementById("detailCard");
-      card.innerHTML=`
-        <div class="dc-body">
-          <div class="dc-kicker">selected alert</div>
-          <div class="dc-title">${a.title}</div>
-          <p class="dc-text">${a.summary}</p>
-          <div class="dc-chips">
-            <span class="badge ${badgeClass(a.state)}">${a.state}</span>
-            <span class="badge ${scoreClass(a.risk)}">risk ${a.risk}</span>
-            <span class="badge ${scoreClass(a.trend)}">trend ${a.trend}</span>
-            <span class="badge ${scoreClass(a.priority)}">priority ${a.priority}</span>
-            <span class="badge blue">${a.route}</span>
-            <span class="badge green">${a.target}</span>
-          </div>
-          <div class="dc-grid">
-            <div class="dc-mini"><small>Perché conta</small><strong>${a.reason}</strong></div>
-            <div class="dc-mini"><small>Fonte</small><strong>${a.source}</strong></div>
-            <div class="dc-mini"><small>Azione consigliata</small><strong>${a.action}</strong></div>
-            <div class="dc-mini"><small>Routing</small><strong>${a.route}</strong></div>
-          </div>
+function getTopics(){ return dataByTab[currentTab].topics; }
+function currentTopic(){
+  const topics = getTopics();
+  return topics.find(t=>t.id===activeTopicId) || topics[0];
+}
+function allAlerts(){
+  return getTopics().flatMap(t=>t.alerts.map(a=>({...a, topicLabel:t.label, topicId:t.id, topicDescription:t.description})));
+}
+function currentAlert(){
+  const list = allAlerts();
+  return list.find(a=>a.id===activeAlertId) || list[0];
+}
+function normalizeStateText(s){
+  if(s==="urgent"||s==="high") return ["red", s];
+  if(s==="today"||s==="medium"||s==="confirm") return ["yellow", s];
+  if(s==="routed"||s==="draft"||s==="approval"||s==="local") return ["blue", s];
+  return ["green", s];
+}
+function scoreClass(n){
+  return n>=3 ? "red" : n>=2 ? "yellow" : "green";
+}
+function badge(label,cls){
+  return `<span class="badge ${cls}">${label}</span>`;
+}
+function escapeHtml(str){
+  return String(str).replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
+}
+function ensureSelection(){
+  const topics = getTopics();
+  if(!activeTopicId || !topics.find(t=>t.id===activeTopicId)) activeTopicId = topics[0]?.id || null;
+  const alerts = currentTopic()?.alerts || [];
+  if(!activeAlertId || !alerts.find(a=>a.id===activeAlertId)) activeAlertId = alerts[0]?.id || null;
+}
+function chartMarkup(values, state, viewBox="0 0 420 96"){
+  const W=420,H=96,px=14,py=10;
+  const max=Math.max(...values), min=Math.min(...values), range=max-min||1;
+  const stepX=(W-px*2)/(values.length-1);
+  const fy=v=>H-py-(((v-min)/range)*(H-py*2));
+  const pts=values.map((v,i)=>`${px+i*stepX},${fy(v)}`).join(" ");
+  const area=`${px},${H-py} ${pts} ${W-px},${H-py}`;
+  const color=state==="urgent"?"#d92d20":state==="today"?"#b54708":state==="routed"?"#175cd3":"#027a48";
+  return `
+  <svg class="chart-svg" viewBox="${viewBox}" preserveAspectRatio="none">
+    <defs>
+      <linearGradient id="grad-${Math.random().toString(36).slice(2,8)}" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0%" stop-color="${color}" stop-opacity=".22"/>
+        <stop offset="100%" stop-color="${color}" stop-opacity="0"/>
+      </linearGradient>
+    </defs>
+    <polygon points="${area}" fill="${color}" opacity=".12"/>
+    <polyline points="${pts}" fill="none" stroke="${color}" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+    ${values.map((v,i)=>`<circle cx="${px+i*stepX}" cy="${fy(v)}" r="${i===values.length-1?4.5:3}" fill="${color}" opacity="${i===values.length-1?1:.65}"/>`).join("")}
+  </svg>`;
+}
+function toast(msg){
+  const wrap=document.getElementById("toastWrap");
+  const el=document.createElement("div");
+  el.className="toast";
+  el.textContent=msg;
+  wrap.appendChild(el);
+  requestAnimationFrame(()=>el.classList.add("show"));
+  setTimeout(()=>{el.classList.remove("show"); setTimeout(()=>el.remove(),180);},2200);
+}
+function openDrawer(type, payload){
+  const drawer=document.getElementById("drawer");
+  const overlay=document.getElementById("overlay");
+  const title=document.getElementById("drawerTitle");
+  const sub=document.getElementById("drawerSub");
+  const body=document.getElementById("drawerBody");
+
+  if(type==="alert"){
+    const a=payload;
+    title.textContent=a.title;
+    sub.textContent=`${a.route} · ${a.target} · ${a.source}`;
+    const state = normalizeStateText(a.state)[0];
+    body.innerHTML=`
+      <div class="modal-block"><div class="in">
+        <div class="chips" style="margin-bottom:10px">
+          ${badge(a.state,state)}
+          ${badge("risk "+a.risk,scoreClass(a.risk))}
+          ${badge("trend "+a.trend,scoreClass(a.trend))}
+          ${badge("priority "+a.priority,scoreClass(a.priority))}
+          ${badge(a.route,"blue")}
+          ${badge(a.target,"green")}
         </div>
-        <div class="dc-actions">
-          <button class="btn primary" onclick="openDrawer(window._currentAlert())">Apri detail</button>
-          <button class="btn danger">Daj instrukciju media timu</button>
-          <button class="btn">Pošalji mjesnom odboru</button>
-          <button class="btn">Stavi na hold</button>
-        </div>`;
-    }
+        <p class="dc-text" style="margin-bottom:0">${a.summary}</p>
+      </div></div>
 
-    window._currentAlert = currentAlert;
-
-    // CHART
-    function renderChart(){
-      const a=currentAlert();
-      const svg=document.getElementById("miniChart");
-      const W=400,H=80,px=16,py=8;
-      const vals=a.trendLine;
-      const max=Math.max(...vals);
-      const min=Math.min(...vals);
-      const range=max-min||1;
-      const stepX=(W-px*2)/(vals.length-1);
-      function fy(v){ return H-py-(((v-min)/range)*(H-py*2)); }
-
-      const colorMap={urgent:"#ff3535",today:"#ff8f00",routed:"#4d9fff",watch:"#00d97e"};
-      const c=colorMap[a.state]||"#4d9fff";
-
-      let pts=vals.map((v,i)=>`${px+i*stepX},${fy(v)}`).join(" ");
-      let area=`${px},${H-py} `+pts+` ${W-px},${H-py}`;
-
-      document.getElementById("chartMeta").textContent=a.state+" · "+a.target;
-
-      svg.innerHTML=`
-        <defs>
-          <linearGradient id="grad" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0%" stop-color="${c}" stop-opacity=".25"/>
-            <stop offset="100%" stop-color="${c}" stop-opacity="0"/>
-          </linearGradient>
-        </defs>
-        <polygon points="${area}" fill="url(#grad)"/>
-        <polyline points="${pts}" fill="none" stroke="${c}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-        ${vals.map((v,i)=>`<circle cx="${px+i*stepX}" cy="${fy(v)}" r="${i===vals.length-1?4:2.5}" fill="${c}" opacity="${i===vals.length-1?1:.6}"/>`).join("")}
-      `;
-    }
-
-    function renderRight(){ renderDetail(); renderChart(); }
-
-    // DRAWER
-    function openDrawer(alertObj){
-      document.getElementById("drawerTitle").textContent=alertObj.title;
-      document.getElementById("drawerSub").textContent=alertObj.route+" · "+alertObj.target+" · "+alertObj.source;
-      document.getElementById("drawerBody").innerHTML=`
-        <div class="dc-chips" style="margin-bottom:10px">
-          <span class="badge ${badgeClass(alertObj.state)}">${alertObj.state}</span>
-          <span class="badge ${scoreClass(alertObj.risk)}">risk ${alertObj.risk}</span>
-          <span class="badge ${scoreClass(alertObj.trend)}">trend ${alertObj.trend}</span>
-          <span class="badge ${scoreClass(alertObj.priority)}">priority ${alertObj.priority}</span>
-          <span class="badge blue">${alertObj.route}</span>
+      <div class="modal-block">
+        <div class="section-head">
+          <span class="section-head-title">Grafico 10 giorni</span>
+          <span class="section-head-meta">${a.state} · ${a.target}</span>
         </div>
-        <p style="font-size:12px;color:var(--text2);line-height:1.5;margin-bottom:12px">${alertObj.summary}</p>
-        <div class="dc-mini" style="margin-bottom:6px"><small>Zašto je sistem ovo podigao</small><strong>${alertObj.reason}</strong></div>
-        <div class="dc-mini" style="margin-bottom:14px"><small>Preporučena akcija</small><strong>${alertObj.action}</strong></div>
-        <div class="section-head" style="margin:0 -14px;padding:7px 14px;border-top:1px solid var(--line)">
+        <div class="chart-box">${chartMarkup(a.trendLine, a.state)}</div>
+      </div>
+
+      <div class="modal-block"><div class="in">
+        <div class="dc-grid" style="margin-top:0">
+          <div class="dc-mini"><small>Perché conta</small><strong>${a.reason}</strong></div>
+          <div class="dc-mini"><small>Fonte</small><strong>${a.source}</strong></div>
+          <div class="dc-mini"><small>Azione consigliata</small><strong>${a.action}</strong></div>
+          <div class="dc-mini"><small>Routing</small><strong>${a.route}</strong></div>
+        </div>
+      </div></div>
+
+      <div class="modal-block">
+        <div class="section-head">
           <span class="section-head-title">Timeline</span>
           <span class="section-head-meta">zadnjih sati</span>
         </div>
-        <div class="timeline">
-          ${alertObj.timeline.map(item=>`
-            <div class="timeline-item">
-              <span class="ti-time">${item[0]}</span>
-              <span class="ti-text">${item[1]}</span>
+        <div class="in">
+          <div class="timeline">
+            ${a.timeline.map(item=>`<div class="timeline-item"><span class="ti-time">${item[0]}</span><span class="ti-text">${item[1]}</span></div>`).join("")}
+          </div>
+        </div>
+        <div class="modal-actions">
+          <button class="btn primary" onclick="actionToast('Case otvoren za '+decodeHTML('${encodeURIComponent(a.title)}'))">Open case</button>
+          <button class="btn red" onclick="actionToast('Instrukcija poslana media timu')">Instrukcija media timu</button>
+          <button class="btn blue" onclick="actionToast('Proslijeđeno lokalnom odboru')">Pošalji mjesnom odboru</button>
+          <button class="btn" onclick="actionToast('Tema stavljena na hold 24h')">Stavi na hold</button>
+        </div>
+      </div>`;
+  } else if(type==="topic"){
+    const t=payload;
+    title.textContent=t.label;
+    sub.textContent=t.description;
+    const avgTrend = t.alerts[0]?.trendLine || [1,2,3];
+    body.innerHTML=`
+      <div class="modal-block"><div class="in">
+        <div class="chips" style="margin-bottom:10px">
+          ${badge(t.label, t.color==="red"?"red":t.color==="yellow"?"yellow":"green")}
+          ${badge(t.count+" alert","gray")}
+          ${badge("topic view","blue")}
+        </div>
+        <p class="dc-text" style="margin-bottom:0">${t.description}</p>
+      </div></div>
+
+      <div class="modal-block">
+        <div class="section-head">
+          <span class="section-head-title">Trend tema</span>
+          <span class="section-head-meta">10 giorni</span>
+        </div>
+        <div class="chart-box">${chartMarkup(avgTrend, t.color==="red"?"urgent":t.color==="yellow"?"today":"watch")}</div>
+      </div>
+
+      <div class="modal-block">
+        <div class="section-head">
+          <span class="section-head-title">Alert collegati</span>
+          <span class="section-head-meta">${t.alerts.length} elementi</span>
+        </div>
+        <div class="queue-list">
+          ${t.alerts.map(a=>`
+            <div class="queue-card">
+              <div style="flex:1">
+                <div class="qc-title">${a.title}</div>
+                <div class="qc-desc">${a.summary}</div>
+              </div>
+              <div class="qc-right">
+                ${badge(a.state, normalizeStateText(a.state)[0])}
+                <button class="btn blue" onclick="selectAlertFromPopup('${t.id}','${a.id}')">Apri</button>
+              </div>
             </div>`).join("")}
         </div>
-        <div style="display:flex;flex-wrap:wrap;gap:6px;margin-top:14px">
-          <button class="btn primary">Open case</button>
-          <button class="btn danger">Instrukcija media timu</button>
-          <button class="btn">Pošalji mjesnom odboru</button>
-          <button class="btn">Traži local confirm</button>
-        </div>`;
-      document.getElementById("drawer").classList.add("open");
-    }
+      </div>`;
+  } else if(type==="case"){
+    const c=payload;
+    title.textContent=c.title;
+    sub.textContent=`${c.id} · owner ${c.owner} · due ${c.due}`;
+    body.innerHTML=`
+      <div class="modal-block"><div class="in">
+        <div class="chips" style="margin-bottom:10px">
+          ${badge(c.status, normalizeStateText(c.status)[0])}
+          ${badge(c.severity, normalizeStateText(c.severity)[0])}
+          ${badge(c.owner,"blue")}
+        </div>
+        <p class="dc-text" style="margin-bottom:0">${c.detail}</p>
+      </div></div>
+      <div class="modal-block"><div class="in">
+        <div class="timeline">
+          <div class="timeline-item"><span class="ti-time">08:15</span><span class="ti-text">Signal ingestovan i povezan s aktivnim temama.</span></div>
+          <div class="timeline-item"><span class="ti-time">10:40</span><span class="ti-text">Case otvoren i routing potvrđen.</span></div>
+          <div class="timeline-item"><span class="ti-time">12:25</span><span class="ti-text">Čeka finalnu odluku ili potvrdu ownershipa.</span></div>
+        </div>
+      </div>
+      <div class="modal-actions">
+        <button class="btn primary" onclick="actionToast('Case approvato')">Approva linea</button>
+        <button class="btn red" onclick="actionToast('Case inviato media timu')">Invia media team</button>
+        <button class="btn" onclick="actionToast('Case messo in watch 24h')">Watch 24h</button>
+      </div></div>`;
+  }
 
-    function renderAll(){
-      renderTraffic();
-      renderQueue();
-      renderAlerts();
-      renderRight();
-    }
-
-    document.getElementById("toggleSidebar").addEventListener("click",()=>{
-      document.getElementById("app").classList.toggle("collapsed");
-    });
-    document.getElementById("closeDrawer").addEventListener("click",()=>{
-      document.getElementById("drawer").classList.remove("open");
-    });
-    document.querySelectorAll(".ttab").forEach(btn=>{
-      btn.addEventListener("click",()=>{
-        document.querySelectorAll(".ttab").forEach(b=>b.classList.remove("active"));
-        btn.classList.add("active");
-      });
-    });
-
-    renderAll();
-  </script>
+  drawer.classList.add("open");
+  overlay.classList.add("open");
+}
+function closeDrawer(){
+  document.getElementById("drawer").classList.remove("open");
+  document.getElementById("overlay").classList.remove("open");
+}
+function actionToast(msg){ toast(msg); }
+function decodeHTML(str){ return decodeURIComponent(str); }
+function selectAlertFromPopup(topicId, alertId){
+  activeTopicId=topicId;
+  activeAlertId=alertId;
+  closeDrawer();
+  renderAll();
+  toast("Alert aperto nella dashboard");
+}
+function renderKpis(){
+  const alerts = allAlerts();
+  const urgent = alerts.filter(a=>a.state==="urgent").length;
+  const today = alerts.filter(a=>a.state==="today").length;
+  const watch = alerts.filter(a=>a.state==="watch").length;
+  const routed = alerts.filter(a=>a.state==="routed").length;
+  const data = [
+    ["Active alerts", alerts.length, `${urgent} rossi`, urgent? "red":"blue"],
+    ["Open cases", cases.length, `${cases.filter(c=>c.status==="approval").length} čekaju vrh`, "amber"],
+    ["Follow-up watch", watch, `${watch} pod nadzorom`, "green"],
+    ["Instradati", routed, `${routed} ownership chiara`, "blue"],
+    ["Media returns", mediaReturns.length, `oggi`, "blue"]
+  ];
+  document.getElementById("kpiRow").innerHTML = data.map(item=>`
+    <div class="kpi">
+      <div class="kpi-label">${item[0]}</div>
+      <div class="kpi-val ${item[3]}">${item[1]}</div>
+      <div class="kpi-sub">${item[2]}</div>
+    </div>`).join("");
+}
+function renderTraffic(){
+  const row=document.getElementById("trafficRow");
+  row.innerHTML="";
+  getTopics().forEach(topic=>{
+    const el=document.createElement("div");
+    el.className="traffic"+(topic.id===activeTopicId?" active":"");
+    el.innerHTML=`<span class="t-dot ${topic.color}"></span><span class="t-label">${topic.label}</span><span class="t-count">${topic.count}</span>`;
+    el.onclick=()=>{
+      activeTopicId=topic.id;
+      activeAlertId=topic.alerts[0]?.id;
+      renderAll();
+      openDrawer("topic", topic);
+    };
+    row.appendChild(el);
+  });
+}
+function renderQueue(){
+  const list=document.getElementById("vrhQueue");
+  const items=allAlerts().filter(a=>a.route.includes("Vrh") || a.state==="urgent").slice(0,5);
+  list.innerHTML = items.map(a=>`
+    <div class="queue-card">
+      <div style="flex:1">
+        <div class="qc-title">${a.title}</div>
+        <div class="qc-desc">${a.reason}</div>
+      </div>
+      <div class="qc-right">
+        ${badge(a.state,normalizeStateText(a.state)[0])}
+        ${badge("P"+a.priority,scoreClass(a.priority))}
+      </div>
+    </div>`).join("");
+}
+function renderLegend(){
+  document.getElementById("legendList").innerHTML = legendItems.map(item=>`
+    <div class="queue-card">
+      <div style="flex:1">
+        <div class="qc-title">${item.title}</div>
+        <div class="qc-desc">${item.desc}</div>
+      </div>
+      <div class="qc-right">${item.badges.map(b=>badge(b[0],b[1])).join("")}</div>
+    </div>`).join("");
+}
+function renderAlerts(){
+  const t=currentTopic();
+  const list=document.getElementById("alertList");
+  document.getElementById("alertsTitle").textContent = "Alert · " + t.label;
+  document.getElementById("alertsMeta").textContent = t.alerts.length + " elementi";
+  list.innerHTML = t.alerts.map(a=>`
+    <div class="alert-card ${a.id===activeAlertId?"active":""}" data-alert-id="${a.id}">
+      <div class="alert-main">
+        <div class="alert-top">
+          ${badge(a.state,normalizeStateText(a.state)[0])}
+          ${badge("risk "+a.risk,scoreClass(a.risk))}
+          ${badge("trend "+a.trend,scoreClass(a.trend))}
+          ${badge("P"+a.priority,scoreClass(a.priority))}
+          ${badge(a.route,"blue")}
+        </div>
+        <div class="alert-title">${a.title}</div>
+        <div class="alert-desc">${a.summary}</div>
+      </div>
+      <div class="alert-side">
+        <div class="score-box"><small>target</small><strong>${a.target}</strong></div>
+        <div class="score-box"><small>source</small><strong>${a.source}</strong></div>
+      </div>
+    </div>`).join("");
+  [...list.querySelectorAll(".alert-card")].forEach((el,idx)=>{
+    const a=t.alerts[idx];
+    el.onclick=()=>{ activeAlertId=a.id; renderDetail(); renderChart(); renderAlerts(); };
+    el.ondblclick=()=>openDrawer("alert", {...a, topicLabel:t.label});
+  });
+}
+function renderDetail(){
+  const a=currentAlert();
+  const box=document.getElementById("detailCard");
+  box.innerHTML=`
+    <div class="body">
+      <div class="dc-kicker">selected alert</div>
+      <div class="dc-title">${a.title}</div>
+      <div class="dc-text">${a.summary}</div>
+      <div class="chips">
+        ${badge(a.state,normalizeStateText(a.state)[0])}
+        ${badge("risk "+a.risk,scoreClass(a.risk))}
+        ${badge("trend "+a.trend,scoreClass(a.trend))}
+        ${badge("priority "+a.priority,scoreClass(a.priority))}
+        ${badge(a.route,"blue")}
+        ${badge(a.target,"green")}
+      </div>
+      <div class="dc-grid">
+        <div class="dc-mini"><small>Perché conta</small><strong>${a.reason}</strong></div>
+        <div class="dc-mini"><small>Fonte</small><strong>${a.source}</strong></div>
+        <div class="dc-mini"><small>Azione consigliata</small><strong>${a.action}</strong></div>
+        <div class="dc-mini"><small>Routing</small><strong>${a.route}</strong></div>
+      </div>
+    </div>
+    <div class="actions">
+      <button class="btn primary" id="btnOpenPopup">Apri popup completo</button>
+      <button class="btn red" onclick="actionToast('Instrukcija media timu')">Media team</button>
+      <button class="btn blue" onclick="actionToast('Pošalji mjesnom odboru')">Local board</button>
+      <button class="btn" onclick="actionToast('Stavljeno na hold')">Hold</button>
+    </div>`;
+  document.getElementById("btnOpenPopup").onclick = ()=>openDrawer("alert", a);
+}
+function renderChart(){
+  const a=currentAlert();
+  document.getElementById("chartMeta").textContent = `${a.state} · ${a.target}`;
+  document.getElementById("miniChart").outerHTML = chartMarkup(a.trendLine, a.state, "0 0 420 96").replace('class="chart-svg"', 'class="chart-svg" id="miniChart"');
+}
+function renderMediaReturns(){
+  document.getElementById("mediaReturns").innerHTML = mediaReturns.map(item=>`
+    <div class="queue-card">
+      <div style="flex:1">
+        <div class="qc-title">${item.title}</div>
+        <div class="qc-desc">${item.desc}</div>
+      </div>
+      <div class="qc-right">${badge(item.tag[0], item.tag[1])}</div>
+    </div>`).join("");
+}
+function renderAllAlerts(){
+  let alerts = allAlerts();
+  if(activeFilter!=="all") alerts = alerts.filter(a=>a.state===activeFilter);
+  if(searchTerm.trim()){
+    const q=searchTerm.toLowerCase();
+    alerts = alerts.filter(a =>
+      [a.title,a.summary,a.source,a.target,a.route,a.topicLabel].join(" ").toLowerCase().includes(q)
+    );
+  }
+  document.getElementById("allAlertsMeta").textContent = alerts.length + " risultati";
+  document.getElementById("allAlertsList").innerHTML = alerts.map(a=>`
+    <div class="alert-card">
+      <div>
+        <div class="alert-top">
+          ${badge(a.topicLabel,"gray")}
+          ${badge(a.state,normalizeStateText(a.state)[0])}
+          ${badge("P"+a.priority,scoreClass(a.priority))}
+        </div>
+        <div class="alert-title">${a.title}</div>
+        <div class="alert-desc">${a.summary}</div>
+      </div>
+      <div class="alert-side">
+        <button class="btn blue" onclick="jumpToAlert('${a.topicId}','${a.id}')">Apri</button>
+      </div>
+    </div>`).join("");
+}
+function jumpToAlert(topicId, alertId){
+  activeTopicId=topicId; activeAlertId=alertId; activeView="overview";
+  renderAll(); toast("Alert portato in overview");
+}
+function renderFilters(){
+  const states=["all","urgent","today","routed","watch"];
+  document.getElementById("stateFilters").innerHTML = states.map(s=>`
+    <button class="pill ${activeFilter===s?'active':''}" data-filter="${s}">${s}</button>`).join("");
+  [...document.querySelectorAll("#stateFilters .pill")].forEach(btn=>{
+    btn.onclick=()=>{activeFilter=btn.dataset.filter; renderFilters(); renderAllAlerts();};
+  });
+}
+function renderCases(){
+  document.getElementById("caseSummary").innerHTML = [
+    ["Case open",cases.length,"blue"],
+    ["Approval",cases.filter(c=>c.status==="approval").length,"red"],
+    ["In progress",cases.filter(c=>c.status==="in progress").length,"yellow"],
+    ["Watch",cases.filter(c=>c.status==="watch").length,"green"]
+  ].map(i=>`
+    <div class="kpi">
+      <div class="kpi-label">${i[0]}</div>
+      <div class="kpi-val ${i[2]}">${i[1]}</div>
+      <div class="kpi-sub">demo</div>
+    </div>`).join("");
+  document.getElementById("caseList").innerHTML = cases.map(c=>`
+    <div class="queue-card" data-case="${c.id}">
+      <div style="flex:1">
+        <div class="qc-title">${c.title}</div>
+        <div class="qc-desc">${c.detail}</div>
+      </div>
+      <div class="qc-right">
+        ${badge(c.status, normalizeStateText(c.status)[0])}
+        ${badge(c.severity, normalizeStateText(c.severity)[0])}
+      </div>
+    </div>`).join("");
+  [...document.querySelectorAll("[data-case]")].forEach((el,idx)=>el.onclick=()=>openDrawer("case", cases[idx]));
+}
+function renderMediaBoard(){
+  document.getElementById("mediaBoard").innerHTML = mediaReturns.map(item=>`
+    <div class="queue-card">
+      <div style="flex:1">
+        <div class="qc-title">${item.title}</div>
+        <div class="qc-desc">${item.desc}</div>
+      </div>
+      <div class="qc-right">
+        ${badge(item.tag[0], item.tag[1])}
+        <button class="btn blue" onclick="actionToast('Aperto task media team')">Open</button>
+      </div>
+    </div>`).join("");
+}
+function renderLocalBoard(){
+  document.getElementById("localBoard").innerHTML = localUpdates.map(item=>`
+    <div class="queue-card">
+      <div style="flex:1">
+        <div class="qc-title">${item.title}</div>
+        <div class="qc-desc">${item.desc}</div>
+      </div>
+      <div class="qc-right">${badge(item.tag[0], item.tag[1])}</div>
+    </div>`).join("");
+}
+function renderFullQueue(){
+  const items = allAlerts().sort((a,b)=>b.priority-a.priority || b.trend-a.trend);
+  document.getElementById("fullQueue").innerHTML = items.map(a=>`
+    <div class="queue-card">
+      <div style="flex:1">
+        <div class="qc-title">${a.title}</div>
+        <div class="qc-desc">${a.reason}</div>
+      </div>
+      <div class="qc-right">
+        ${badge(a.state, normalizeStateText(a.state)[0])}
+        ${badge("P"+a.priority, scoreClass(a.priority))}
+      </div>
+    </div>`).join("");
+}
+function renderTopicsView(){
+  document.getElementById("topicsList").innerHTML = getTopics().map(t=>`
+    <div class="queue-card" data-topic-id="${t.id}">
+      <div style="flex:1">
+        <div class="qc-title">${t.label}</div>
+        <div class="qc-desc">${t.description}</div>
+      </div>
+      <div class="qc-right">
+        ${badge(t.count+" alert","gray")}
+        <button class="btn blue">Apri</button>
+      </div>
+    </div>`).join("");
+  [...document.querySelectorAll("[data-topic-id]")].forEach((el,idx)=>el.onclick=()=>openDrawer("topic", getTopics()[idx]));
+}
+function renderFollow(){
+  const followItems = allAlerts().filter(a=>a.route.includes("Follow") || a.target==="archive" || a.target==="follow-up" || a.target==="memory");
+  document.getElementById("followList").innerHTML = followItems.map(a=>`
+    <div class="queue-card">
+      <div style="flex:1">
+        <div class="qc-title">${a.title}</div>
+        <div class="qc-desc">${a.summary}</div>
+      </div>
+      <div class="qc-right">
+        ${badge(a.target,"green")}
+        <button class="btn blue" onclick="openDrawer('alert', currentFollow('${a.id}'))">Apri</button>
+      </div>
+    </div>`).join("");
+}
+function currentFollow(id){ return allAlerts().find(a=>a.id===id); }
+function setView(view){
+  activeView=view;
+  document.querySelectorAll("section[id^='view-']").forEach(sec=>sec.classList.add("hidden-section"));
+  document.getElementById("view-"+view)?.classList.remove("hidden-section");
+  document.querySelectorAll(".side-link").forEach(btn=>btn.classList.toggle("active", btn.dataset.view===view));
+  const labels = {
+    overview:["VRH <span>· overview</span>","Pregled svega bitnog, optimizovan za telefon i brzu procjenu."],
+    alerts:["Alert <span>· center</span>","Lista svih alert-a sa pretragom i filtrima."],
+    cases:["Case <span>· workflow</span>","Predmeti, ownership, approval i watch."],
+    media:["Media <span>· team</span>","Draftovi, potvrde, povrati i radni tok."],
+    local:["Lokalni <span>· odbori</span>","Terenske potvrde i instrukcije."],
+    queue:["VRH <span>· queue</span>","Extended priority queue per decisione."],
+    topics:["Topics <span>· cluster</span>","Teme, trend i ulaz u popup tema."],
+    follow:["Memoria <span>· follow-up</span>","Arhivski povrati i recurrence."],
+  };
+  document.getElementById("pageTitle").innerHTML = labels[view][0];
+  document.getElementById("pageDesc").textContent = labels[view][1];
+}
+function renderAll(){
+  ensureSelection();
+  renderKpis();
+  renderTraffic();
+  renderQueue();
+  renderLegend();
+  renderAlerts();
+  renderDetail();
+  renderChart();
+  renderMediaReturns();
+  renderFilters();
+  renderAllAlerts();
+  renderCases();
+  renderMediaBoard();
+  renderLocalBoard();
+  renderFullQueue();
+  renderTopicsView();
+  renderFollow();
+  setView(activeView);
+}
+document.getElementById("toggleSidebar").onclick=()=>document.getElementById("app").classList.toggle("collapsed");
+document.getElementById("mobileBurger").onclick=()=>{
+  document.getElementById("sidebar").classList.add("mobile-open");
+  document.getElementById("overlay").classList.add("open");
+};
+document.getElementById("overlay").onclick=()=>{
+  closeDrawer();
+  document.getElementById("sidebar").classList.remove("mobile-open");
+};
+document.getElementById("closeDrawer").onclick=closeDrawer;
+document.getElementById("quickOpen").onclick=()=>openDrawer("alert", currentAlert());
+document.querySelectorAll(".side-link").forEach(btn=>btn.onclick=()=>{
+  setView(btn.dataset.view);
+  document.getElementById("sidebar").classList.remove("mobile-open");
+  if(window.innerWidth<981) document.getElementById("overlay").classList.remove("open");
+});
+document.querySelectorAll(".tab-btn").forEach(btn=>btn.onclick=()=>{
+  document.querySelectorAll(".tab-btn").forEach(b=>b.classList.remove("active"));
+  btn.classList.add("active");
+  currentTab=btn.dataset.tab;
+  activeTopicId=null;
+  activeAlertId=null;
+  renderAll();
+  toast("Scenario aggiornato: "+btn.textContent);
+});
+document.getElementById("searchInput").addEventListener("input", e=>{
+  searchTerm=e.target.value;
+  renderAllAlerts();
+});
+window.addEventListener("keydown", e=>{ if(e.key==="Escape") closeDrawer(); });
+renderAll();
+</script>
 </body>
 </html>
