@@ -95,6 +95,22 @@
     .top-title span{color:var(--text-3)}
     .top-desc{font-size:.76rem;color:var(--text-3);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:460px}
     .top-actions{margin-left:auto;display:flex;align-items:center;gap:8px;flex-wrap:wrap;justify-content:flex-end}
+    .top-main-actions{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+    .title-refresh{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+    .title-refresh .refresh-top-btn{padding:8px 10px;font-size:.72rem;font-weight:800;background:var(--surface);border-color:var(--line-2)}
+    .top-brand-mini{font-size:.58rem;font-weight:800;letter-spacing:.16em;color:var(--blue)}
+    .hero-trigger{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:14px 16px}
+    .hero-trigger h2{font-size:1.08rem;letter-spacing:-.02em}
+    .hero-trigger .hero-actions{display:flex;flex-wrap:wrap;gap:8px}
+    .topic-tile.active{outline:2px solid var(--blue);background:var(--blue-soft)}
+    .seen-flag{margin-top:8px;display:flex;gap:6px;flex-wrap:wrap}
+    .reset-inline{padding:10px 12px;font-size:.75rem;font-weight:800;background:#fff;border:1px solid var(--line-2);border-radius:12px;cursor:pointer;color:var(--text-2)}
+    .filters .reset-inline{flex:0 0 auto}
+    .modal{max-height:calc(100vh - 64px);margin-top:18px}
+    .modal-head{padding:14px 16px}
+    .modal-body{padding:14px 16px 12px}
+    .close-btn{font-weight:800;background:#fff;border-color:var(--line-2)}
+
     .tab-btn{padding:9px 11px;font-size:.7rem;text-transform:uppercase;letter-spacing:.12em;font-weight:800}
     .tab-btn.active{background:var(--blue);color:#fff;border-color:var(--blue)}
     .content{padding:12px 16px 16px;display:flex;flex-direction:column;gap:14px}
@@ -203,6 +219,15 @@ section[id]{scroll-margin-top:92px}
       .topic-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
     }
     @media (max-width: 860px){
+      .top-main-actions{width:100%}
+      .title-refresh{width:100%;justify-content:space-between}
+      .top-actions{gap:6px}
+      .top-actions .tab-btn{font-size:.64rem;padding:7px 9px}
+      .hero-trigger{padding:12px}
+      .hero-trigger h2{font-size:1rem}
+      .modal{max-height:calc(100vh - 34px);width:calc(100vw - 12px);height:auto;inset:14px 6px auto 6px;transform:none;border-radius:18px}
+      .modal.open{transform:none}
+
       html{font-size:16px}
       .app{grid-template-columns:1fr}
       .sidebar{position:fixed;left:0;top:0;bottom:0;transform:translateX(-100%);width:min(88vw,300px);height:100vh;box-shadow:0 30px 80px rgba(15,23,42,.24)}
@@ -272,41 +297,40 @@ section[id]{scroll-margin-top:92px}
         </button>
         <div class="top-title-wrap">
           <div class="top-brand-mini">UJEDINJENA SRPSKA</div>
-          <div class="top-title">VRH <span>· overview</span></div>
-          <div class="top-desc">Emergenze prvo. Teme u radu odmah ispod.</div>
+          <div class="title-refresh">
+            <div class="top-title">VRH <span>· pregled</span></div>
+            <button class="action-btn refresh-top-btn" id="refreshTopBtn">Osvježi</button>
+          </div>
+          <div class="top-desc">Hitno prvo. Teme u radu i odluke odmah ispod.</div>
         </div>
         <div class="top-actions">
-          <button class="tab-btn active" data-scenario="bih">Scenario BIH</button>
-          <button class="tab-btn" data-scenario="7d">7 dana</button>
-          <button class="tab-btn" data-scenario="cen">Centralno</button>
-          <button class="tab-btn" data-scenario="hi">High priority</button>
-          <button class="action-btn" id="legendBtn">Legenda</button>
+          <div class="top-main-actions">
+            <button class="tab-btn active" data-scenario="bih">BIH</button>
+            <button class="tab-btn" data-scenario="7d">7 dana</button>
+            <button class="tab-btn" data-scenario="cen">Centralno</button>
+            <button class="tab-btn" data-scenario="hi">Hitno</button>
+            <button class="action-btn" id="legendBtn">Legenda</button>
+          </div>
         </div>
       </div>
 
       <div class="content">
         <section class="hero-grid" id="overview">
-          <div class="panel hero-card">
+          <div class="panel hero-trigger">
             <h2>Hitno sada</h2>
-            <p>Crveni i narandžasti prioriteti.</p>
-            <div class="hero-list" id="heroUrgentChips"></div>
+            <div class="hero-actions">
+              <button class="action-btn primary" id="urgentOverviewBtn">Otvori</button>
+            </div>
           </div>
-          <div class="panel hero-card">
+          <div class="panel hero-trigger">
             <h2>Teme u radu</h2>
-            <p>Aktivne teme i klasteri.</p>
-            <div class="hero-list" id="heroTopicChips"></div>
+            <div class="hero-actions">
+              <button class="action-btn" id="topicsOverviewBtn">Otvori</button>
+            </div>
           </div>
         </section>
 
         <section class="kpi-row" id="kpiRow"></section>
-
-        <section class="panel" id="topics">
-          <div class="panel-head">
-            <div class="panel-title">Aktivne teme</div>
-            <div class="panel-meta">klik za pregled teme</div>
-          </div>
-          <div class="topic-grid" id="topicGrid"></div>
-        </section>
 
         <section class="queue-split" id="queue">
           <div class="panel">
@@ -325,6 +349,14 @@ section[id]{scroll-margin-top:92px}
           </div>
         </section>
 
+        <section class="panel" id="topics">
+          <div class="panel-head">
+            <div class="panel-title">Aktivne teme</div>
+            <div class="panel-meta">klik za pregled teme</div>
+          </div>
+          <div class="topic-grid" id="topicGrid"></div>
+        </section>
+
         <section class="two-col" id="alerts">
           <div class="panel">
             <div class="panel-head">
@@ -335,14 +367,15 @@ section[id]{scroll-margin-top:92px}
               <div class="search"><input id="searchInput" type="text" placeholder="Pretraži alert, mjesto, temu, izvor..." /></div>
               <select class="filter-select" id="stateFilter">
                 <option value="all">Svi statusi</option>
-                <option value="urgent">Urgent</option>
-                <option value="today">Today</option>
-                <option value="routed">Routed</option>
-                <option value="watch">Watch</option>
+                <option value="urgent">Hitno</option>
+                <option value="today">Danas</option>
+                <option value="routed">Usmjereno</option>
+                <option value="watch">Praćenje</option>
               </select>
               <select class="filter-select" id="topicFilter">
                 <option value="all">Sve teme</option>
               </select>
+              <button class="reset-inline" id="resetFiltersBtn">Reset</button>
             </div>
             <div class="alert-list" id="alertList"></div>
           </div>
@@ -350,7 +383,7 @@ section[id]{scroll-margin-top:92px}
           <div class="panel">
             <div class="panel-head">
               <div class="panel-title">Izabrani pregled</div>
-              <div class="panel-meta">detalj sa grafikom</div>
+              <div class="panel-meta">detalj sa grafikonom</div>
             </div>
             <div class="summary-panel" id="summaryPanel"></div>
           </div>
@@ -367,7 +400,7 @@ section[id]{scroll-margin-top:92px}
           <div class="panel" id="media">
             <div class="panel-head">
               <div class="panel-title">Medijski tim & mjesni odbori</div>
-              <div class="panel-meta">demo akcije</div>
+              <div class="panel-meta">radnje u demo prikazu</div>
             </div>
             <div class="media-list" id="mediaList"></div>
           </div>
@@ -383,7 +416,7 @@ section[id]{scroll-margin-top:92px}
           </div>
           <div class="panel" id="followup">
             <div class="panel-head">
-              <div class="panel-title">Povratak tema / ritorni</div>
+              <div class="panel-title">Povratak tema</div>
               <div class="panel-meta">povratak tema i arhiva</div>
             </div>
             <div class="topic-list" id="followList"></div>
@@ -394,6 +427,16 @@ section[id]{scroll-margin-top:92px}
   </div>
 
   <div class="modal-overlay" id="modalOverlay"></div>
+  <div class="modal" id="overviewModal">
+    <div class="modal-head">
+      <div style="flex:1;min-width:0">
+        <h3 id="overviewModalTitle">Pregled</h3>
+        <div class="modal-sub" id="overviewModalSub">Brzi izbor</div>
+      </div>
+      <button class="close-btn" id="closeOverviewModal">✕</button>
+    </div>
+    <div class="modal-body" id="overviewModalBody"></div>
+  </div>
   <div class="modal" id="detailModal">
     <div class="modal-head">
       <div style="flex:1;min-width:0">
@@ -524,14 +567,15 @@ section[id]{scroll-margin-top:92px}
     ];
 
     const localItems = [
-      {place:'Prijedor',text:'Potvrda o listama birača tražena do 16:00',state:'confirm'},
-      {place:'Doboj',text:'Provjera navoda o zapošljavanju još bez dokaza',state:'watch'},
-      {place:'Trebinje',text:'Tema vode traži jedno lice za odgovor',state:'today'},
-      {place:'Bijeljina',text:'Lokalni FAQ za vrtiće spreman za slanje',state:'done'}
+      {place:'Prijedor',text:'Potvrda o listama birača tražena do 16:00',state:'confirm',ref:'rs03'},
+      {place:'Doboj',text:'Provjera navoda o zapošljavanju još bez dokaza',state:'watch',ref:'rs17'},
+      {place:'Doboj',text:'Kandidat US-a za Vijeće naroda iz Doboja i hrvatski glas u većini',state:'today',ref:'rs31'},
+      {place:'Trebinje',text:'Tema vode traži jedno lice za odgovor',state:'today',ref:'rs20'},
+      {place:'Bijeljina',text:'Lokalni FAQ za vrtiće spreman za slanje',state:'done',ref:'rs18'}
     ];
 
     const stateTone = s => s==='urgent' || s==='high' ? 'red' : s==='today' || s==='medium' || s==='confirm' ? 'amber' : s==='routed' || s==='approval' || s==='draft' ? 'blue' : 'green';
-    const prettyState = s => ({urgent:'urgent',today:'today',watch:'watch',routed:'routed',approval:'approval',open:'open','in progress':'in progress',draft:'draft',confirm:'confirm',done:'done',high:'high',medium:'medium'}[s] || s);
+    const prettyState = s => ({urgent:'hitno',today:'danas',watch:'praćenje',routed:'usmjereno',approval:'odobrenje',open:'otvoreno','in progress':'u radu',draft:'nacrt',confirm:'potvrda',done:'završeno',high:'visoko',medium:'srednje',low:'nisko'}[s] || s);
 
     let activeTopicId = topics[0].id;
     let activeAlertId = topics[0].alerts[0].id;
@@ -556,10 +600,10 @@ section[id]{scroll-margin-top:92px}
     }
 
     function renderHero(){
-      const urgent = allAlerts().filter(a => a.state==='urgent' || a.priority===3).slice(0,6);
-      const workTopics = topics.slice().sort((a,b)=>b.alerts.length-a.alerts.length).slice(0,6);
-      document.getElementById('heroUrgentChips').innerHTML = urgent.map(a => `<button class="chip-btn primary" onclick="openAlertModal('${a.id}')">${a.title}</button>`).join('');
-      document.getElementById('heroTopicChips').innerHTML = workTopics.map(t => `<button class="chip-btn" onclick="openTopicModal('${t.id}')">${t.label} · ${t.alerts.length}</button>`).join('');
+      const urgentCount = allAlerts().filter(a => a.state==='urgent' || a.priority===3).length;
+      const workCount = topics.reduce((acc,t)=>acc+t.alerts.length,0);
+      document.getElementById('urgentOverviewBtn').textContent = `Otvori (${urgentCount})`;
+      document.getElementById('topicsOverviewBtn').textContent = `Otvori (${topics.length})`;
     }
 
     function renderKpis(){
@@ -570,8 +614,8 @@ section[id]{scroll-margin-top:92px}
       const followup = alerts.filter(a=>a.type==='return').length;
       const topicsCount = topics.length;
       const items = [
-        ['Active alerts', active, `${alerts.filter(a=>a.state==='urgent').length} urgent`, 'red', 'Aperti ora'],
-        ['Otvoreni slučajevi', openCases, 'casi demo', 'amber', 'Otvori lista casi'],
+        ['Aktivni alerti', active, `${alerts.filter(a=>a.state==='urgent').length} hitno`, 'red', 'Otvori alert centar'],
+        ['Otvoreni slučajevi', openCases, 'demo slučajevi', 'amber', 'Otvori lista casi'],
         ['Local confirm', localConfirm, 'sa terena', 'blue', 'Vedi locali'],
         ['Povratak tema', followup, 'alert di ritorno', 'green', 'Vai ai ritorni'],
         ['Aktivne teme', topicsCount, 'RS demo', 'blue', 'Otvori temi']
@@ -620,15 +664,15 @@ section[id]{scroll-margin-top:92px}
 
     function renderAlerts(){
       const list = getFilteredAlerts();
-      document.getElementById('alertMeta').textContent = `${list.length} alert filtrati · 30 demo slučajeva`;
+      document.getElementById('alertMeta').textContent = `${list.length} filtrirano alerta · 30 demo slučajeva`;
       const alertList = document.getElementById('alertList');
-      if(!list.length){ alertList.innerHTML = '<div class="empty">Nessun alert con questi filtri. Cambia filtro o cerca meno duro.</div>'; return; }
+      if(!list.length){ alertList.innerHTML = '<div class="empty">Nema alerta za ove filtere. Promijeni filter ili proširi pretragu.</div>'; return; }
       if(!list.some(a=>a.id===activeAlertId)) activeAlertId = list[0].id;
       alertList.innerHTML = list.map(a=>`
         <div class="alert-card ${a.id===activeAlertId?'active':''}" onclick="selectAlert('${a.id}')">
           <div class="card-main">
             <div class="inline-badges">
-              <span class="badge ${stateTone(a.state)}">${a.state}</span>
+              <span class="badge ${stateTone(a.state)}">${prettyState(a.state)}</span>
               <span class="badge ${a.type==='new'?'violet':'gray'}">${a.type==='new'?'novi':'povratak'}</span>
               <span class="badge ${stateTone(a.priority===3?'high':a.priority===2?'medium':'low')}">P${a.priority}</span>
               <span class="badge blue">${a.route}</span>
@@ -657,7 +701,7 @@ section[id]{scroll-margin-top:92px}
       if(!a) return;
       document.getElementById('summaryPanel').innerHTML = `
         <div class="inline-badges">
-          <span class="badge ${stateTone(a.state)}">${a.state}</span>
+          <span class="badge ${stateTone(a.state)}">${prettyState(a.state)}</span>
           <span class="badge ${a.type==='new'?'violet':'gray'}">${a.type==='new'?'nuovo alert':'alert di ritorno'}</span>
           <span class="badge blue">${a.topicLabel}</span>
         </div>
@@ -670,7 +714,7 @@ section[id]{scroll-margin-top:92px}
           <div class="mini-box"><small>zašto je važno</small><strong>${a.reason}</strong></div>
         </div>
         <div class="chart-wrap">
-          <div class="chart-title"><span>Trend demo · ultimi 8 slot</span><span>${a.state} · ${a.target}</span></div>
+          <div class="chart-title"><span>Trend demo · ultimi 8 slot</span><span>${prettyState(a.state)} · ${a.target}</span></div>
           <svg class="chart-svg" id="previewChart"></svg>
         </div>
         <div class="action-line">
@@ -688,7 +732,7 @@ section[id]{scroll-margin-top:92px}
         <div class="queue-card">
           <div class="card-main">
             <div class="inline-badges">
-              <span class="badge ${stateTone(a.state)}">${a.state}</span>
+              <span class="badge ${stateTone(a.state)}">${prettyState(a.state)}</span>
               <span class="badge ${a.type==='new'?'violet':'gray'}">${a.type==='new'?'new':'return'}</span>
             </div>
             <div class="card-title">${a.title}</div>
@@ -718,7 +762,7 @@ section[id]{scroll-margin-top:92px}
       document.getElementById('caseList').innerHTML = casesData.map(c=>`
         <div class="case-card">
           <div class="card-main">
-            <div class="inline-badges"><span class="badge ${stateTone(c.status)}">${c.status}</span><span class="badge ${stateTone(c.severity)}">${c.severity}</span></div>
+            <div class="inline-badges"><span class="badge ${stateTone(c.status)}">${prettyState(c.status)}</span><span class="badge ${stateTone(c.severity)}">${prettyState(c.severity)}</span></div>
             <div class="card-title">${c.title}</div>
             <div class="card-sub">${c.id} · owner ${c.owner} · due ${c.due}</div>
           </div>
@@ -730,26 +774,26 @@ section[id]{scroll-margin-top:92px}
       document.getElementById('mediaList').innerHTML = mediaItems.map(m=>`
         <div class="media-card">
           <div class="card-main">
-            <div class="inline-badges"><span class="badge ${stateTone(m.state)}">${m.state}</span></div>
+            <div class="inline-badges"><span class="badge ${stateTone(m.state)}">${prettyState(m.state)}</span></div>
             <div class="card-title">${m.title}</div>
             <div class="card-text">${m.desc}</div>
           </div>
-          <div class="card-side"><button class="action-btn" onclick="toast('Demo: azione veloce aperta per media team')">Otvori</button></div>
+          <div class="card-side"><button class="action-btn" onclick="toast('Otvoren zapis medijskog tima.')">Otvori</button></div>
         </div>`).join('');
       document.getElementById('localList').innerHTML = localItems.map(m=>`
         <div class="topic-card">
           <div class="card-main">
-            <div class="inline-badges"><span class="badge ${stateTone(m.state)}">${m.state}</span></div>
+            <div class="inline-badges"><span class="badge ${stateTone(m.state)}">${prettyState(m.state)}</span></div>
             <div class="card-title">${m.place}</div>
             <div class="card-text">${m.text}</div>
           </div>
-          <div class="card-side"><button class="action-btn" onclick="toast('Demo: nota locale aperta')">Otvori</button></div>
+          <div class="card-side"><button class="action-btn" onclick="openAlertModal('${m.ref}')">Otvori</button></div>
         </div>`).join('');
       const returns = allAlerts().filter(a=>a.type==='return').slice(0,8);
       document.getElementById('followList').innerHTML = returns.map(a=>`
         <div class="topic-card">
           <div class="card-main">
-            <div class="inline-badges"><span class="badge gray">return</span><span class="badge ${stateTone(a.state)}">${a.state}</span></div>
+            <div class="inline-badges"><span class="badge gray">return</span><span class="badge ${stateTone(a.state)}">${prettyState(a.state)}</span></div>
             <div class="card-title">${a.title}</div>
             <div class="card-text">${a.reason}</div>
           </div>
@@ -792,7 +836,7 @@ section[id]{scroll-margin-top:92px}
         <div class="modal-grid">
           <div>
             <div class="inline-badges">
-              <span class="badge ${stateTone(a.state)}">${a.state}</span>
+              <span class="badge ${stateTone(a.state)}">${prettyState(a.state)}</span>
               <span class="badge ${a.type==='new'?'violet':'gray'}">${a.type==='new'?'nuovo alert':'alert di ritorno'}</span>
               <span class="badge blue">${a.topicLabel}</span>
               <span class="badge gray">${a.place}</span>
@@ -863,6 +907,7 @@ section[id]{scroll-margin-top:92px}
     }
     function closeModals(){
       document.getElementById('modalOverlay').classList.remove('open');
+      document.getElementById('overviewModal').classList.remove('open');
       document.getElementById('detailModal').classList.remove('open');
       document.getElementById('legendModal').classList.remove('open');
       document.getElementById('composeModal').classList.remove('open');
@@ -873,7 +918,7 @@ section[id]{scroll-margin-top:92px}
       const a = getAlert(id);
       if(!a) return;
       document.getElementById('modalTitle').textContent = a.title;
-      document.getElementById('modalSub').textContent = `${a.topicLabel} · ${a.place} · ${a.type==='new'?'nuovo':'ritorno'} · ${a.state}`;
+      document.getElementById('modalSub').textContent = `${a.topicLabel} · ${a.place} · ${a.type==='new'?'nuovo':'ritorno'} · ${prettyState(a.state)}`;
       document.getElementById('modalBody').innerHTML = buildDetailHtml(a, sourceContext);
       openModal('detailModal');
       window.currentChartLabels = a.labels || null;
@@ -884,7 +929,7 @@ section[id]{scroll-margin-top:92px}
       const t = topics.find(x=>x.id===topicId);
       if(!t) return;
       document.getElementById('modalTitle').textContent = `${t.label} · elenco tema`;
-      document.getElementById('modalSub').textContent = `${t.alerts.length} casi demo · owner ${t.owner}`;
+      document.getElementById('modalSub').textContent = `${t.alerts.length} demo slučajevi · owner ${t.owner}`;
       document.getElementById('modalBody').innerHTML = `
         <div class="inline-badges">
           <span class="badge ${t.color==='red'?'red':t.color==='amber'?'amber':'green'}">${t.label}</span>
@@ -895,7 +940,7 @@ section[id]{scroll-margin-top:92px}
         <div class="topic-list" style="margin-top:14px;border:1px solid var(--line);border-radius:16px;overflow:hidden">${t.alerts.map(a=>`
           <div class="topic-card">
             <div class="card-main">
-              <div class="inline-badges"><span class="badge ${stateTone(a.state)}">${a.state}</span><span class="badge ${a.type==='new'?'violet':'gray'}">${a.type}</span></div>
+              <div class="inline-badges"><span class="badge ${stateTone(a.state)}">${prettyState(a.state)}</span><span class="badge ${a.type==='new'?'violet':'gray'}">${a.type}</span></div>
               <div class="card-title">${a.title}</div>
               <div class="card-text">${a.summary}</div>
               <div class="card-sub">${a.place} · ${a.route}</div>
@@ -941,6 +986,28 @@ section[id]{scroll-margin-top:92px}
       document.querySelectorAll('.topic-tile').forEach(el=>el.classList.toggle('active', best==='topics'));
     }
 
+
+    function resetFilters(){
+      document.getElementById('searchInput').value='';
+      document.getElementById('stateFilter').value='all';
+      document.getElementById('topicFilter').value='all';
+      renderAlerts();
+      toast('Filteri su resetovani.');
+    }
+
+    function openOverviewChooser(type){
+      const urgent = allAlerts().filter(a => a.state==='urgent' || a.priority===3).slice(0,8);
+      const workTopics = topics.slice().sort((a,b)=>b.alerts.length-a.alerts.length).slice(0,8);
+      const title = type==='urgent' ? 'Hitno sada' : 'Teme u radu';
+      const body = type==='urgent'
+        ? urgent.map(a=>`<div class="topic-card"><div class="card-main"><div class="inline-badges"><span class="badge ${stateTone(a.state)}">${prettyState(a.state)}</span><span class="badge ${a.type==='new'?'violet':'gray'}">${a.type==='new'?'novo':'povratak'}</span></div><div class="card-title">${a.title}</div><div class="card-sub">${a.place} · ${a.topicLabel}</div></div><div class="card-side"><button class="action-btn primary" onclick="openAlertModal('${a.id}')">Otvori</button></div></div>`).join('')
+        : workTopics.map(t=>`<div class="topic-card"><div class="card-main"><div class="inline-badges"><span class="badge ${t.color==='red'?'red':t.color==='amber'?'amber':'green'}">${t.label}</span><span class="badge gray">${t.alerts.length}</span></div><div class="card-title">${t.owner}</div><div class="card-sub">Novi ${t.alerts.filter(a=>a.type==='new').length} · povratak ${t.alerts.filter(a=>a.type==='return').length}</div></div><div class="card-side"><button class="action-btn" onclick="openTopicModal('${t.id}')">Otvori</button></div></div>`).join('');
+      document.getElementById('overviewModalTitle').textContent = title;
+      document.getElementById('overviewModalSub').textContent = type==='urgent' ? 'Izaberi alert ili zatvori prozor' : 'Izaberi temu ili zatvori prozor';
+      document.getElementById('overviewModalBody').innerHTML = `<div class="topic-list">${body}</div>`;
+      openModal('overviewModal');
+    }
+
     function renderAll(){
       renderHero();
       renderKpis();
@@ -966,6 +1033,11 @@ section[id]{scroll-margin-top:92px}
     document.getElementById('sendComposeBtn').addEventListener('click', sendCompose);
     document.getElementById('modalOverlay').addEventListener('click', closeModals);
     document.getElementById('legendBtn').addEventListener('click', ()=>openModal('legendModal'));
+    document.getElementById('closeOverviewModal').addEventListener('click', closeModals);
+    document.getElementById('urgentOverviewBtn').addEventListener('click', ()=>openOverviewChooser('urgent'));
+    document.getElementById('topicsOverviewBtn').addEventListener('click', ()=>openOverviewChooser('topics'));
+    document.getElementById('resetFiltersBtn').addEventListener('click', resetFilters);
+    document.getElementById('refreshTopBtn').addEventListener('click', ()=>{ renderAll(); toast('Prikaz osvježen.'); });
     document.querySelectorAll('.tab-btn').forEach(btn=>btn.addEventListener('click', ()=>{
       document.querySelectorAll('.tab-btn').forEach(x=>x.classList.remove('active'));
       btn.classList.add('active');
@@ -982,6 +1054,25 @@ section[id]{scroll-margin-top:92px}
     document.querySelectorAll('.nav-btn').forEach(btn=>btn.addEventListener('click', ()=> scrollToSection(btn.dataset.section)));
     document.getElementById('refreshBtn').addEventListener('click', ()=>{ renderAll(); toast('Prikaz osvježen'); });
     window.addEventListener('scroll', ()=>{ document.querySelector('.topbar').classList.toggle('compact', window.scrollY > 40); updateSectionHighlight(); }, {passive:true});
+
+
+    let touchStartX = null, touchStartY = null;
+    document.addEventListener('touchstart', (e)=>{
+      const t = e.changedTouches[0];
+      touchStartX = t.clientX; touchStartY = t.clientY;
+    }, {passive:true});
+    document.addEventListener('touchend', (e)=>{
+      const t = e.changedTouches[0];
+      if(touchStartX===null) return;
+      const dx = t.clientX - touchStartX;
+      const dy = Math.abs(t.clientY - touchStartY);
+      if(window.innerWidth <= 860 && dy < 70){
+        if(touchStartX < 28 && dx > 70) openSidebar();
+        if(dx < -70 && document.getElementById('sidebar').classList.contains('open')) closeSidebar();
+      }
+      touchStartX = null; touchStartY = null;
+    }, {passive:true});
+
 
     renderAll(); updateSectionHighlight();
     window.openAlertModal = openAlertModal;
