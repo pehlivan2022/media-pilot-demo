@@ -1,798 +1,1072 @@
-import React, { useMemo, useState } from 'react';
-import { Bell, ChevronRight, Menu, Search, X, AlertTriangle, CheckCircle2, Activity, Clock3, FileText, Users, BarChart3, ArrowLeft, Send, PauseCircle, ShieldAlert } from 'lucide-react';
+<!DOCTYPE html>
+<html lang="sr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>VRH · Media Pilot</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=Martian+Mono:wght@300;400;500;600&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,400&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #080a0e;
+      --surface: #0e1117;
+      --surface2: #141820;
+      --surface3: #1c2230;
+      --line: #1e2535;
+      --line2: #2a3347;
+      --text: #dde3f0;
+      --text2: #8a96ae;
+      --text3: #4d5a72;
+      --accent: #d4ff4e;
+      --red: #ff3535;
+      --red-soft: rgba(255,53,53,.12);
+      --red-border: rgba(255,53,53,.25);
+      --orange: #ff8f00;
+      --orange-soft: rgba(255,143,0,.1);
+      --orange-border: rgba(255,143,0,.22);
+      --green: #00d97e;
+      --green-soft: rgba(0,217,126,.1);
+      --green-border: rgba(0,217,126,.2);
+      --blue: #4d9fff;
+      --blue-soft: rgba(77,159,255,.1);
+      --blue-border: rgba(77,159,255,.2);
+      --gray-soft: rgba(138,150,174,.08);
+      --gray-border: rgba(138,150,174,.18);
+      --mono: 'Martian Mono', monospace;
+      --display: 'Syne', sans-serif;
+      --body: 'DM Sans', sans-serif;
+      --sidebar-w: 220px;
+      --sidebar-col: 52px;
+      --drawer-w: 440px;
+      --radius: 10px;
+      --radius-sm: 6px;
+    }
 
-const topics = [
-  {
-    id: 'izbori',
-    label: 'Izbori',
-    color: 'red',
-    count: 4,
-    alerts: [
-      {
-        id: 'a1',
-        title: 'Regularnost izbora postaje centralna tema',
-        summary: 'Više izvora i NGO kanala gura narativ o pritisku na izborni proces. Tema je iz lokalnog signala prešla na centralni nivo.',
-        risk: 3,
-        trend: 3,
-        priority: 3,
-        route: 'Vrh',
-        target: 'centralno',
-        reason: 'Strategic relevance 3 + trend 3 + NGO legitimitet',
-        source: 'NGO + portal + društvene mreže',
-        action: 'Political line needed',
-        state: 'urgent',
-        trendLine: [2, 3, 3, 4, 4, 5, 6, 7, 8, 9],
-        timeline: [
-          ['08:15', 'NGO signal preuzet od dva portala'],
-          ['10:30', 'Isti okvir u tri koordinisane objave'],
-          ['12:20', 'Lokalni signal potvrđuje offline eho'],
-        ],
-      },
-      {
-        id: 'a2',
-        title: 'CIK spominjan u više koordinisanih objava',
-        summary: 'Ponavljaju se iste fraze i isti okvir kroz više kanala u kratkom vremenu.',
-        risk: 3,
-        trend: 2,
-        priority: 3,
-        route: 'Analitičar / Vrh',
-        target: 'centralno',
-        reason: 'Coordination signal + izborni kontekst',
-        source: 'Portali + Facebook stranice',
-        action: 'Confirm cluster and prep case',
-        state: 'today',
-        trendLine: [1, 2, 2, 3, 4, 4, 5, 5, 6, 6],
-        timeline: [
-          ['09:10', 'Cluster detektovan na tri izvora'],
-          ['11:00', 'Phrase reuse signal raste'],
-          ['13:05', 'Predložen alert kandidat'],
-        ],
-      },
-      {
-        id: 'a3',
-        title: 'Tema izlaznosti dobija negativni okvir',
-        summary: 'Sadržaj pokušava pretvoriti mobilizaciju u priču o nepovjerenju.',
-        risk: 2,
-        trend: 2,
-        priority: 2,
-        route: 'Media team',
-        target: 'regionalno',
-        reason: 'Important but still operatively solvable',
-        source: 'Regionalni portal',
-        action: 'Counter-narrative',
-        state: 'routed',
-        trendLine: [1, 1, 2, 2, 2, 3, 3, 4, 4, 4],
-        timeline: [
-          ['08:50', 'Prvi negativni okvir'],
-          ['10:15', 'Media team dobio task'],
-          ['12:40', 'Draft u radu'],
-        ],
-      },
-      {
-        id: 'a4',
-        title: 'Lokalni signal traži potvrdu sa terena',
-        summary: 'Prvi lokalni odbor javlja da se ista tema pojavljuje i offline.',
-        risk: 2,
-        trend: 2,
-        priority: 2,
-        route: 'Lokalni odbor',
-        target: 'lokalno',
-        reason: 'Needs local confirmation before escalation',
-        source: 'Local board feedback',
-        action: 'Confirm / enrich',
-        state: 'watch',
-        trendLine: [1, 1, 1, 2, 2, 2, 3, 3, 3, 4],
-        timeline: [
-          ['09:25', 'Signal sa terena'],
-          ['10:05', 'Poslano lokalnom odboru'],
-          ['12:55', 'Čeka potvrdu'],
-        ],
-      },
-    ],
-  },
-  {
-    id: 'lider',
-    label: 'Lider',
-    color: 'red',
-    count: 3,
-    alerts: [
-      {
-        id: 'b1',
-        title: 'Reputacioni napad na lidera jača u istom okviru',
-        summary: 'Tema je personalizovana i prelazi iz ironije u direktan reputacijski napad.',
-        risk: 3,
-        trend: 3,
-        priority: 3,
-        route: 'Vrh',
-        target: 'lider',
-        reason: 'Leader target + risk 3 + repeat pattern',
-        source: 'Portal + short video',
-        action: 'Approval for direct answer',
-        state: 'urgent',
-        trendLine: [2, 2, 3, 4, 4, 5, 6, 7, 7, 8],
-        timeline: [
-          ['08:40', 'Prvi personalni napad'],
-          ['11:20', 'Video format širi temu'],
-          ['13:10', 'Predložen case za vrh'],
-        ],
-      },
-      {
-        id: 'b2',
-        title: 'Napad vezan za stil i simboliku lidera',
-        summary: 'Još nije dokazno jak, ali raste kroz kratke forme.',
-        risk: 2,
-        trend: 2,
-        priority: 2,
-        route: 'Media team',
-        target: 'lider',
-        reason: 'Monitor + prep response',
-        source: 'Reels / clips',
-        action: 'Light framing response',
-        state: 'today',
-        trendLine: [1, 1, 2, 2, 3, 3, 4, 4, 4, 5],
-        timeline: [
-          ['09:00', 'Clip format počeo da raste'],
-          ['11:50', 'Media team priprema odgovor'],
-          ['13:30', 'Tema još nije full red'],
-        ],
-      },
-      {
-        id: 'b3',
-        title: 'Stara tema o imovini se vraća',
-        summary: 'Follow-up signal pokazuje da se koristi stari obrazac.',
-        risk: 2,
-        trend: 1,
-        priority: 2,
-        route: 'Follow-up',
-        target: 'lider',
-        reason: 'Return of archived narrative',
-        source: 'Copy portals',
-        action: 'Reuse archive response',
-        state: 'watch',
-        trendLine: [1, 1, 1, 1, 2, 2, 2, 2, 3, 3],
-        timeline: [
-          ['08:05', 'Stari narativ vraćen'],
-          ['10:45', 'Povezan sa arhivom'],
-          ['12:15', 'Predložen follow-up monitoring'],
-        ],
-      },
-    ],
-  },
-  {
-    id: 'rs-lokal',
-    label: 'RS lokal',
-    color: 'yellow',
-    count: 4,
-    alerts: [
-      {
-        id: 'c1',
-        title: 'Lokalna tema u RS traži potvrdu prije eskalacije',
-        summary: 'Više lokalnih signala postoji, ali bez dovoljne centralne težine dok mjesni odbor ne potvrdi.',
-        risk: 2,
-        trend: 2,
-        priority: 2,
-        route: 'Lokalni odbor',
-        target: 'lokalno',
-        reason: 'Local first, not immediate vrh',
-        source: 'Local portal + teren',
-        action: 'Confirm and enrich',
-        state: 'watch',
-        trendLine: [1, 1, 2, 2, 2, 2, 3, 3, 3, 4],
-        timeline: [
-          ['08:25', 'Prvi lokalni signal'],
-          ['10:10', 'Poslano na provjeru'],
-          ['13:05', 'Još bez centralne težine'],
-        ],
-      },
-      {
-        id: 'c2',
-        title: 'Narativ se širi na susjedne opštine',
-        summary: 'Tema prelazi iz jedne opštine u dvije susjedne, ali još nije centralna.',
-        risk: 2,
-        trend: 3,
-        priority: 2,
-        route: 'Media team / Lokalni odbor',
-        target: 'regionalno',
-        reason: 'Regional growth with local roots',
-        source: 'Regional portals',
-        action: 'Coordinate local line',
-        state: 'today',
-        trendLine: [1, 2, 2, 3, 3, 4, 4, 5, 5, 6],
-        timeline: [
-          ['08:55', 'Signal iz druge opštine'],
-          ['11:00', 'Regionalni šum raste'],
-          ['13:25', 'Traži koordinaciju'],
-        ],
-      },
-    ],
-  },
-  {
-    id: 'followup',
-    label: 'Follow-up',
-    color: 'green',
-    count: 3,
-    alerts: [
-      {
-        id: 'g1',
-        title: 'Arhivska tema se vraća kroz novi ugao',
-        summary: 'Nije ista priča doslovno, ali koristi isti memorijski okvir.',
-        risk: 2,
-        trend: 2,
-        priority: 2,
-        route: 'Follow-up',
-        target: 'archive',
-        reason: 'Linked to old case',
-        source: 'Mixed',
-        action: 'Reuse old lines',
-        state: 'watch',
-        trendLine: [1, 1, 1, 2, 2, 2, 3, 3, 4, 4],
-        timeline: [
-          ['08:00', 'Stari frame aktiviran'],
-          ['10:20', 'Povezano sa hot topic'],
-          ['12:50', 'Predložen reuse'],
-        ],
-      },
-    ],
-  },
-];
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { font-size: 13px; }
 
-const nav = [
-  { key: 'vrh', label: 'Overview VRH', icon: Activity },
-  { key: 'topics', label: 'Topics & trend', icon: BarChart3 },
-  { key: 'cases', label: 'Cases', icon: FileText },
-  { key: 'media', label: 'Media team', icon: Users },
-];
+    body {
+      font-family: var(--body);
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
 
-const mediaTasks = [
-  { title: 'Draft izjave spreman', desc: 'Čeka političku liniju', state: 'draft' },
-  { title: 'Lokalni odbor potvrdio signal', desc: 'Tema veća od prvobitne procjene', state: 'confirm' },
-  { title: '1 tema zatvorena', desc: 'Ostaje monitoring 24h', state: 'done' },
-];
+    /* ── APP SHELL ── */
+    .app {
+      display: grid;
+      grid-template-columns: var(--sidebar-w) 1fr;
+      min-height: 100vh;
+      transition: grid-template-columns .18s ease;
+    }
+    .app.collapsed { grid-template-columns: var(--sidebar-col) 1fr; }
 
-const caseList = [
-  { id: 'case-102', title: 'Izbori · centralni narativ', owner: 'Media team', status: 'open', due: 'oggi', severity: 'high' },
-  { id: 'case-097', title: 'Lider · reputacioni napad', owner: 'VRH', status: 'approval', due: 'entro 2h', severity: 'high' },
-  { id: 'case-091', title: 'RS lokal · koordinazione', owner: 'Lokalni odbor', status: 'in progress', due: 'danas', severity: 'medium' },
-];
+    /* ── SIDEBAR ── */
+    .sidebar {
+      background: var(--surface);
+      border-right: 1px solid var(--line);
+      position: sticky;
+      top: 0;
+      height: 100vh;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      z-index: 20;
+      transition: width .18s ease;
+    }
 
-function cn(...classes) {
-  return classes.filter(Boolean).join(' ');
-}
+    .side-top {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 14px 12px;
+      border-bottom: 1px solid var(--line);
+      flex-shrink: 0;
+    }
 
-function stateTone(state) {
-  if (state === 'urgent' || state === 'high') return 'bg-red-500/15 text-red-300 border-red-400/30';
-  if (state === 'today' || state === 'medium' || state === 'confirm') return 'bg-amber-500/15 text-amber-300 border-amber-400/30';
-  if (state === 'routed' || state === 'draft' || state === 'approval') return 'bg-sky-500/15 text-sky-300 border-sky-400/30';
-  if (state === 'done' || state === 'watch' || state === 'open' || state === 'in progress') return 'bg-emerald-500/15 text-emerald-300 border-emerald-400/30';
-  return 'bg-zinc-500/15 text-zinc-300 border-zinc-400/30';
-}
+    .burger {
+      width: 28px; height: 28px;
+      border-radius: 6px;
+      border: 1px solid var(--line2);
+      background: var(--surface2);
+      display: flex; align-items: center; justify-content: center;
+      cursor: pointer;
+      flex-shrink: 0;
+      transition: background .12s;
+    }
+    .burger:hover { background: var(--surface3); }
+    .burger-lines { width: 13px; display: grid; gap: 2.5px; }
+    .burger-lines span { height: 1.5px; border-radius: 2px; background: var(--text2); display: block; }
 
-function scoreTone(score) {
-  if (score >= 3) return 'text-red-300 border-red-400/30 bg-red-500/10';
-  if (score >= 2) return 'text-amber-300 border-amber-400/30 bg-amber-500/10';
-  return 'text-emerald-300 border-emerald-400/30 bg-emerald-500/10';
-}
+    .brand { overflow: hidden; }
+    .brand strong {
+      display: block;
+      font-family: var(--display);
+      font-size: 15px;
+      font-weight: 800;
+      color: var(--text);
+      letter-spacing: -.3px;
+      white-space: nowrap;
+    }
+    .brand strong em { color: var(--accent); font-style: normal; }
+    .brand span {
+      display: block;
+      font-family: var(--mono);
+      font-size: 9px;
+      color: var(--text3);
+      margin-top: 2px;
+      letter-spacing: .5px;
+      white-space: nowrap;
+    }
 
-function Badge({ children, className = '' }) {
-  return <span className={cn('inline-flex items-center rounded-md border px-2 py-1 text-[10px] font-medium uppercase tracking-wide', className)}>{children}</span>;
-}
+    .side-scroll { flex: 1; overflow-y: auto; overflow-x: hidden; padding: 10px 8px; }
+    .side-scroll::-webkit-scrollbar { width: 3px; }
+    .side-scroll::-webkit-scrollbar-thumb { background: var(--line2); border-radius: 2px; }
 
-function Card({ children, className = '' }) {
-  return <div className={cn('rounded-2xl border border-zinc-800 bg-zinc-950/80 shadow-[0_0_0_1px_rgba(255,255,255,0.02)]', className)}>{children}</div>;
-}
+    .side-group { margin-bottom: 16px; }
+    .side-title {
+      font-family: var(--mono);
+      font-size: 8px;
+      text-transform: uppercase;
+      letter-spacing: 1.2px;
+      color: var(--text3);
+      padding: 0 8px;
+      margin: 0 0 6px;
+      white-space: nowrap;
+      overflow: hidden;
+    }
 
-function MiniLineChart({ values, tone = '#ef4444' }) {
-  const w = 400;
-  const h = 110;
-  const p = 14;
-  const max = Math.max(...values);
-  const min = Math.min(...values);
-  const range = max - min || 1;
-  const step = (w - p * 2) / (values.length - 1);
-  const y = (v) => h - p - ((v - min) / range) * (h - p * 2);
-  const points = values.map((v, i) => `${p + step * i},${y(v)}`).join(' ');
-  const area = `${p},${h - p} ${points} ${w - p},${h - p}`;
+    .side-link {
+      display: flex;
+      align-items: center;
+      gap: 9px;
+      padding: 7px 8px;
+      border-radius: var(--radius-sm);
+      color: var(--text2);
+      text-decoration: none;
+      margin-bottom: 2px;
+      border: 1px solid transparent;
+      font-size: 12px;
+      font-weight: 500;
+      white-space: nowrap;
+      overflow: hidden;
+      transition: all .12s;
+    }
+    .side-link:hover { background: var(--surface2); color: var(--text); }
+    .side-link.active { background: var(--surface3); border-color: var(--line2); color: var(--text); }
 
-  return (
-    <svg viewBox={`0 0 ${w} ${h}`} className="h-28 w-full">
-      <defs>
-        <linearGradient id="g" x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0%" stopColor={tone} stopOpacity="0.28" />
-          <stop offset="100%" stopColor={tone} stopOpacity="0" />
-        </linearGradient>
-      </defs>
-      <polygon points={area} fill="url(#g)" />
-      <polyline points={points} fill="none" stroke={tone} strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" />
-      {values.map((v, i) => (
-        <circle key={i} cx={p + step * i} cy={y(v)} r={i === values.length - 1 ? 4 : 2.6} fill={tone} opacity={i === values.length - 1 ? 1 : 0.55} />
-      ))}
-    </svg>
-  );
-}
+    .sdot {
+      width: 7px; height: 7px;
+      border-radius: 50%;
+      flex-shrink: 0;
+      background: var(--text3);
+    }
+    .sdot.red { background: var(--red); box-shadow: 0 0 5px var(--red); }
+    .sdot.yellow { background: var(--orange); }
+    .sdot.green { background: var(--green); }
+    .sdot.blue { background: var(--blue); }
 
-function LoginScreen({ onEnter }) {
-  const [role, setRole] = useState('VRH');
-  return (
-    <div className="min-h-screen bg-[#07090d] text-zinc-100 flex items-center justify-center p-6">
-      <Card className="w-full max-w-md p-6">
-        <div className="mb-6">
-          <div className="text-xs uppercase tracking-[0.3em] text-zinc-500">Media Pilot Demo</div>
-          <h1 className="mt-2 text-3xl font-black tracking-tight">VRH front-end demo</h1>
-          <p className="mt-2 text-sm text-zinc-400">Login finto, gloria vera quanto basta per una demo. Nessun backend, nessun dramma.</p>
-        </div>
-        <div className="space-y-4">
-          <div>
-            <label className="mb-2 block text-xs uppercase tracking-wide text-zinc-500">Ruolo demo</label>
-            <div className="grid grid-cols-3 gap-2">
-              {['VRH', 'Media team', 'Lokalni odbor'].map((r) => (
-                <button
-                  key={r}
-                  onClick={() => setRole(r)}
-                  className={cn(
-                    'rounded-xl border px-3 py-3 text-sm transition',
-                    role === r ? 'border-lime-300 bg-lime-300 text-black' : 'border-zinc-800 bg-zinc-900 text-zinc-300 hover:border-zinc-700'
-                  )}
-                >
-                  {r}
-                </button>
-              ))}
-            </div>
-          </div>
-          <div className="space-y-2">
-            <input className="w-full rounded-xl border border-zinc-800 bg-zinc-900 px-4 py-3 text-sm outline-none" value="demo@pilot.app" readOnly />
-            <input className="w-full rounded-xl border border-zinc-800 bg-zinc-900 px-4 py-3 text-sm outline-none" value="••••••••" readOnly type="password" />
-          </div>
-          <button onClick={() => onEnter(role)} className="w-full rounded-xl bg-lime-300 px-4 py-3 text-sm font-bold text-black hover:bg-lime-200">
-            Entra nella demo
-          </button>
-        </div>
-      </Card>
-    </div>
-  );
-}
+    .app.collapsed .brand,
+    .app.collapsed .side-title,
+    .app.collapsed .side-link-label { display: none; }
+    .app.collapsed .side-link { justify-content: center; padding: 8px 0; }
+    .app.collapsed .side-top { padding: 14px 12px; }
 
-function Sidebar({ collapsed, setCollapsed, activeScreen, setActiveScreen }) {
-  return (
-    <aside className={cn('border-r border-zinc-800 bg-zinc-950/90 transition-all duration-200', collapsed ? 'w-[78px]' : 'w-[240px]')}>
-      <div className="flex h-16 items-center gap-3 border-b border-zinc-800 px-4">
-        <button onClick={() => setCollapsed(!collapsed)} className="rounded-lg border border-zinc-700 bg-zinc-900 p-2 text-zinc-300 hover:bg-zinc-800">
-          <Menu className="h-4 w-4" />
+    /* ── MAIN ── */
+    .main { min-width: 0; display: flex; flex-direction: column; }
+
+    /* ── TOPBAR ── */
+    .topbar {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 10px 16px;
+      border-bottom: 1px solid var(--line);
+      background: var(--surface);
+      flex-shrink: 0;
+      position: sticky;
+      top: 0;
+      z-index: 10;
+    }
+    .topbar-title {
+      font-family: var(--display);
+      font-size: 17px;
+      font-weight: 800;
+      letter-spacing: -.4px;
+    }
+    .topbar-title span { color: var(--text3); }
+    .topbar-desc {
+      font-size: 11px;
+      color: var(--text3);
+      flex: 1;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      display: none;
+    }
+    .topbar-tabs { display: flex; gap: 3px; margin-left: auto; }
+    .ttab {
+      font-family: var(--mono);
+      font-size: 9px;
+      letter-spacing: .4px;
+      padding: 5px 10px;
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      color: var(--text3);
+      border: 1px solid transparent;
+      transition: all .12s;
+      text-transform: uppercase;
+      background: none;
+    }
+    .ttab:hover { color: var(--text2); border-color: var(--line2); }
+    .ttab.active { background: var(--accent); color: #000; font-weight: 600; border-color: transparent; }
+
+    /* ── CONTENT WRAPPER ── */
+    .content-wrap { flex: 1; padding: 12px 16px; display: flex; flex-direction: column; gap: 10px; }
+
+    /* ── KPI ROW ── */
+    .kpi-row {
+      display: grid;
+      grid-template-columns: repeat(5, minmax(0,1fr));
+      gap: 1px;
+      background: var(--line);
+      border-radius: var(--radius);
+      overflow: hidden;
+      border: 1px solid var(--line);
+      flex-shrink: 0;
+    }
+    .kpi {
+      background: var(--surface);
+      padding: 10px 14px;
+      cursor: default;
+      transition: background .12s;
+    }
+    .kpi:hover { background: var(--surface2); }
+    .kpi-label {
+      font-family: var(--mono);
+      font-size: 8px;
+      text-transform: uppercase;
+      letter-spacing: .8px;
+      color: var(--text3);
+      margin-bottom: 5px;
+    }
+    .kpi-val {
+      font-family: var(--display);
+      font-size: 28px;
+      font-weight: 800;
+      line-height: 1;
+      color: var(--text);
+    }
+    .kpi-val.is-red { color: var(--red); }
+    .kpi-val.is-orange { color: var(--orange); }
+    .kpi-sub { font-family: var(--mono); font-size: 9px; color: var(--text3); margin-top: 4px; }
+
+    /* ── SEMAFORI ── */
+    .traffic-wrap {
+      background: var(--surface);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      overflow: hidden;
+      flex-shrink: 0;
+    }
+    .section-head {
+      display: flex;
+      align-items: center;
+      padding: 7px 14px;
+      border-bottom: 1px solid var(--line);
+      gap: 8px;
+    }
+    .section-head-title {
+      font-family: var(--mono);
+      font-size: 8px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: var(--text3);
+    }
+    .section-head-meta {
+      font-family: var(--mono);
+      font-size: 8px;
+      color: var(--text3);
+      margin-left: auto;
+    }
+    .traffic-row {
+      display: flex;
+      gap: 0;
+    }
+    .traffic {
+      flex: 1;
+      padding: 10px 14px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      cursor: pointer;
+      border-right: 1px solid var(--line);
+      transition: background .12s;
+      position: relative;
+    }
+    .traffic:last-child { border-right: none; }
+    .traffic:hover { background: var(--surface2); }
+    .traffic.active { background: var(--surface3); }
+    .traffic.active::after {
+      content: '';
+      position: absolute;
+      bottom: 0; left: 0; right: 0;
+      height: 2px;
+      background: var(--accent);
+    }
+    .t-dot {
+      width: 10px; height: 10px;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+    .t-dot.red { background: var(--red); box-shadow: 0 0 7px var(--red); animation: pulse 2s ease infinite; }
+    .t-dot.yellow { background: var(--orange); box-shadow: 0 0 5px var(--orange); }
+    .t-dot.green { background: var(--green); box-shadow: 0 0 5px var(--green); }
+    @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.4} }
+    .t-label { font-size: 12px; font-weight: 500; }
+    .t-count {
+      margin-left: auto;
+      font-family: var(--mono);
+      font-size: 10px;
+      color: var(--text3);
+    }
+
+    /* ── MAIN GRID ── */
+    .main-grid {
+      display: grid;
+      grid-template-columns: 1fr 360px;
+      gap: 10px;
+      flex: 1;
+      min-height: 0;
+    }
+
+    /* ── PRIORITY STRIP ── */
+    .priority-strip {
+      display: grid;
+      grid-template-columns: 1.2fr .8fr;
+      gap: 10px;
+    }
+
+    /* ── PANEL BASE ── */
+    .panel {
+      background: var(--surface);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      overflow: hidden;
+    }
+
+    /* ── QUEUE CARD ── */
+    .queue-list { display: flex; flex-direction: column; }
+    .queue-card {
+      padding: 9px 14px;
+      border-bottom: 1px solid var(--line);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      transition: background .12s;
+    }
+    .queue-card:last-child { border-bottom: none; }
+    .queue-card:hover { background: var(--surface2); }
+    .qc-title { font-size: 12px; font-weight: 500; color: var(--text); margin-bottom: 2px; }
+    .qc-desc { font-size: 10px; color: var(--text3); }
+    .qc-right { display: flex; flex-direction: column; align-items: flex-end; gap: 4px; flex-shrink: 0; }
+
+    /* ── BADGE ── */
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      padding: 3px 7px;
+      border-radius: 4px;
+      font-family: var(--mono);
+      font-size: 9px;
+      font-weight: 500;
+      letter-spacing: .3px;
+      white-space: nowrap;
+      border: 1px solid;
+    }
+    .badge.red { background: var(--red-soft); color: var(--red); border-color: var(--red-border); }
+    .badge.yellow { background: var(--orange-soft); color: var(--orange); border-color: var(--orange-border); }
+    .badge.green { background: var(--green-soft); color: var(--green); border-color: var(--green-border); }
+    .badge.blue { background: var(--blue-soft); color: var(--blue); border-color: var(--blue-border); }
+    .badge.gray { background: var(--gray-soft); color: var(--text2); border-color: var(--gray-border); }
+
+    /* ── ALERT LIST ── */
+    .alert-list { display: flex; flex-direction: column; }
+    .alert-card {
+      padding: 10px 14px;
+      border-bottom: 1px solid var(--line);
+      cursor: pointer;
+      transition: background .12s;
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 10px;
+      align-items: start;
+    }
+    .alert-card:last-child { border-bottom: none; }
+    .alert-card:hover { background: var(--surface2); }
+    .alert-card.active { background: var(--surface3); border-left: 2px solid var(--blue); }
+    .alert-top { display: flex; flex-wrap: wrap; gap: 4px; margin-bottom: 5px; }
+    .alert-title { font-size: 13px; font-weight: 500; color: var(--text); margin-bottom: 3px; line-height: 1.3; }
+    .alert-desc {
+      font-size: 11px; color: var(--text2); line-height: 1.4;
+      display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;
+    }
+    .alert-side { display: flex; flex-direction: column; align-items: flex-end; gap: 4px; min-width: 80px; }
+    .score-box { text-align: right; }
+    .score-box small { font-family: var(--mono); font-size: 8px; color: var(--text3); display: block; }
+    .score-box strong { font-family: var(--display); font-size: 15px; font-weight: 800; color: var(--text); display: block; }
+
+    /* ── RIGHT STACK ── */
+    .right-stack { display: flex; flex-direction: column; gap: 10px; }
+
+    /* ── DETAIL CARD ── */
+    .detail-card {
+      background: var(--surface);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      overflow: hidden;
+    }
+    .dc-kicker {
+      font-family: var(--mono);
+      font-size: 8px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: var(--text3);
+    }
+    .dc-title {
+      font-family: var(--display);
+      font-size: 15px;
+      font-weight: 700;
+      line-height: 1.2;
+      color: var(--text);
+      margin: 6px 0 10px;
+    }
+    .dc-body { padding: 12px 14px; }
+    .dc-text { font-size: 11px; color: var(--text2); line-height: 1.5; margin-bottom: 10px; }
+    .dc-chips { display: flex; flex-wrap: wrap; gap: 4px; margin-bottom: 10px; }
+    .dc-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin-bottom: 10px; }
+    .dc-mini {
+      background: var(--surface2);
+      border: 1px solid var(--line);
+      border-radius: var(--radius-sm);
+      padding: 7px 9px;
+    }
+    .dc-mini small { font-family: var(--mono); font-size: 8px; color: var(--text3); display: block; margin-bottom: 3px; }
+    .dc-mini strong { font-size: 11px; color: var(--text); display: block; line-height: 1.3; }
+
+    /* ── ACTIONS ── */
+    .dc-actions { display: flex; flex-wrap: wrap; gap: 6px; padding: 10px 14px; border-top: 1px solid var(--line); }
+    .btn {
+      font-family: var(--mono);
+      font-size: 9px;
+      font-weight: 500;
+      letter-spacing: .3px;
+      padding: 7px 11px;
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--line2);
+      background: var(--surface2);
+      color: var(--text2);
+      cursor: pointer;
+      transition: all .12s;
+      text-transform: uppercase;
+    }
+    .btn:hover { background: var(--surface3); color: var(--text); }
+    .btn.primary { background: var(--accent); border-color: transparent; color: #000; font-weight: 600; }
+    .btn.primary:hover { background: #c0eb3a; }
+    .btn.danger { background: var(--red-soft); border-color: var(--red-border); color: var(--red); }
+    .btn.danger:hover { background: rgba(255,53,53,.2); }
+
+    /* ── CHART ── */
+    .chart-panel {
+      background: var(--surface);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      overflow: hidden;
+    }
+    .chart-svg {
+      width: 100%;
+      height: 80px;
+      display: block;
+    }
+
+    /* ── MEDIA TEAM RETURNS ── */
+    /* reuses panel + queue-card */
+
+    /* ── DRAWER ── */
+    .drawer {
+      position: fixed;
+      top: 0; right: 0;
+      width: var(--drawer-w);
+      max-width: 100vw;
+      height: 100vh;
+      background: var(--surface);
+      border-left: 1px solid var(--line2);
+      box-shadow: -20px 0 60px rgba(0,0,0,.5);
+      transform: translateX(100%);
+      transition: transform .2s ease;
+      z-index: 50;
+      display: flex;
+      flex-direction: column;
+    }
+    .drawer.open { transform: translateX(0); }
+    .drawer-head {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      padding: 14px;
+      border-bottom: 1px solid var(--line);
+      flex-shrink: 0;
+    }
+    .drawer-head-text { flex: 1; min-width: 0; }
+    .drawer-head-text h3 {
+      font-family: var(--display);
+      font-size: 16px;
+      font-weight: 700;
+      margin-bottom: 4px;
+      color: var(--text);
+    }
+    .drawer-head-text p { font-size: 11px; color: var(--text2); line-height: 1.4; }
+    .close-btn {
+      width: 30px; height: 30px;
+      border-radius: 6px;
+      border: 1px solid var(--line2);
+      background: var(--surface2);
+      color: var(--text2);
+      cursor: pointer;
+      font-size: 16px;
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0;
+      transition: all .12s;
+    }
+    .close-btn:hover { background: var(--surface3); color: var(--text); }
+    .drawer-body { flex: 1; overflow-y: auto; padding: 14px; }
+    .drawer-body::-webkit-scrollbar { width: 3px; }
+    .drawer-body::-webkit-scrollbar-thumb { background: var(--line2); border-radius: 2px; }
+
+    /* Timeline */
+    .timeline { display: flex; flex-direction: column; gap: 6px; margin-top: 10px; }
+    .timeline-item {
+      background: var(--surface2);
+      border: 1px solid var(--line);
+      border-radius: var(--radius-sm);
+      padding: 8px 10px;
+      display: flex;
+      gap: 10px;
+      align-items: baseline;
+    }
+    .ti-time { font-family: var(--mono); font-size: 9px; color: var(--text3); flex-shrink: 0; }
+    .ti-text { font-size: 11px; color: var(--text2); line-height: 1.4; }
+
+    /* ── FADE IN ── */
+    @keyframes fadein { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: none; } }
+    .alert-card { animation: fadein .15s ease both; }
+    .alert-card:nth-child(1){animation-delay:.04s}
+    .alert-card:nth-child(2){animation-delay:.08s}
+    .alert-card:nth-child(3){animation-delay:.12s}
+    .alert-card:nth-child(4){animation-delay:.16s}
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 1300px) {
+      .main-grid { grid-template-columns: 1fr 300px; }
+    }
+    @media (max-width: 1100px) {
+      .main-grid { grid-template-columns: 1fr; }
+      .right-stack { display: grid; grid-template-columns: 1fr 1fr; }
+    }
+    @media (max-width: 900px) {
+      .priority-strip { grid-template-columns: 1fr; }
+      .kpi-row { grid-template-columns: repeat(3, 1fr); }
+    }
+    @media (max-width: 700px) {
+      .app { grid-template-columns: 1fr; }
+      .sidebar { position: relative; height: auto; border-right: 0; border-bottom: 1px solid var(--line); }
+      .topbar-tabs { display: none; }
+      .kpi-row { grid-template-columns: 1fr 1fr; }
+      .dc-grid { grid-template-columns: 1fr; }
+      .right-stack { grid-template-columns: 1fr; }
+      .drawer { width: 100vw; }
+      .alert-card { grid-template-columns: 1fr; }
+      .alert-side { align-items: flex-start; }
+    }
+  </style>
+</head>
+<body>
+  <div class="app" id="app">
+
+    <!-- SIDEBAR -->
+    <aside class="sidebar">
+      <div class="side-top">
+        <button class="burger" id="toggleSidebar" aria-label="Toggle menu">
+          <span class="burger-lines"><span></span><span></span><span></span></span>
         </button>
-        {!collapsed && (
-          <div>
-            <div className="font-black tracking-tight"><span className="text-lime-300">VRH</span> · Media Pilot</div>
-            <div className="text-[10px] uppercase tracking-[0.25em] text-zinc-500">executive view</div>
-          </div>
-        )}
+        <div class="brand">
+          <strong><em>VRH</em> · Media Pilot</strong>
+          <span>executive view</span>
+        </div>
       </div>
-      <div className="space-y-2 p-3">
-        {nav.map((item) => {
-          const Icon = item.icon;
-          const active = activeScreen === item.key;
-          return (
-            <button
-              key={item.key}
-              onClick={() => setActiveScreen(item.key)}
-              className={cn(
-                'flex w-full items-center gap-3 rounded-xl border px-3 py-3 text-sm transition',
-                active ? 'border-zinc-700 bg-zinc-900 text-white' : 'border-transparent text-zinc-400 hover:border-zinc-800 hover:bg-zinc-900'
-              )}
-            >
-              <Icon className="h-4 w-4 shrink-0" />
-              {!collapsed && <span>{item.label}</span>}
-            </button>
-          );
-        })}
+      <div class="side-scroll">
+        <div class="side-group">
+          <div class="side-title">Operatività</div>
+          <a class="side-link active" href="#"><span class="sdot blue"></span><span class="side-link-label">Overview Vrh</span></a>
+          <a class="side-link" href="#"><span class="sdot red"></span><span class="side-link-label">Alert</span></a>
+          <a class="side-link" href="#"><span class="sdot blue"></span><span class="side-link-label">Case</span></a>
+          <a class="side-link" href="#"><span class="sdot green"></span><span class="side-link-label">Media team</span></a>
+          <a class="side-link" href="#"><span class="sdot yellow"></span><span class="side-link-label">Mjesni odbori</span></a>
+          <a class="side-link" href="#"><span class="sdot red"></span><span class="side-link-label">Vrh queue</span></a>
+        </div>
+        <div class="side-group">
+          <div class="side-title">Intelligence</div>
+          <a class="side-link" href="#"><span class="sdot"></span><span class="side-link-label">Cluster</span></a>
+          <a class="side-link" href="#"><span class="sdot"></span><span class="side-link-label">Trend</span></a>
+          <a class="side-link" href="#"><span class="sdot"></span><span class="side-link-label">Teme</span></a>
+          <a class="side-link" href="#"><span class="sdot"></span><span class="side-link-label">Fonti</span></a>
+          <a class="side-link" href="#"><span class="sdot"></span><span class="side-link-label">Attori</span></a>
+          <a class="side-link" href="#"><span class="sdot"></span><span class="side-link-label">Territori</span></a>
+        </div>
+        <div class="side-group">
+          <div class="side-title">Memoria</div>
+          <a class="side-link" href="#"><span class="sdot"></span><span class="side-link-label">Hot topics</span></a>
+          <a class="side-link" href="#"><span class="sdot"></span><span class="side-link-label">Archivio</span></a>
+          <a class="side-link" href="#"><span class="sdot"></span><span class="side-link-label">Follow-up</span></a>
+        </div>
       </div>
     </aside>
-  );
-}
 
-function Topbar({ title, subtitle, onBack, showBack = false }) {
-  return (
-    <div className="sticky top-0 z-20 flex h-16 items-center gap-4 border-b border-zinc-800 bg-[#07090d]/90 px-4 backdrop-blur">
-      {showBack && (
-        <button onClick={onBack} className="rounded-lg border border-zinc-700 bg-zinc-900 p-2 text-zinc-300 hover:bg-zinc-800">
-          <ArrowLeft className="h-4 w-4" />
-        </button>
-      )}
-      <div className="min-w-0">
-        <div className="text-lg font-black tracking-tight text-white">{title}</div>
-        <div className="truncate text-xs text-zinc-500">{subtitle}</div>
+    <!-- MAIN -->
+    <main class="main">
+
+      <!-- TOPBAR -->
+      <div class="topbar">
+        <div class="topbar-title">VRH <span>· overview</span></div>
+        <div class="topbar-tabs" id="topbarTabs">
+          <button class="ttab active" data-tab="bih">Scenario BIH</button>
+          <button class="ttab" data-tab="7d">7 dana</button>
+          <button class="ttab" data-tab="cen">Centralno</button>
+          <button class="ttab" data-tab="hi">High priority</button>
+        </div>
       </div>
-      <div className="ml-auto flex items-center gap-2">
-        <button className="hidden rounded-xl border border-zinc-800 bg-zinc-900 px-3 py-2 text-xs text-zinc-300 md:flex md:items-center md:gap-2">
-          <Search className="h-3.5 w-3.5" /> Cerca
-        </button>
-        <button className="rounded-xl border border-zinc-800 bg-zinc-900 p-2 text-zinc-300"><Bell className="h-4 w-4" /></button>
-      </div>
-    </div>
-  );
-}
 
-function KpiRow({ alerts }) {
-  const urgent = alerts.filter((a) => a.state === 'urgent').length;
-  const today = alerts.filter((a) => a.state === 'today').length;
-  const watch = alerts.filter((a) => a.state === 'watch').length;
-  const routed = alerts.filter((a) => a.state === 'routed').length;
-  const items = [
-    ['Active alerts', alerts.length, `${urgent} rossi`],
-    ['Da decidere oggi', today, 'ciclo corrente'],
-    ['Follow-up watch', watch, 'monitoring'],
-    ['Già instradati', routed, 'ownership chiara'],
-  ];
+      <!-- CONTENT -->
+      <div class="content-wrap">
 
-  return (
-    <div className="grid grid-cols-2 gap-3 xl:grid-cols-4">
-      {items.map(([label, val, sub]) => (
-        <Card key={label} className="p-4">
-          <div className="text-[10px] uppercase tracking-[0.22em] text-zinc-500">{label}</div>
-          <div className="mt-2 text-3xl font-black tracking-tight text-white">{val}</div>
-          <div className="mt-1 text-xs text-zinc-500">{sub}</div>
-        </Card>
-      ))}
-    </div>
-  );
-}
+        <!-- KPI ROW -->
+        <div class="kpi-row">
+          <div class="kpi">
+            <div class="kpi-label">Active alerts</div>
+            <div class="kpi-val is-red">12</div>
+            <div class="kpi-sub">4 rossi</div>
+          </div>
+          <div class="kpi">
+            <div class="kpi-label">Open cases</div>
+            <div class="kpi-val is-orange">7</div>
+            <div class="kpi-sub">2 čekaju vrh</div>
+          </div>
+          <div class="kpi">
+            <div class="kpi-label">Local confirm.</div>
+            <div class="kpi-val">4</div>
+            <div class="kpi-sub">2 hitne</div>
+          </div>
+          <div class="kpi">
+            <div class="kpi-label">Follow-up watch</div>
+            <div class="kpi-val">9</div>
+            <div class="kpi-sub">3 caldi</div>
+          </div>
+          <div class="kpi">
+            <div class="kpi-label">Media returns</div>
+            <div class="kpi-val">5</div>
+            <div class="kpi-sub">oggi</div>
+          </div>
+        </div>
 
-function TopicRow({ topics, activeTopicId, setActiveTopicId }) {
-  return (
-    <Card className="overflow-hidden">
-      <div className="flex items-center border-b border-zinc-800 px-4 py-3 text-[10px] uppercase tracking-[0.24em] text-zinc-500">
-        Semafori tema
-        <span className="ml-auto">click apre alert</span>
-      </div>
-      <div className="grid grid-cols-2 md:grid-cols-4">
-        {topics.map((topic) => (
-          <button
-            key={topic.id}
-            onClick={() => setActiveTopicId(topic.id)}
-            className={cn(
-              'flex items-center gap-3 border-r border-zinc-800 px-4 py-4 text-left last:border-r-0 hover:bg-zinc-900',
-              activeTopicId === topic.id && 'bg-zinc-900'
-            )}
-          >
-            <span
-              className={cn(
-                'h-3 w-3 rounded-full',
-                topic.color === 'red' && 'bg-red-400 shadow-[0_0_12px_rgba(248,113,113,0.8)]',
-                topic.color === 'yellow' && 'bg-amber-400 shadow-[0_0_12px_rgba(251,191,36,0.6)]',
-                topic.color === 'green' && 'bg-emerald-400 shadow-[0_0_12px_rgba(52,211,153,0.6)]'
-              )}
-            />
-            <div>
-              <div className="text-sm font-semibold text-white">{topic.label}</div>
-              <div className="text-xs text-zinc-500">{topic.count} alert</div>
-            </div>
-          </button>
-        ))}
-      </div>
-    </Card>
-  );
-}
+        <!-- SEMAFORI -->
+        <div class="traffic-wrap">
+          <div class="section-head">
+            <span class="section-head-title">Semafori tema</span>
+            <span class="section-head-meta">klik otvara alert listu</span>
+          </div>
+          <div class="traffic-row" id="trafficRow"></div>
+        </div>
 
-function AlertList({ alerts, activeAlertId, setActiveAlertId, onOpenDetail }) {
-  return (
-    <Card className="overflow-hidden">
-      <div className="flex items-center border-b border-zinc-800 px-4 py-3 text-[10px] uppercase tracking-[0.24em] text-zinc-500">
-        Alert list
-        <span className="ml-auto">{alerts.length} elementi</span>
-      </div>
-      <div className="divide-y divide-zinc-800">
-        {alerts.map((a) => (
-          <button
-            key={a.id}
-            onClick={() => setActiveAlertId(a.id)}
-            className={cn('grid w-full gap-3 p-4 text-left hover:bg-zinc-900 lg:grid-cols-[1fr_auto]', activeAlertId === a.id && 'bg-zinc-900')}
-          >
-            <div>
-              <div className="mb-2 flex flex-wrap gap-2">
-                <Badge className={stateTone(a.state)}>{a.state}</Badge>
-                <Badge className={scoreTone(a.risk)}>risk {a.risk}</Badge>
-                <Badge className={scoreTone(a.trend)}>trend {a.trend}</Badge>
-                <Badge className={scoreTone(a.priority)}>P{a.priority}</Badge>
-              </div>
-              <div className="text-sm font-semibold text-white">{a.title}</div>
-              <div className="mt-1 text-sm leading-5 text-zinc-400">{a.summary}</div>
+        <!-- PRIORITY STRIP -->
+        <div class="priority-strip">
+          <div class="panel">
+            <div class="section-head">
+              <span class="section-head-title">Šta traži odluku vrha sada</span>
+              <span class="section-head-meta">queue corta</span>
             </div>
-            <div className="flex min-w-[130px] items-end justify-between gap-2 lg:flex-col lg:items-end">
-              <div className="text-xs text-zinc-500">{a.target}</div>
-              <button
-                onClick={(e) => {
-                  e.stopPropagation();
-                  onOpenDetail(a.id);
-                }}
-                className="inline-flex items-center gap-1 rounded-lg border border-zinc-700 bg-zinc-950 px-2 py-1 text-xs text-zinc-300 hover:bg-zinc-800"
-              >
-                Apri <ChevronRight className="h-3 w-3" />
-              </button>
-            </div>
-          </button>
-        ))}
-      </div>
-    </Card>
-  );
-}
+            <div class="queue-list" id="vrhQueue"></div>
+          </div>
 
-function DetailPanel({ alert, onOpenCase, onSendMedia }) {
-  const tone = alert.state === 'urgent' ? '#ef4444' : alert.state === 'today' ? '#f59e0b' : alert.state === 'routed' ? '#38bdf8' : '#34d399';
-  return (
-    <div className="space-y-3">
-      <Card className="p-4">
-        <div className="text-[10px] uppercase tracking-[0.24em] text-zinc-500">Selected alert</div>
-        <div className="mt-2 text-xl font-black tracking-tight text-white">{alert.title}</div>
-        <p className="mt-2 text-sm leading-6 text-zinc-400">{alert.summary}</p>
-        <div className="mt-3 flex flex-wrap gap-2">
-          <Badge className={stateTone(alert.state)}>{alert.state}</Badge>
-          <Badge className={scoreTone(alert.risk)}>risk {alert.risk}</Badge>
-          <Badge className={scoreTone(alert.trend)}>trend {alert.trend}</Badge>
-          <Badge className={scoreTone(alert.priority)}>priority {alert.priority}</Badge>
-        </div>
-        <div className="mt-4 grid gap-3 md:grid-cols-2">
-          <InfoMini label="Perché conta" value={alert.reason} />
-          <InfoMini label="Fonte" value={alert.source} />
-          <InfoMini label="Azione" value={alert.action} />
-          <InfoMini label="Routing" value={alert.route} />
-        </div>
-        <div className="mt-4 flex flex-wrap gap-2">
-          <button onClick={onOpenCase} className="rounded-xl bg-lime-300 px-4 py-2 text-sm font-bold text-black hover:bg-lime-200">Open case</button>
-          <button onClick={onSendMedia} className="rounded-xl border border-zinc-700 bg-zinc-900 px-4 py-2 text-sm text-zinc-200 hover:bg-zinc-800">Instrukcija media timu</button>
-          <button className="rounded-xl border border-zinc-700 bg-zinc-900 px-4 py-2 text-sm text-zinc-200 hover:bg-zinc-800">Stavi na hold</button>
-        </div>
-      </Card>
-      <Card className="overflow-hidden">
-        <div className="flex items-center border-b border-zinc-800 px-4 py-3 text-[10px] uppercase tracking-[0.24em] text-zinc-500">
-          Grafico 10 giorni
-          <span className="ml-auto">{alert.state} · {alert.target}</span>
-        </div>
-        <div className="p-2">
-          <MiniLineChart values={alert.trendLine} tone={tone} />
-        </div>
-      </Card>
-      <Card className="overflow-hidden">
-        <div className="flex items-center border-b border-zinc-800 px-4 py-3 text-[10px] uppercase tracking-[0.24em] text-zinc-500">
-          Timeline
-        </div>
-        <div className="space-y-3 p-4">
-          {alert.timeline.map(([time, text]) => (
-            <div key={time + text} className="flex gap-3 rounded-xl border border-zinc-800 bg-zinc-900 p-3">
-              <div className="text-xs font-medium text-zinc-500">{time}</div>
-              <div className="text-sm text-zinc-300">{text}</div>
+          <div class="panel">
+            <div class="section-head">
+              <span class="section-head-title">Stato rapido</span>
+              <span class="section-head-meta">legenda</span>
             </div>
-          ))}
-        </div>
-      </Card>
-    </div>
-  );
-}
-
-function InfoMini({ label, value }) {
-  return (
-    <div className="rounded-xl border border-zinc-800 bg-zinc-900 p-3">
-      <div className="text-[10px] uppercase tracking-[0.2em] text-zinc-500">{label}</div>
-      <div className="mt-1 text-sm text-white">{value}</div>
-    </div>
-  );
-}
-
-function CasePage({ alert, onBack }) {
-  return (
-    <div className="min-h-screen bg-[#07090d] text-zinc-100">
-      <Topbar title="Case view" subtitle="stato del caso, assegnazioni e azioni demo" onBack={onBack} showBack />
-      <div className="grid gap-4 p-4 xl:grid-cols-[1.2fr_0.8fr]">
-        <div className="space-y-4">
-          <Card className="p-5">
-            <div className="flex flex-wrap items-start justify-between gap-4">
-              <div>
-                <div className="text-[10px] uppercase tracking-[0.24em] text-zinc-500">Case ID · demo-102</div>
-                <h1 className="mt-2 text-2xl font-black tracking-tight">{alert.title}</h1>
-                <p className="mt-2 max-w-3xl text-sm leading-6 text-zinc-400">{alert.summary}</p>
-              </div>
-              <Badge className={stateTone(alert.state)}>{alert.state}</Badge>
-            </div>
-            <div className="mt-5 grid gap-3 md:grid-cols-3">
-              <InfoMini label="Owner" value={alert.route} />
-              <InfoMini label="Target" value={alert.target} />
-              <InfoMini label="Recommended action" value={alert.action} />
-            </div>
-          </Card>
-          <Card className="overflow-hidden">
-            <div className="border-b border-zinc-800 px-4 py-3 text-[10px] uppercase tracking-[0.24em] text-zinc-500">Decisioni rapide</div>
-            <div className="grid gap-3 p-4 md:grid-cols-3">
-              <button className="flex items-center justify-center gap-2 rounded-xl bg-lime-300 px-4 py-3 text-sm font-bold text-black"><CheckCircle2 className="h-4 w-4" /> Approva linea</button>
-              <button className="flex items-center justify-center gap-2 rounded-xl border border-zinc-700 bg-zinc-900 px-4 py-3 text-sm text-zinc-200"><Send className="h-4 w-4" /> Invia media team</button>
-              <button className="flex items-center justify-center gap-2 rounded-xl border border-zinc-700 bg-zinc-900 px-4 py-3 text-sm text-zinc-200"><PauseCircle className="h-4 w-4" /> Hold 24h</button>
-            </div>
-          </Card>
-        </div>
-        <div className="space-y-4">
-          <Card className="overflow-hidden">
-            <div className="border-b border-zinc-800 px-4 py-3 text-[10px] uppercase tracking-[0.24em] text-zinc-500">Workflow</div>
-            <div className="space-y-3 p-4">
-              {[
-                ['08:15', 'Signal ingestovan'],
-                ['10:30', 'Cluster potvrđen'],
-                ['12:20', 'Alert otvoren'],
-                ['13:40', 'Case predat vrhu'],
-              ].map(([t, d]) => (
-                <div key={t} className="flex gap-3 rounded-xl border border-zinc-800 bg-zinc-900 p-3">
-                  <div className="text-xs text-zinc-500">{t}</div>
-                  <div className="text-sm text-zinc-300">{d}</div>
+            <div class="queue-list">
+              <div class="queue-card">
+                <div style="flex:1">
+                  <div class="qc-title">Urgente</div>
+                  <div class="qc-desc">Decisione o linea oggi</div>
                 </div>
-              ))}
-            </div>
-          </Card>
-          <Card className="overflow-hidden">
-            <div className="border-b border-zinc-800 px-4 py-3 text-[10px] uppercase tracking-[0.24em] text-zinc-500">Bozza risposta</div>
-            <div className="p-4 text-sm leading-6 text-zinc-300">
-              Tema traži smirenu, kratku i autoritativnu liniju. Fokus: procedura, regularnost, odbacivanje panike, spremnost na transparentnost.
-            </div>
-          </Card>
-        </div>
-      </div>
-    </div>
-  );
-}
-
-function TopicsPage({ topics, onOpenAlert }) {
-  return (
-    <div className="space-y-4 p-4">
-      <div className="grid gap-4 lg:grid-cols-2">
-        {topics.map((topic) => {
-          const first = topic.alerts[0];
-          const tone = topic.color === 'red' ? '#ef4444' : topic.color === 'yellow' ? '#f59e0b' : '#34d399';
-          return (
-            <Card key={topic.id} className="overflow-hidden">
-              <div className="flex items-center border-b border-zinc-800 px-4 py-3">
-                <div>
-                  <div className="text-lg font-black tracking-tight text-white">{topic.label}</div>
-                  <div className="text-xs text-zinc-500">{topic.count} alert collegati</div>
+                <div class="qc-right"><span class="badge red">high</span></div>
+              </div>
+              <div class="queue-card">
+                <div style="flex:1">
+                  <div class="qc-title">Da decidere oggi</div>
+                  <div class="qc-desc">Giallo, va risolto nel ciclo corrente</div>
                 </div>
-                <div className="ml-auto"><Badge className={topic.color === 'red' ? stateTone('urgent') : topic.color === 'yellow' ? stateTone('today') : stateTone('watch')}>{topic.color}</Badge></div>
+                <div class="qc-right"><span class="badge yellow">today</span></div>
               </div>
-              <div className="p-3">
-                <MiniLineChart values={first.trendLine} tone={tone} />
-                <div className="mt-3 rounded-xl border border-zinc-800 bg-zinc-900 p-3">
-                  <div className="text-sm font-semibold text-white">Top alert</div>
-                  <div className="mt-1 text-sm text-zinc-400">{first.title}</div>
-                  <button onClick={() => onOpenAlert(topic.id, first.id)} className="mt-3 rounded-lg border border-zinc-700 bg-zinc-950 px-3 py-2 text-xs text-zinc-300 hover:bg-zinc-800">Apri dettaglio</button>
+              <div class="queue-card">
+                <div style="flex:1">
+                  <div class="qc-title">Monitoraggio</div>
+                  <div class="qc-desc">Verde o grigio, niente panico</div>
                 </div>
+                <div class="qc-right"><span class="badge green">watch</span></div>
               </div>
-            </Card>
-          );
-        })}
-      </div>
-    </div>
-  );
-}
-
-function CasesPage() {
-  return (
-    <div className="space-y-4 p-4">
-      <Card className="overflow-hidden">
-        <div className="flex items-center border-b border-zinc-800 px-4 py-3 text-[10px] uppercase tracking-[0.24em] text-zinc-500">
-          Active cases
-          <span className="ml-auto">mock data</span>
-        </div>
-        <div className="divide-y divide-zinc-800">
-          {caseList.map((c) => (
-            <div key={c.id} className="grid gap-3 p-4 md:grid-cols-[1fr_auto_auto_auto] md:items-center">
-              <div>
-                <div className="text-sm font-semibold text-white">{c.title}</div>
-                <div className="mt-1 text-xs text-zinc-500">{c.id} · owner {c.owner}</div>
+              <div class="queue-card">
+                <div style="flex:1">
+                  <div class="qc-title">Già instradato</div>
+                  <div class="qc-desc">Blu, ownership chiara</div>
+                </div>
+                <div class="qc-right"><span class="badge blue">routed</span></div>
               </div>
-              <Badge className={stateTone(c.status)}>{c.status}</Badge>
-              <Badge className={stateTone(c.severity)}>{c.severity}</Badge>
-              <div className="text-xs text-zinc-400">{c.due}</div>
             </div>
-          ))}
+          </div>
         </div>
-      </Card>
-    </div>
-  );
-}
 
-function MediaPage() {
-  return (
-    <div className="space-y-4 p-4">
-      <div className="grid gap-4 lg:grid-cols-2">
-        <Card className="overflow-hidden">
-          <div className="border-b border-zinc-800 px-4 py-3 text-[10px] uppercase tracking-[0.24em] text-zinc-500">Media team queue</div>
-          <div className="divide-y divide-zinc-800">
-            {mediaTasks.map((m) => (
-              <div key={m.title} className="p-4">
-                <div className="flex items-start justify-between gap-3">
-                  <div>
-                    <div className="text-sm font-semibold text-white">{m.title}</div>
-                    <div className="mt-1 text-sm text-zinc-400">{m.desc}</div>
+        <!-- MAIN GRID -->
+        <div class="main-grid">
+
+          <!-- LEFT: ALERT LIST -->
+          <div class="panel">
+            <div class="section-head">
+              <span class="section-head-title" id="alertsTitle">Alert</span>
+              <span class="section-head-meta" id="alertsMeta">0 elementi</span>
+            </div>
+            <div class="alert-list" id="alertList"></div>
+          </div>
+
+          <!-- RIGHT STACK -->
+          <div class="right-stack">
+
+            <!-- DETAIL -->
+            <div class="detail-card" id="detailCard"></div>
+
+            <!-- CHART -->
+            <div class="chart-panel">
+              <div class="section-head">
+                <span class="section-head-title">Grafico 10 giorni</span>
+                <span class="section-head-meta" id="chartMeta">trend</span>
+              </div>
+              <svg class="chart-svg" id="miniChart" viewBox="0 0 400 80" preserveAspectRatio="none"></svg>
+            </div>
+
+            <!-- MEDIA TEAM RETURNS -->
+            <div class="panel">
+              <div class="section-head">
+                <span class="section-head-title">Media team ritorni</span>
+                <span class="section-head-meta">oggi</span>
+              </div>
+              <div class="queue-list">
+                <div class="queue-card">
+                  <div style="flex:1">
+                    <div class="qc-title">Draft izjave spreman</div>
+                    <div class="qc-desc">Čeka političku liniju</div>
                   </div>
-                  <Badge className={stateTone(m.state)}>{m.state}</Badge>
+                  <div class="qc-right"><span class="badge blue">draft</span></div>
+                </div>
+                <div class="queue-card">
+                  <div style="flex:1">
+                    <div class="qc-title">Lokalni odbor potvrdio signal</div>
+                    <div class="qc-desc">Tema veća od prvobitne procjene</div>
+                  </div>
+                  <div class="qc-right"><span class="badge yellow">confirm</span></div>
+                </div>
+                <div class="queue-card">
+                  <div style="flex:1">
+                    <div class="qc-title">1 tema zatvorena</div>
+                    <div class="qc-desc">Ostaje monitoring 24h</div>
+                  </div>
+                  <div class="qc-right"><span class="badge green">done</span></div>
                 </div>
               </div>
-            ))}
+            </div>
+
           </div>
-        </Card>
-        <Card className="p-4">
-          <div className="text-[10px] uppercase tracking-[0.24em] text-zinc-500">Suggested response</div>
-          <div className="mt-3 rounded-xl border border-zinc-800 bg-zinc-900 p-4 text-sm leading-6 text-zinc-300">
-            Ova tema traži kratku, disciplinovanu reakciju. Ne širiti narativ protivnika. Potvrditi procedure, spustiti ton, ostaviti prostor za transparentnost.
+        </div>
+
+      </div>
+    </main>
+  </div>
+
+  <!-- DRAWER -->
+  <aside class="drawer" id="drawer">
+    <div class="drawer-head">
+      <div class="drawer-head-text">
+        <h3 id="drawerTitle">Alert detail</h3>
+        <p id="drawerSub">Dettaglio completo del segnale selezionato</p>
+      </div>
+      <button class="close-btn" id="closeDrawer">×</button>
+    </div>
+    <div class="drawer-body" id="drawerBody"></div>
+  </aside>
+
+  <script>
+    const topics = [
+      {
+        id:"izbori",label:"Izbori",color:"red",count:4,
+        alerts:[
+          {id:"a1",title:"Regularnost izbora postaje centralna tema",summary:"Više izvora i NGO kanala gura narativ o pritisku na izborni proces. Tema je iz lokalnog signala prešla na centralni nivo.",risk:3,trend:3,priority:3,route:"Vrh",target:"centralno",reason:"strategic relevance 3 + trend 3 + NGO legitimitet",source:"NGO + portal + društvene mreže",action:"political line needed",state:"urgent",trendLine:[2,3,3,4,4,5,6,7,8,9],timeline:[["08:15","NGO signal preuzet od dva portala"],["10:30","Isti okvir u tri koordinisane objave"],["12:20","Lokalni signal potvrđuje offline eho"]]},
+          {id:"a2",title:"CIK spominjan u više koordinisanih objava",summary:"Ponavljaju se iste fraze i isti okvir kroz više kanala u kratkom vremenu.",risk:3,trend:2,priority:3,route:"Analitičar / Vrh",target:"centralno",reason:"coordination signal + izborni kontekst",source:"portali + Facebook stranice",action:"confirm cluster and prep case",state:"today",trendLine:[1,2,2,3,4,4,5,5,6,6],timeline:[["09:10","Cluster detektovan na tri izvora"],["11:00","Phrase reuse signal raste"],["13:05","Predložen alert kandidat"]]},
+          {id:"a3",title:"Tema izlaznosti dobija negativni okvir",summary:"Sadržaj pokušava pretvoriti mobilizaciju u priču o nepovjerenju.",risk:2,trend:2,priority:2,route:"Media team",target:"regionalno",reason:"important but still operatively solvable",source:"regionalni portal",action:"counter-narrative",state:"routed",trendLine:[1,1,2,2,2,3,3,4,4,4],timeline:[["08:50","Prvi negativni okvir"],["10:15","Media team dobio task"],["12:40","Draft u radu"]]},
+          {id:"a4",title:"Lokalni signal traži potvrdu sa terena",summary:"Prvi lokalni odbor javlja da se ista tema pojavljuje i offline.",risk:2,trend:2,priority:2,route:"Lokalni odbor",target:"lokalno",reason:"needs local confirmation before escalation",source:"local board feedback",action:"confirm / enrich",state:"watch",trendLine:[1,1,1,2,2,2,3,3,3,4],timeline:[["09:25","Signal sa terena"],["10:05","Poslano lokalnom odboru"],["12:55","Čeka potvrdu"]]}
+        ]
+      },
+      {
+        id:"lider",label:"Lider",color:"red",count:3,
+        alerts:[
+          {id:"b1",title:"Reputacioni napad na lidera jača u istom okviru",summary:"Tema je personalizovana i prelazi iz ironije u direktan reputacijski napad.",risk:3,trend:3,priority:3,route:"Vrh",target:"lider",reason:"leader target + risk 3 + repeat pattern",source:"portal + short video",action:"approval for direct answer",state:"urgent",trendLine:[2,2,3,4,4,5,6,7,7,8],timeline:[["08:40","Prvi personalni napad"],["11:20","Video format širi temu"],["13:10","Predložen case za vrh"]]},
+          {id:"b2",title:"Napad vezan za stil i simboliku lidera",summary:"Još nije dokazno jak, ali raste kroz kratke forme.",risk:2,trend:2,priority:2,route:"Media team",target:"lider",reason:"monitor + prep response",source:"reels / clips",action:"light framing response",state:"today",trendLine:[1,1,2,2,3,3,4,4,4,5],timeline:[["09:00","Clip format počeo da raste"],["11:50","Media team priprema odgovor"],["13:30","Tema još nije full red"]]},
+          {id:"b3",title:"Stara tema o imovini se vraća",summary:"Follow-up signal pokazuje da se koristi stari obrazac.",risk:2,trend:1,priority:2,route:"Follow-up",target:"lider",reason:"return of archived narrative",source:"copy portals",action:"reuse archive response",state:"watch",trendLine:[1,1,1,1,2,2,2,2,3,3],timeline:[["08:05","Stari narativ vraćen"],["10:45","Povezan sa arhivom"],["12:15","Predložen follow-up monitoring"]]}
+        ]
+      },
+      {
+        id:"rs-lokal",label:"RS lokal",color:"yellow",count:4,
+        alerts:[
+          {id:"c1",title:"Lokalna tema u RS traži potvrdu prije eskalacije",summary:"Više lokalnih signala postoji, ali bez dovoljne centralne težine dok mjesni odbor ne potvrdi.",risk:2,trend:2,priority:2,route:"Lokalni odbor",target:"lokalno",reason:"local first, not immediate vrh",source:"local portal + teren",action:"confirm and enrich",state:"watch",trendLine:[1,1,2,2,2,2,3,3,3,4],timeline:[["08:25","Prvi lokalni signal"],["10:10","Poslano na provjeru"],["13:05","Još bez centralne težine"]]},
+          {id:"c2",title:"Narativ se širi na susjedne opštine",summary:"Tema prelazi iz jedne opštine u dvije susjedne, ali još nije centralna.",risk:2,trend:3,priority:2,route:"Media team / Lokalni odbor",target:"regionalno",reason:"regional growth with local roots",source:"regional portals",action:"coordinate local line",state:"today",trendLine:[1,2,2,3,3,4,4,5,5,6],timeline:[["08:55","Signal iz druge opštine"],["11:00","Regionalni šum raste"],["13:25","Traži koordinaciju"]]},
+          {id:"c3",title:"Mjesni odbor traži instrukciju, ne javnu objavu",summary:"Treba ponašanje po uputi, a ne medijski izlaz.",risk:1,trend:2,priority:2,route:"Media team",target:"lokalno",reason:"operational local guidance",source:"local feedback",action:"instruction",state:"routed",trendLine:[1,1,1,2,2,2,2,3,3,3],timeline:[["09:20","Lokalni odbor traži smjernicu"],["11:45","Media team preuzeo"],["13:00","Čeka slanje instrukcije"]]},
+          {id:"c4",title:"Potvrđen teren, tema ide media timu",summary:"Lokalna provjera vratila je jači kontekst nego što je sistem prvo mislio.",risk:2,trend:2,priority:2,route:"Media team",target:"regionalno",reason:"local board confirmed escalation",source:"local board",action:"open case",state:"routed",trendLine:[1,1,2,2,3,3,3,4,4,5],timeline:[["08:35","Potvrda terena"],["10:50","Eskalacija odobrena"],["12:35","Case otvoren"]]}
+        ]
+      },
+      {
+        id:"followup",label:"Follow-up",color:"green",count:3,
+        alerts:[
+          {id:"g1",title:"Arhivska tema se vraća kroz novi ugao",summary:"Nije ista priča doslovno, ali koristi isti memorijski okvir.",risk:2,trend:2,priority:2,route:"Follow-up",target:"archive",reason:"linked to old case",source:"mixed",action:"reuse old lines",state:"watch",trendLine:[1,1,1,2,2,2,3,3,4,4],timeline:[["08:00","Stari frame aktiviran"],["10:20","Povezano sa hot topic"],["12:50","Predložen reuse"]]},
+          {id:"g2",title:"Drugi talas vjerovatan u 24h",summary:"Tema je stala, ali indikatori pokazuju da neće ostati mirna.",risk:2,trend:2,priority:2,route:"Monitoring",target:"follow-up",reason:"follow-up probability high",source:"trend watch",action:"monitor 24h",state:"watch",trendLine:[2,2,2,3,3,3,3,4,4,4],timeline:[["09:30","Trend nije mrtav"],["11:35","Praćenje pojačano"],["13:15","Monitoring ostaje aktivan"]]},
+          {id:"g3",title:"Hot topic dobija novi cluster link",summary:"Povezivanje s memorijom teme povećava budući priority boost.",risk:1,trend:2,priority:2,route:"Hot topic",target:"memory",reason:"topic recurrence",source:"archive",action:"link case",state:"watch",trendLine:[1,1,2,2,2,2,3,3,3,3],timeline:[["08:10","Cluster link prepoznat"],["10:15","Tema dobila memorijski tag"],["12:40","Priority boost spreman za buduće alert-e"]]}
+        ]
+      }
+    ];
+
+    let activeTopicId = topics[0].id;
+    let activeAlertId = topics[0].alerts[0].id;
+
+    function badgeClass(state){
+      if(state==="urgent") return "red";
+      if(state==="today") return "yellow";
+      if(state==="routed") return "blue";
+      return "green";
+    }
+    function scoreClass(n){
+      if(n>=3) return "red";
+      if(n>=2) return "yellow";
+      return "green";
+    }
+    function currentTopic(){ return topics.find(t=>t.id===activeTopicId); }
+    function currentAlert(){
+      const t=currentTopic();
+      return t.alerts.find(a=>a.id===activeAlertId)||t.alerts[0];
+    }
+
+    // TRAFFIC
+    function renderTraffic(){
+      const row=document.getElementById("trafficRow");
+      row.innerHTML="";
+      topics.forEach(topic=>{
+        const el=document.createElement("div");
+        el.className="traffic"+(topic.id===activeTopicId?" active":"");
+        el.innerHTML=`<div class="t-dot ${topic.color}"></div><span class="t-label">${topic.label}</span><span class="t-count">${topic.count}</span>`;
+        el.onclick=()=>{
+          activeTopicId=topic.id;
+          activeAlertId=topic.alerts[0]?.id||null;
+          renderAll();
+        };
+        row.appendChild(el);
+      });
+    }
+
+    // QUEUE
+    function renderQueue(){
+      const list=document.getElementById("vrhQueue");
+      const all=topics.flatMap(t=>t.alerts);
+      const filtered=all.filter(a=>a.route.includes("Vrh")||a.state==="urgent").slice(0,4);
+      list.innerHTML="";
+      filtered.forEach(a=>{
+        const el=document.createElement("div");
+        el.className="queue-card";
+        el.innerHTML=`
+          <div style="flex:1;min-width:0">
+            <div class="qc-title">${a.title}</div>
+            <div class="qc-desc">${a.reason}</div>
           </div>
-        </Card>
-      </div>
-    </div>
-  );
-}
+          <div class="qc-right">
+            <span class="badge ${badgeClass(a.state)}">${a.state}</span>
+            <span class="badge ${scoreClass(a.priority)}">P${a.priority}</span>
+          </div>`;
+        list.appendChild(el);
+      });
+    }
 
-function OverviewPage({ topics, activeTopicId, setActiveTopicId, activeAlertId, setActiveAlertId, onOpenDetail, onOpenCase }) {
-  const activeTopic = useMemo(() => topics.find((t) => t.id === activeTopicId) || topics[0], [topics, activeTopicId]);
-  const activeAlert = useMemo(() => activeTopic.alerts.find((a) => a.id === activeAlertId) || activeTopic.alerts[0], [activeTopic, activeAlertId]);
-  const allAlerts = useMemo(() => topics.flatMap((t) => t.alerts), [topics]);
+    // ALERTS
+    function renderAlerts(){
+      const t=currentTopic();
+      document.getElementById("alertsTitle").textContent="Alert · "+t.label;
+      document.getElementById("alertsMeta").textContent=t.alerts.length+" elementi";
+      const list=document.getElementById("alertList");
+      list.innerHTML="";
+      t.alerts.forEach(a=>{
+        const card=document.createElement("div");
+        card.className="alert-card"+(a.id===activeAlertId?" active":"");
+        card.innerHTML=`
+          <div class="alert-main">
+            <div class="alert-top">
+              <span class="badge ${badgeClass(a.state)}">${a.state}</span>
+              <span class="badge ${scoreClass(a.risk)}">risk ${a.risk}</span>
+              <span class="badge ${scoreClass(a.trend)}">trend ${a.trend}</span>
+              <span class="badge ${scoreClass(a.priority)}">P${a.priority}</span>
+              <span class="badge blue">${a.route}</span>
+            </div>
+            <div class="alert-title">${a.title}</div>
+            <p class="alert-desc">${a.summary}</p>
+          </div>
+          <div class="alert-side">
+            <div class="score-box"><small>target</small><strong>${a.target}</strong></div>
+            <div class="score-box"><small>source</small><strong style="font-size:11px;font-family:var(--mono)">${a.source}</strong></div>
+          </div>`;
+        card.onclick=()=>{ activeAlertId=a.id; renderAlerts(); renderRight(); };
+        card.ondblclick=()=>openDrawer(a);
+        list.appendChild(card);
+      });
+    }
 
-  return (
-    <div className="space-y-4 p-4">
-      <KpiRow alerts={allAlerts} />
-      <TopicRow topics={topics} activeTopicId={activeTopicId} setActiveTopicId={(id) => { setActiveTopicId(id); setActiveAlertId((topics.find((t) => t.id === id)?.alerts[0]?.id) || ''); }} />
-      <div className="grid gap-4 xl:grid-cols-[1.1fr_0.9fr]">
-        <AlertList alerts={activeTopic.alerts} activeAlertId={activeAlert.id} setActiveAlertId={setActiveAlertId} onOpenDetail={onOpenDetail} />
-        <DetailPanel alert={activeAlert} onOpenCase={onOpenCase} onSendMedia={() => {}} />
-      </div>
-    </div>
-  );
-}
+    // DETAIL
+    function renderDetail(){
+      const a=currentAlert();
+      const card=document.getElementById("detailCard");
+      card.innerHTML=`
+        <div class="dc-body">
+          <div class="dc-kicker">selected alert</div>
+          <div class="dc-title">${a.title}</div>
+          <p class="dc-text">${a.summary}</p>
+          <div class="dc-chips">
+            <span class="badge ${badgeClass(a.state)}">${a.state}</span>
+            <span class="badge ${scoreClass(a.risk)}">risk ${a.risk}</span>
+            <span class="badge ${scoreClass(a.trend)}">trend ${a.trend}</span>
+            <span class="badge ${scoreClass(a.priority)}">priority ${a.priority}</span>
+            <span class="badge blue">${a.route}</span>
+            <span class="badge green">${a.target}</span>
+          </div>
+          <div class="dc-grid">
+            <div class="dc-mini"><small>Perché conta</small><strong>${a.reason}</strong></div>
+            <div class="dc-mini"><small>Fonte</small><strong>${a.source}</strong></div>
+            <div class="dc-mini"><small>Azione consigliata</small><strong>${a.action}</strong></div>
+            <div class="dc-mini"><small>Routing</small><strong>${a.route}</strong></div>
+          </div>
+        </div>
+        <div class="dc-actions">
+          <button class="btn primary" onclick="openDrawer(window._currentAlert())">Apri detail</button>
+          <button class="btn danger">Daj instrukciju media timu</button>
+          <button class="btn">Pošalji mjesnom odboru</button>
+          <button class="btn">Stavi na hold</button>
+        </div>`;
+    }
 
-export default function MediaPilotDemoApp() {
-  const [loggedIn, setLoggedIn] = useState(false);
-  const [role, setRole] = useState('VRH');
-  const [collapsed, setCollapsed] = useState(false);
-  const [activeScreen, setActiveScreen] = useState('vrh');
-  const [activeTopicId, setActiveTopicId] = useState(topics[0].id);
-  const [activeAlertId, setActiveAlertId] = useState(topics[0].alerts[0].id);
-  const [selectedAlertId, setSelectedAlertId] = useState(topics[0].alerts[0].id);
-  const [showCasePage, setShowCasePage] = useState(false);
+    window._currentAlert = currentAlert;
 
-  const allAlerts = useMemo(() => topics.flatMap((t) => t.alerts), []);
-  const selectedAlert = useMemo(() => allAlerts.find((a) => a.id === selectedAlertId) || allAlerts[0], [allAlerts, selectedAlertId]);
+    // CHART
+    function renderChart(){
+      const a=currentAlert();
+      const svg=document.getElementById("miniChart");
+      const W=400,H=80,px=16,py=8;
+      const vals=a.trendLine;
+      const max=Math.max(...vals);
+      const min=Math.min(...vals);
+      const range=max-min||1;
+      const stepX=(W-px*2)/(vals.length-1);
+      function fy(v){ return H-py-(((v-min)/range)*(H-py*2)); }
 
-  const openAlertDetail = (topicId, alertId) => {
-    setActiveTopicId(topicId);
-    setActiveAlertId(alertId);
-    setSelectedAlertId(alertId);
-    setActiveScreen('vrh');
-  };
+      const colorMap={urgent:"#ff3535",today:"#ff8f00",routed:"#4d9fff",watch:"#00d97e"};
+      const c=colorMap[a.state]||"#4d9fff";
 
-  if (!loggedIn) {
-    return <LoginScreen onEnter={(selectedRole) => { setRole(selectedRole); setLoggedIn(true); }} />;
-  }
+      let pts=vals.map((v,i)=>`${px+i*stepX},${fy(v)}`).join(" ");
+      let area=`${px},${H-py} `+pts+` ${W-px},${H-py}`;
 
-  if (showCasePage) {
-    return <CasePage alert={selectedAlert} onBack={() => setShowCasePage(false)} />;
-  }
+      document.getElementById("chartMeta").textContent=a.state+" · "+a.target;
 
-  return (
-    <div className="min-h-screen bg-[#07090d] text-zinc-100">
-      <div className="flex min-h-screen">
-        <Sidebar collapsed={collapsed} setCollapsed={setCollapsed} activeScreen={activeScreen} setActiveScreen={setActiveScreen} />
-        <main className="min-w-0 flex-1">
-          <Topbar title={activeScreen === 'vrh' ? 'VRH overview' : activeScreen === 'topics' ? 'Topics & trend' : activeScreen === 'cases' ? 'Cases' : 'Media team'} subtitle={`Frontend demo · ruolo ${role} · niente backend per ora`} />
-          {activeScreen === 'vrh' && (
-            <OverviewPage
-              topics={topics}
-              activeTopicId={activeTopicId}
-              setActiveTopicId={setActiveTopicId}
-              activeAlertId={activeAlertId}
-              setActiveAlertId={(id) => { setActiveAlertId(id); setSelectedAlertId(id); }}
-              onOpenDetail={(alertId) => { setSelectedAlertId(alertId); }}
-              onOpenCase={() => setShowCasePage(true)}
-            />
-          )}
-          {activeScreen === 'topics' && <TopicsPage topics={topics} onOpenAlert={(topicId, alertId) => openAlertDetail(topicId, alertId)} />}
-          {activeScreen === 'cases' && <CasesPage />}
-          {activeScreen === 'media' && <MediaPage />}
-        </main>
-      </div>
-      <div className="fixed bottom-4 right-4 hidden rounded-full border border-zinc-800 bg-zinc-950/90 px-4 py-2 text-xs text-zinc-400 shadow-lg md:flex md:items-center md:gap-2">
-        <ShieldAlert className="h-4 w-4 text-lime-300" /> demo only · mock data · frontend
-      </div>
-    </div>
-  );
-}
+      svg.innerHTML=`
+        <defs>
+          <linearGradient id="grad" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stop-color="${c}" stop-opacity=".25"/>
+            <stop offset="100%" stop-color="${c}" stop-opacity="0"/>
+          </linearGradient>
+        </defs>
+        <polygon points="${area}" fill="url(#grad)"/>
+        <polyline points="${pts}" fill="none" stroke="${c}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        ${vals.map((v,i)=>`<circle cx="${px+i*stepX}" cy="${fy(v)}" r="${i===vals.length-1?4:2.5}" fill="${c}" opacity="${i===vals.length-1?1:.6}"/>`).join("")}
+      `;
+    }
+
+    function renderRight(){ renderDetail(); renderChart(); }
+
+    // DRAWER
+    function openDrawer(alertObj){
+      document.getElementById("drawerTitle").textContent=alertObj.title;
+      document.getElementById("drawerSub").textContent=alertObj.route+" · "+alertObj.target+" · "+alertObj.source;
+      document.getElementById("drawerBody").innerHTML=`
+        <div class="dc-chips" style="margin-bottom:10px">
+          <span class="badge ${badgeClass(alertObj.state)}">${alertObj.state}</span>
+          <span class="badge ${scoreClass(alertObj.risk)}">risk ${alertObj.risk}</span>
+          <span class="badge ${scoreClass(alertObj.trend)}">trend ${alertObj.trend}</span>
+          <span class="badge ${scoreClass(alertObj.priority)}">priority ${alertObj.priority}</span>
+          <span class="badge blue">${alertObj.route}</span>
+        </div>
+        <p style="font-size:12px;color:var(--text2);line-height:1.5;margin-bottom:12px">${alertObj.summary}</p>
+        <div class="dc-mini" style="margin-bottom:6px"><small>Zašto je sistem ovo podigao</small><strong>${alertObj.reason}</strong></div>
+        <div class="dc-mini" style="margin-bottom:14px"><small>Preporučena akcija</small><strong>${alertObj.action}</strong></div>
+        <div class="section-head" style="margin:0 -14px;padding:7px 14px;border-top:1px solid var(--line)">
+          <span class="section-head-title">Timeline</span>
+          <span class="section-head-meta">zadnjih sati</span>
+        </div>
+        <div class="timeline">
+          ${alertObj.timeline.map(item=>`
+            <div class="timeline-item">
+              <span class="ti-time">${item[0]}</span>
+              <span class="ti-text">${item[1]}</span>
+            </div>`).join("")}
+        </div>
+        <div style="display:flex;flex-wrap:wrap;gap:6px;margin-top:14px">
+          <button class="btn primary">Open case</button>
+          <button class="btn danger">Instrukcija media timu</button>
+          <button class="btn">Pošalji mjesnom odboru</button>
+          <button class="btn">Traži local confirm</button>
+        </div>`;
+      document.getElementById("drawer").classList.add("open");
+    }
+
+    function renderAll(){
+      renderTraffic();
+      renderQueue();
+      renderAlerts();
+      renderRight();
+    }
+
+    document.getElementById("toggleSidebar").addEventListener("click",()=>{
+      document.getElementById("app").classList.toggle("collapsed");
+    });
+    document.getElementById("closeDrawer").addEventListener("click",()=>{
+      document.getElementById("drawer").classList.remove("open");
+    });
+    document.querySelectorAll(".ttab").forEach(btn=>{
+      btn.addEventListener("click",()=>{
+        document.querySelectorAll(".ttab").forEach(b=>b.classList.remove("active"));
+        btn.classList.add("active");
+      });
+    });
+
+    renderAll();
+  </script>
+</body>
+</html>
